@@ -15,7 +15,7 @@ export default function HeroSection({ name, summary, photoUrl }: HeroSectionProp
   return (
     <section className="relative flex flex-wrap items-center justify-between gap-8 px-4 py-12">
       <div className="flex-1 min-w-0 max-w-xl text-left z-10">
-        <h1 className="text-4xl font-bold m-0 text-white">{name}</h1>
+        <h1 className="text-4xl font-bold m-0 text-blue-500">{name}</h1>
         <div className="text-lg mt-4 leading-relaxed text-gray-300">
           <TypingText text={summary} speed={50} />
         </div>
@@ -28,9 +28,9 @@ export default function HeroSection({ name, summary, photoUrl }: HeroSectionProp
             w-60 h-60
             rounded-md
             overflow-hidden
-            border-4 border-green-500
+            border-4 border-white
             shadow-2xl
-            filter brightness-75
+            filter brightness-90
             transform transition duration-500
             hover:scale-105 hover:rotate-3
           "

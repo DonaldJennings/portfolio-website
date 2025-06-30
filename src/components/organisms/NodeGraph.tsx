@@ -1,12 +1,32 @@
 // components/organisms/NodeGraph.tsx
 'use client';
+
 import { useRef } from 'react';
 import CanvasElement from '@/components/atoms/CanvasElement';
 import { useNodeGraph } from '@/hooks/useNodeGraph';
 
-export default function NodeGraph({ nodeCount = 100 }: { nodeCount?: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useNodeGraph(canvasRef, { nodeCount });
+interface NodeGraphProps {
+  nodeCount?: number;
+  fadeOpacity?: number;
+  maxDist?: number;
+  nodeRadius?: number;
+}
+
+export default function NodeGraph({
+  nodeCount = 250,
+  fadeOpacity = 0.1,
+  maxDist = 150,
+  nodeRadius = 3,
+}: NodeGraphProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null) as React.RefObject<HTMLCanvasElement>;
+
+  // Pass all four props through to the hook
+  useNodeGraph(canvasRef, {
+    nodeCount,
+    fadeOpacity,
+    maxDist,
+    nodeRadius,
+  });
 
   return (
     <CanvasElement

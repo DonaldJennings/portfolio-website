@@ -1,12 +1,11 @@
 // app/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/organisms/HeroSection';
 
-// dynamically load MatrixRain so it only runs in the browser
-const MatrixRain = dynamic(() => import('@/components/organisms/MatrixRain'), {
+// load NodeGraph (which uses the new useNodeGraph hook internally)
+const NodeGraph = dynamic(() => import('@/components/organisms/NodeGraph'), {
   ssr: false,
   loading: () => null,
 });
@@ -14,14 +13,22 @@ const MatrixRain = dynamic(() => import('@/components/organisms/MatrixRain'), {
 export default function Home() {
   return (
     <main className="relative h-screen w-full overflow-hidden bg-black font-mono">
-      {/* 1) Matrix-style rain background */}
-      <MatrixRain />
+      {/* animated background: only shows nodes near the cursor */}
+      <NodeGraph
+        // you can tune these props if you exposed them in NodeGraph
+        nodeCount={100}
+        fadeOpacity={0.05}
+        maxDist={150}
+        nodeRadius={3}
+      />
+
+      {/* semi-transparent overlay for contrast */}
       <div
         className="absolute inset-0 z-10 pointer-events-none"
         style={{ background: 'rgba(0,0,0,0.4)' }}
       />
 
-      {/* 3) Hero content + scroll cue */}
+      {/* hero content + scroll cue */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center">
         <HeroSection
           name="Donald Jennings"

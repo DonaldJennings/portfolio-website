@@ -13,7 +13,7 @@ export default function NavMenu({ vertical }: { vertical?: boolean }) {
   return (
     <div className={vertical ? 'space-y-2' : 'flex space-x-4'}>
       {links.map(link => (
-        <NavLink key={link.name} href={link.href}>
+        <NavLink key={link.name} href={link.href} className="">
           {link.name}
         </NavLink>
       ))}

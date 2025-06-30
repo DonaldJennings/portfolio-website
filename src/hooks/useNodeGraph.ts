@@ -10,13 +10,7 @@ interface Node {
 
 export function useNodeGraph(
   canvasRef: RefObject<HTMLCanvasElement>,
-  {
-    fadeOpacity = 0.05,
-    nodeColor = '16,185,129',
-    nodeRadius = 3,
-    nodeCount = 100,
-    maxDist = 150,
-  } = {},
+  { fadeOpacity = 0.05, nodeRadius = 3, nodeCount = 100, maxDist = 150 } = {},
 ) {
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -25,29 +19,33 @@ export function useNodeGraph(
     if (!ctx) return;
 
     let animationId: number;
+    let centerX = 0,
+      centerY = 0;
 
-    // Resize handler
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      centerX = canvas.width / 2;
+      centerY = canvas.height / 2;
     };
     window.addEventListener('resize', resize);
     resize();
 
-    // Mouse tracking
-    const mouse = { x: null as number | null, y: null as number | null };
-    const onMouseMove = (e: MouseEvent) => {
+    // Start mouse at center
+    const mouse = { x: centerX, y: centerY };
+
+    // Listen on window instead of canvas
+    const handleMouseMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     };
-    const onMouseLeave = () => {
-      mouse.x = null;
-      mouse.y = null;
+    const handleMouseLeave = () => {
+      mouse.x = centerX;
+      mouse.y = centerY;
     };
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseleave', handleMouseLeave);
 
-    // Initialize nodes
     const nodes: Node[] = Array.from({ length: nodeCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -56,56 +54,48 @@ export function useNodeGraph(
     }));
 
     const draw = () => {
-      // 1) Fade by erasing old pixels
+      // fade to transparent
       ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = `rgba(0,0,0,${fadeOpacity})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // 2) Restore normal draw mode
       ctx.globalCompositeOperation = 'source-over';
 
-      // 3) Update & draw each node
-      ctx.fillStyle = `rgba(${nodeColor},1)`;
+      // update positions
       for (const n of nodes) {
         n.x += n.vx;
         n.y += n.vy;
         if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
         if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+      }
 
+      // draw only nodes near mouse
+      const active = nodes.filter(n => {
+        const dx = n.x - mouse.x!;
+        const dy = n.y - mouse.y!;
+        return Math.hypot(dx, dy) < maxDist;
+      });
+
+      // draw nodes
+      ctx.fillStyle = 'rgba(255,255,255,1)';
+      for (const n of active) {
         ctx.beginPath();
         ctx.arc(n.x, n.y, nodeRadius, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // 4) Draw lines between close nodes
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
+      // draw links
+      for (let i = 0; i < active.length; i++) {
+        for (let j = i + 1; j < active.length; j++) {
+          const dx = active[i].x - active[j].x;
+          const dy = active[i].y - active[j].y;
           const dist = Math.hypot(dx, dy);
           if (dist < maxDist) {
-            ctx.strokeStyle = `rgba(${nodeColor},${1 - dist / maxDist})`;
+            const alpha = 1 - dist / maxDist;
+            ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // 5) Draw lines from mouse to nodes
-      if (mouse.x !== null && mouse.y !== null) {
-        for (const n of nodes) {
-          const dx = n.x - mouse.x;
-          const dy = n.y - mouse.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < maxDist) {
-            ctx.strokeStyle = `rgba(${nodeColor},${1 - dist / maxDist})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(n.x, n.y);
-            ctx.lineTo(mouse.x, mouse.y);
+            ctx.moveTo(active[i].x, active[i].y);
+            ctx.lineTo(active[j].x, active[j].y);
             ctx.stroke();
           }
         }
@@ -119,8 +109,8 @@ export function useNodeGraph(
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resize);
-      canvas.removeEventListener('mousemove', onMouseMove);
-      canvas.removeEventListener('mouseleave', onMouseLeave);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [canvasRef, fadeOpacity, nodeColor, nodeRadius, nodeCount, maxDist]);
+  }, [canvasRef, fadeOpacity, nodeRadius, nodeCount, maxDist]);
 }
