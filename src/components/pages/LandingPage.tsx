@@ -1,12 +1,6 @@
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/organisms/HeroSection';
 
-// load NodeGraph (which uses the new useNodeGraph hook internally)
-const NodeGraph = dynamic(() => import('@/components/organisms/NodeGraph'), {
-  ssr: false,
-  loading: () => null,
-});
-
 const MatrixRain = dynamic(() => import('@/components/organisms/MatrixRain'), {
   ssr: false,
   loading: () => null,
