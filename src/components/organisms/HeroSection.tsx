@@ -13,27 +13,27 @@ interface HeroSectionProps {
 
 export default function HeroSection({ name, summary, photoUrl }: HeroSectionProps) {
   return (
-    <section className="relative flex flex-wrap items-center justify-between gap-8 px-4 py-12">
-      <div className="flex-1 min-w-0 max-w-xl text-left z-10">
-        <h1 className="text-4xl font-bold m-0 text-blue-500">{name}</h1>
-        <div className="text-lg mt-4 leading-relaxed text-gray-300">
+    <section className="min-h-screen flex flex-col-reverse md:flex-row items-center justify-center gap-10 px-6 sm:px-10 lg:px-20 py-20">
+      {/* Text block */}
+      <div className="w-full md:flex-1 max-w-2xl text-center md:text-left">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-sky-400 mb-4">{name}</h1>
+        <div className="text-gray-300 text-lg sm:text-xl leading-relaxed mb-6">
           <TypingText text={summary} speed={50} />
         </div>
       </div>
 
-      <div className="flex-shrink-0 z-10">
-        {/* Framed portrait with dimmed filter and subtle tilt on hover */}
+      <div className="w-full md:w-auto flex justify-center md:justify-end">
         <div
           className="
-            w-60 h-60
-            rounded-md
-            overflow-hidden
-            border-4 border-white
-            shadow-2xl
-            filter brightness-90
-            transform transition duration-500
-            hover:scale-105 hover:rotate-3
-          "
+        w-40 h-40 sm:w-48 sm:h-48 md:w-60 md:h-60
+        max-w-full
+        rounded-md overflow-hidden
+        border-2 sm:border-4 border-white
+        shadow-[0_0_12px_rgba(59,130,246,0.4)]
+        filter brightness-90
+        transition-transform duration-300
+        hover:scale-105 hover:rotate-2
+      "
         >
           <HeroImage
             src={photoUrl}

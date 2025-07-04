@@ -16,7 +16,7 @@ export default function MobileMenuToggle() {
       </IconButton>
 
       {open && (
-        <div className="absolute top-full inset-x-0 bg-gray-800 py-4 px-6 shadow-lg">
+        <div className="absolute top-full left-0 right-0 bg-slate-800/95 backdrop-blur-md border-t border-slate-700 py-4 px-6 shadow-lg">
           <NavMenu vertical />
         </div>
       )}

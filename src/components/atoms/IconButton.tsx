@@ -12,7 +12,7 @@ export default function IconButton({ onClick, children, className = '' }: IconBu
     <button
       type="button"
       onClick={onClick}
-      className={`p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none ${className}`}
+      className={`p-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${className}`}
     >
       {children}
     </button>

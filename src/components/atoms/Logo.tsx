@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 export default function Logo() {
   return (
-    <Link href="/" className="text-2xl font-bold text-white">
-      Donald<span className="text-blue-500">J</span>
+    <Link href="/" className="text-white font-bold text-lg">
+      Donald<span className="text-slate-400">J</span>
     </Link>
   );
 }

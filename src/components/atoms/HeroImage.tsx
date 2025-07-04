@@ -10,16 +10,18 @@ export interface HeroImageProps {
 
 export default function HeroImage({ src, alt, className = '', style }: HeroImageProps) {
   return (
-    <picture>
-      <img
-        src={src}
-        alt={alt}
-        className={`
-          w-full h-auto block object-cover rounded-md shadow-lg
+    <div className="hover:scale-105 transition-transform duration-300">
+      <picture>
+        <img
+          src={src}
+          alt={alt}
+          className={`
+          w-full h-auto block object-cover rounded-md
           ${className}
         `}
-        style={style}
-      />
-    </picture>
+          style={style}
+        />
+      </picture>
+    </div>
   );
 }
