@@ -9,6 +9,7 @@ export interface NavLinkProps {
   target?: string;
   rel?: string;
   isActive?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 export default function NavLink({
@@ -18,24 +19,36 @@ export default function NavLink({
   target,
   rel,
   isActive = false,
+  onClick,
 }: NavLinkProps) {
   const baseClass = 'transition-colors px-2 py-1 font-medium';
   const activeClass = 'text-white font-semibold';
-  const inactiveClass = 'text-slate-300 hover:text-blue-400 hover:underline underline-offset-4';
+  const inactiveClass = 'text-slate-300 hover:text-green-400 hover:underline underline-offset-4';
 
   const finalClass = `${baseClass} ${isActive ? activeClass : inactiveClass} ${className}`.trim();
 
-  // Handle smooth scrolling for hash links
+  // Handle smooth scrolling for hash links and custom onClick
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (href.includes('#')) {
+    // Call custom onClick first if provided
+    if (onClick) {
+      onClick(e);
+    }
+
+    // Only handle hash navigation if the event wasn't prevented
+    if (!e.defaultPrevented && href.includes('#')) {
       const [path, hash] = href.split('#');
 
-      // If we're on the same page or going to root, handle smooth scroll
-      if (path === '' || path === '/' || window.location.pathname === path) {
+      // If we're already on the home page, just scroll
+      if (window.location.pathname === '/' || path === '/') {
         e.preventDefault();
         const element = document.getElementById(hash);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          const navbarHeight = 80; // h-20 = 80px
+          const elementPosition = element.offsetTop - navbarHeight;
+          window.scrollTo({
+            top: elementPosition,
+            behavior: 'smooth',
+          });
         }
         return;
       }

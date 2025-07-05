@@ -1,6 +1,7 @@
 // app/page.tsx
 'use client';
 
+import { useEffect } from 'react';
 import LandingPage from '@/components/pages/LandingPage';
 import SectionWithBackground from '@/components/molecules/Section';
 import ExperienceList from '@/components/organisms/ExperienceList';
@@ -12,6 +13,30 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 export default function Home() {
   const isAboutVisible = useScrollAnimation();
+
+  // Set this to true when you're open for opportunities
+  const isOpenForOpportunities = false; // Change to true when job searching
+
+  // Handle scrolling to sections when navigating from other pages
+  useEffect(() => {
+    // Check if there's a stored scroll target from navigation
+    const scrollToSection = sessionStorage.getItem('scrollToSection');
+    if (scrollToSection) {
+      sessionStorage.removeItem('scrollToSection');
+      // Small delay to ensure page is fully loaded and elements are rendered
+      setTimeout(() => {
+        const element = document.getElementById(scrollToSection);
+        if (element) {
+          const navbarHeight = 80; // h-20 = 80px
+          const elementPosition = element.offsetTop - navbarHeight;
+          window.scrollTo({
+            top: elementPosition,
+            behavior: 'smooth',
+          });
+        }
+      }, 100);
+    }
+  }, []);
 
   return (
     <main className="relative w-full bg-slate-900 font-mono">
@@ -77,14 +102,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Call to Action */}
-          <div
-            className={`mt-12 transition-all duration-1000 delay-800 ${
-              isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
-            <CallToActionSection />
-          </div>
+          {/* Call to Action - Only show when open for opportunities */}
+          {isOpenForOpportunities && (
+            <div
+              className={`mt-12 transition-all duration-1000 delay-800 ${
+                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
+              <CallToActionSection />
+            </div>
+          )}
         </div>
       </section>
     </main>
