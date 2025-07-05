@@ -5,6 +5,7 @@ import LandingPage from '@/components/pages/LandingPage';
 import SectionWithBackground from '@/components/molecules/Section';
 import ExperienceList from '@/components/organisms/ExperienceList';
 import EducationSection from '@/components/organisms/EducationSection';
+import PublicationsSection from '@/components/organisms/PublicationsSection';
 import AboutSidebar from '@/components/organisms/AboutSidebar';
 import CallToActionSection from '@/components/organisms/CallToActionSection';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
@@ -53,7 +54,7 @@ export default function Home() {
               {/* Introduction */}
               <SectionWithBackground
                 title="Introduction"
-                bodyText="Hello! I'm Donald Jennings, a dedicated Software Engineer currently working at Leonardo UK Ltd. With a BSc (Hons) in Computer Science and MIET certification, I bring both academic knowledge and practical expertise to every project. My passion lies in developing innovative solutions that bridge the gap between complex technical challenges and user-friendly applications. I thrive in environments where creativity meets cutting-edge technology"
+                bodyText="I'm Donald Jennings, a passionate Software Engineer currently working at Leonardo UK Ltd. I hold a BSc (Hons) in Computer Science and am a member of the Institution of Engineering and Technology (MIET). My expertise lies in developing innovative solutions that bridge the gap between complex technical challenges and real-world applications."
               />
 
               {/* Experience */}
@@ -61,6 +62,9 @@ export default function Home() {
 
               {/* Education */}
               <EducationSection />
+
+              {/* Publications */}
+              <PublicationsSection />
             </div>
 
             {/* Sidebar */}
