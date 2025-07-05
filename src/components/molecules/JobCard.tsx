@@ -18,7 +18,7 @@ export default function JobCard({
   className = '',
 }: JobCardProps) {
   const borderColor = isCurrent ? 'border-green-500' : 'border-slate-700';
-  
+
   return (
     <div className={`${className}`}>
       <div className={`border-l-4 ${borderColor} pl-6 relative`}>

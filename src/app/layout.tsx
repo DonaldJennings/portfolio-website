@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Donald Jennings - Portfolio',
   description: 'Portfolio website',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
