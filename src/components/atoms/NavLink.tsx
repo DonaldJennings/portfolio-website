@@ -25,10 +25,27 @@ export default function NavLink({
 
   const finalClass = `${baseClass} ${isActive ? activeClass : inactiveClass} ${className}`.trim();
 
+  // Handle smooth scrolling for hash links
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (href.includes('#')) {
+      const [path, hash] = href.split('#');
+
+      // If we're on the same page or going to root, handle smooth scroll
+      if (path === '' || path === '/' || window.location.pathname === path) {
+        e.preventDefault();
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+        return;
+      }
+    }
+  };
+
   // For external links or targets, use regular anchor
   if (target === '_blank' || href.startsWith('http')) {
     return (
-      <a href={href} className={finalClass} target={target} rel={rel}>
+      <a href={href} className={finalClass} target={target} rel={rel} onClick={handleClick}>
         {children}
       </a>
     );
@@ -36,7 +53,7 @@ export default function NavLink({
 
   // For internal links, use Next.js Link
   return (
-    <Link href={href} className={finalClass}>
+    <Link href={href} className={finalClass} onClick={handleClick}>
       {children}
     </Link>
   );

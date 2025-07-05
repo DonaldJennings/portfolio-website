@@ -8,12 +8,15 @@ const MatrixRain = dynamic(() => import('@/components/organisms/MatrixRain'), {
 
 export default function LandingPage() {
   return (
-    <div>
+    <div className="relative h-full w-full">
       <MatrixRain />
 
       <div
         className="absolute inset-0 z-10 pointer-events-none"
-        style={{ background: 'rgba(0,0,0,0.4)' }}
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.4) 85%, rgba(0,0,0,0.2) 100%)',
+        }}
       />
 
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center">
@@ -24,8 +27,13 @@ export default function LandingPage() {
         />
 
         <div
-          className="mt-8 animate-bounce text-green-400 text-3xl fade-slide-up"
+          className="mt-8 animate-bounce text-green-400 text-3xl fade-slide-up cursor-pointer pointer-events-auto"
           style={{ animationDelay: '0.5s' }}
+          onClick={() => {
+            document.getElementById('about')?.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }}
         >
           ↓
         </div>

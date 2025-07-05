@@ -7,41 +7,45 @@ interface TypingTextProps {
   className?: string;
 }
 
-export default function TypingText({ text, speed = 75, className = '' }: TypingTextProps) {
+export default function TypingText({ text, speed = 60, className = '' }: TypingTextProps) {
   const [displayed, setDisplayed] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
     let idx = 0;
     const iv = setInterval(() => {
       setDisplayed(text.slice(0, ++idx));
-      if (idx === text.length) clearInterval(iv);
+      if (idx === text.length) {
+        clearInterval(iv);
+        // Hide cursor after typing is complete
+        setTimeout(() => setShowCursor(false), 2000);
+      }
     }, speed);
     return () => clearInterval(iv);
   }, [text, speed]);
 
+  // Cursor blink effect
+  useEffect(() => {
+    if (!showCursor) return;
+
+    const cursorInterval = setInterval(() => {
+      setShowCursor(prev => !prev);
+    }, 530);
+
+    return () => clearInterval(cursorInterval);
+  }, [showCursor]);
+
   return (
     <span className={className} style={{ whiteSpace: 'pre-wrap' }}>
       {displayed}
-      <span
-        style={{
-          display: 'inline-block',
-          width: '1ch',
-          backgroundColor: 'currentColor',
-          marginLeft: '2px',
-          animation: 'blink 1s step-end infinite',
-        }}
-      />
-      <style jsx>{`
-        @keyframes blink {
-          0%,
-          100% {
-            opacity: 0;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
+      {showCursor && (
+        <span
+          className="inline-block w-0.5 h-6 bg-blue-400 ml-1"
+          style={{
+            animation: 'blink 1s infinite',
+          }}
+        />
+      )}
     </span>
   );
 }

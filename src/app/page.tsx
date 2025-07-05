@@ -2,10 +2,87 @@
 'use client';
 
 import LandingPage from '@/components/pages/LandingPage';
+import SectionWithBackground from '@/components/molecules/Section';
+import ExperienceList from '@/components/organisms/ExperienceList';
+import EducationSection from '@/components/organisms/EducationSection';
+import AboutSidebar from '@/components/organisms/AboutSidebar';
+import CallToActionSection from '@/components/organisms/CallToActionSection';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
 export default function Home() {
+  const isAboutVisible = useScrollAnimation();
+
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-slate-900 font-mono">
-      <LandingPage />
+    <main className="relative w-full bg-slate-900 font-mono">
+      {/* Landing Section */}
+      <section className="h-screen w-full overflow-hidden relative z-10">
+        <LandingPage />
+      </section>
+
+      {/* About Section */}
+      <section
+        id="about"
+        className={`min-h-screen w-full relative z-20 transition-all duration-1000 ${
+          isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.05) 40%, transparent 70%)',
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+          {/* Header */}
+          <div
+            className={`text-center mb-12 transition-all duration-1000 delay-200 ${
+              isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About Me</h1>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+              Passionate software engineer with a focus on innovation and excellence
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-12">
+            {/* Main Content */}
+            <div
+              className={`lg:col-span-3 space-y-8 transition-all duration-1000 delay-400 ${
+                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
+              {/* Introduction */}
+              <SectionWithBackground
+                title="Introduction"
+                bodyText="Hello! I'm Donald Jennings, a dedicated Software Engineer currently working at Leonardo UK Ltd. With a BSc (Hons) in Computer Science and MIET certification, I bring both academic knowledge and practical expertise to every project. My passion lies in developing innovative solutions that bridge the gap between complex technical challenges and user-friendly applications. I thrive in environments where creativity meets cutting-edge technology"
+              />
+
+              {/* Experience */}
+              <ExperienceList />
+
+              {/* Education */}
+              <EducationSection />
+            </div>
+
+            {/* Sidebar */}
+            <div
+              className={`transition-all duration-1000 delay-600 ${
+                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
+              <AboutSidebar />
+            </div>
+          </div>
+
+          {/* Call to Action */}
+          <div
+            className={`mt-12 transition-all duration-1000 delay-800 ${
+              isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
+            <CallToActionSection />
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
