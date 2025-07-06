@@ -25,7 +25,7 @@ export default function AboutPage() {
             {/* Introduction */}
             <SectionWithBackground
               title="Introduction"
-              bodyText="Hello! I'm Donald Jennings, a dedicated Software Engineer currently working at Leonardo UK Ltd. With a BSc (Hons) in Computer Science and MIET certification, I bring both academic knowledge and practical expertise to every project. My passion lies in developing innovative solutions that bridge the gap between complex technical challenges and user-friendly applications. I thrive in environments where creativity meets cutting-edge technology"
+              bodyText="Hello! I'm Donald, a Software Engineer currently working at Leonardo UK Ltd. I graduated with a 1st Class BSc (Hons) in Computer Science from University of Edinburgh. I am interested in developing innovative and smart solutions to complex technical challenges with my skills spanning a wide range from cloud computing to systems programming."
             />
 
             {/* Experience */}

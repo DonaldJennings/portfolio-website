@@ -65,7 +65,7 @@ export default function Home() {
           >
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About Me</h1>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-              Passionate software engineer with a focus on innovation and excellence
+              Graduate software engineer with a focus on innovation and systems programming
             </p>
           </div>
 
@@ -79,7 +79,7 @@ export default function Home() {
               {/* Introduction */}
               <SectionWithBackground
                 title="Introduction"
-                bodyText="I'm Donald Jennings, a passionate Software Engineer currently working at Leonardo UK Ltd. I hold a BSc (Hons) in Computer Science and am a member of the Institution of Engineering and Technology (MIET). My expertise lies in developing innovative solutions that bridge the gap between complex technical challenges and real-world applications."
+                bodyText="Hello! I'm Donald, a Software Engineer currently working at Leonardo UK Ltd. I graduated with a 1st Class BSc (Hons) in Computer Science from University of Edinburgh. I am interested in developing innovative and smart solutions to complex technical challenges with my skills spanning a wide range from cloud computing to systems programming"
               />
 
               {/* Experience */}

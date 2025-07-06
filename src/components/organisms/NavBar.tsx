@@ -4,6 +4,7 @@ import React from 'react';
 import Logo from '@/components/atoms/Logo';
 import NavMenu from '@/components/molecules/NavMenu';
 import MobileMenuToggle from '@/components/molecules/MobileMenuToggle';
+import ThemeToggle from '@/components/atoms/ThemeToggle';
 
 export default function NavBar() {
   return (
@@ -13,13 +14,15 @@ export default function NavBar() {
           {/* Logo */}
           <Logo />
 
-          {/* Desktop menu */}
-          <div className="hidden md:flex">
+          {/* Desktop menu and theme toggle */}
+          <div className="hidden md:flex items-center space-x-4">
             <NavMenu />
+            <ThemeToggle />
           </div>
 
-          {/* Mobile toggle */}
-          <div className="md:hidden ml-4">
+          {/* Mobile menu and theme toggle */}
+          <div className="md:hidden flex items-center space-x-3">
+            <ThemeToggle />
             <MobileMenuToggle />
           </div>
         </div>

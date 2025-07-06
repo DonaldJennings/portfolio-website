@@ -12,7 +12,7 @@ export default function MatrixRain() {
   return (
     <CanvasElement
       canvasRef={canvasRef}
-      className="pointer-events-none fixed inset-0 z-0 opacity-40"
+      className="matrix-rain pointer-events-none fixed inset-0 z-0 opacity-40"
     />
   );
 }

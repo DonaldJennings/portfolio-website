@@ -1,45 +1,70 @@
-type JobCardProps = {
-  jobTitle: string;
-  companyName: string;
-  startDate: string;
-  endDate?: string;
+'use client';
+
+import JobRole from '../atoms/JobRole';
+import CompanyName from '../atoms/CompanyName';
+import JobDates from '../atoms/JobDates';
+import JobDescription from '../atoms/JobDescription';
+import SkillTag from '../atoms/SkillTag';
+
+interface JobCardProps {
+  role: string;
+  company: string;
+  dates: string;
   description: string;
+  skills?: string[];
   isCurrent?: boolean;
-  className?: string;
-};
+}
 
 export default function JobCard({
-  jobTitle,
-  companyName,
-  startDate,
-  endDate,
+  role,
+  company,
+  dates,
   description,
+  skills,
   isCurrent = false,
-  className = '',
 }: JobCardProps) {
-  const borderColor = isCurrent ? 'border-green-500' : 'border-slate-700';
-
   return (
-    <div className={`${className}`}>
-      <div className={`border-l-4 ${borderColor} pl-6 relative`}>
-        {isCurrent && (
-          <div className="absolute -left-1.5 -top-1 w-2 h-2 bg-green-500 rounded-full">
-            <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
-          </div>
+    <div className="relative pb-8 last:pb-0">
+      {/* Vertical line and dot indicator */}
+      <div className="absolute left-0 top-0 bottom-0 w-1">
+        {isCurrent ? (
+          <>
+            {/* Green vertical line */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-green-500"></div>
+            {/* Pulsing dot for current role - positioned over the line with solid background */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-slate-900 rounded-full flex items-center justify-center">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Gray vertical line for previous roles */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-slate-600"></div>
+            {/* Static dot for previous roles */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-600 rounded-full border-2 border-slate-900"></div>
+          </>
         )}
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <h3 className="text-xl font-semibold text-white">{jobTitle}</h3>
-          {isCurrent && (
-            <span className="px-2 py-0.5 text-xs font-medium text-green-400 bg-green-500/10 rounded border border-green-500/30">
-              Current
-            </span>
+      </div>
+
+      {/* Job card content */}
+      <div className="ml-10 py-2">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <JobRole jobTitle={role} isCurrent={isCurrent} />
+            <CompanyName companyName={company} />
+            <JobDates dateRange={dates} />
+          </div>
+
+          <JobDescription description={description} />
+
+          {skills && skills.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {skills.map((skill, index) => (
+                <SkillTag key={index} skill={skill} />
+              ))}
+            </div>
           )}
         </div>
-        <p className="text-blue-400 font-medium mb-1">{companyName}</p>
-        <p className="text-sm text-slate-400 mb-3">
-          {startDate} - {endDate ? endDate : 'Present'}
-        </p>
-        <p className="text-slate-300 leading-relaxed">{description}</p>
       </div>
     </div>
   );
