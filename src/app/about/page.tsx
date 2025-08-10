@@ -9,7 +9,7 @@ import React from 'react';
 
 export default function AboutPage() {
   return (
-    <div className="relative min-h-screen font-mono bg-slate-900">
+    <div className="relative min-h-screen font-mono">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         {/* Header */}
         <div className="text-center mb-12">

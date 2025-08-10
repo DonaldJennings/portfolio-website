@@ -39,7 +39,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative w-full bg-slate-900 font-mono">
+    <main className="relative w-full font-mono">
       {/* Landing Section */}
       <section className="h-screen w-full overflow-hidden relative z-10">
         <LandingPage />
@@ -51,10 +51,6 @@ export default function Home() {
         className={`min-h-screen w-full relative z-20 transition-all duration-1000 ${
           isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
-        style={{
-          background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.05) 40%, transparent 70%)',
-        }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           {/* Header */}
