@@ -7,8 +7,13 @@ export async function generateStaticParams() {
   return posts.map(post => ({ slug: post.slug }));
 }
 
-export default async function DevBlogPostPage({ params }: { params: { slug: string } }) {
-  const { content, meta } = await getDevBlogPost(params.slug);
+export default async function DevBlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const { content, meta } = await getDevBlogPost(slug);
   const compiledMdx = await compileMdx(content);
 
   return (
