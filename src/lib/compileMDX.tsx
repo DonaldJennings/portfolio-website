@@ -1,10 +1,14 @@
-import { compile } from '@mdx-js/mdx';
+import { compileMDX } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 
 export async function compileMdx(source: string) {
-  const compiled = await compile(source, {
-    outputFormat: 'function-body',
-    rehypePlugins: [[rehypePrettyCode, { theme: 'github-dark', keepBackground: false }]],
+  const { content } = await compileMDX({
+    source,
+    options: {
+      mdxOptions: {
+        rehypePlugins: [[rehypePrettyCode, { theme: 'github-dark', keepBackground: false }]],
+      },
+    },
   });
-  return compiled.value;
+  return content;
 }

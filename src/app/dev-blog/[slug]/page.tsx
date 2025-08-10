@@ -21,9 +21,7 @@ export default async function DevBlogPostPage({ params }: { params: { slug: stri
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <MatrixRain />
       <div className="relative z-10 py-20">
-        <BlogPostPage meta={meta}>
-          <MDXRemote source={compiledMdx} />
-        </BlogPostPage>
+        <BlogPostPage meta={meta}>{compiledMdx}</BlogPostPage>
       </div>
     </div>
   );
