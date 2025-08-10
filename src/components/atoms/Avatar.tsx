@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 type AvatarProps = {
   src?: string;
@@ -8,11 +9,11 @@ type AvatarProps = {
 
 export default function Avatar({ src, alt = 'Avatar', size = 32 }: AvatarProps) {
   return (
-    <img
-      src={src}
+    <Image
+      src={src || '/default-avatar.png'}
       alt={alt}
-      width={size}
-      height={size}
+      width={Number(size)}
+      height={Number(size)}
       className="rounded-full object-cover"
       style={{ width: size, height: size }}
     />
