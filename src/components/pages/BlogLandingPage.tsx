@@ -40,20 +40,20 @@ export default function BlogLandingPage({ posts, tags, activeTag }: BlogLandingP
   });
 
   return (
-    <div className="max-w-screen-xl mx-auto px-6 md:px-8 space-y-10 md:space-y-14">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-8 space-y-8 md:space-y-14">
       {/* Hero Section */}
-      <section className="pt-10 pb-6 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 font-sans">Developer Blog</h1>
-        <p className="max-w-prose mx-auto text-lg opacity-80">
+      <section className="pt-8 pb-4 text-center">
+        <h1 className="text-2xl md:text-4xl font-bold mb-3 font-sans">Developer Blog</h1>
+        <p className="max-w-prose mx-auto text-base md:text-lg opacity-80">
           Insights, architecture, and technical deep-dives from Donald Jennings.
         </p>
       </section>
 
-      <div className="flex flex-row gap-10 items-start">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-stretch md:items-start">
         {/* Combined Filter/Search Box */}
-        <div className="min-w-[260px] max-w-[320px] flex flex-col justify-start">
+        <div className="w-full md:min-w-[260px] md:max-w-[320px] flex flex-col justify-start mb-6 md:mb-0">
           <div
-            className="px-4 py-6 rounded-2xl border flex flex-col gap-4"
+            className="px-3 py-5 md:px-4 md:py-6 rounded-2xl border flex flex-col gap-3 md:gap-4"
             style={{
               background: 'rgba(15,23,42,0.65)',
               backdropFilter: 'blur(12px)',
@@ -81,8 +81,8 @@ export default function BlogLandingPage({ posts, tags, activeTag }: BlogLandingP
           </div>
         </div>
         {/* Blog Cards Column */}
-        <div className="flex-1 flex flex-col justify-start">
-          <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
+        <div className="w-full md:flex-1 flex flex-col justify-start">
+          <div className="w-full flex flex-col gap-6 md:gap-8">
             {filteredPosts.map(post => (
               <BlogCard key={post.slug} {...post} />
             ))}

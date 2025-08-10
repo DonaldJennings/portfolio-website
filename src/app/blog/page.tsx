@@ -27,7 +27,6 @@ export default async function DevBlogPage() {
             }}
           >
             {/* MatrixRainGlobal renders the animated effect */}
-            {/* @ts-expect-error */}
             <div id="matrix-rain-global" />
           </div>
         </div>

@@ -30,7 +30,7 @@ export default function BlogCard({
     <Link href={`/blog/${slug}`} className="group" style={{ textDecoration: 'none' }}>
       <motion.div
         layoutId={`blog-card-${slug}`}
-        className="relative rounded-2xl border flex flex-row items-center p-7 md:p-8 transition-all duration-300 cursor-pointer max-w-5xl min-w-[520px] md:min-w-[800px] w-full gap-8 group"
+        className="relative rounded-2xl border flex flex-col md:flex-row items-center p-5 md:p-8 transition-all duration-300 cursor-pointer w-full gap-6 md:gap-8 group"
         style={{
           background: 'rgba(15,23,42,0.65)',
           backdropFilter: 'blur(12px)',
