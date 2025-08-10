@@ -5,6 +5,7 @@ import './globals.css';
 // app/layout.tsx (or page.tsx)
 import NavBar from '@/components/organisms/NavBar';
 import { ThemeProvider } from '@/components/context/ThemeContext';
+import '../styles/mdx.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
