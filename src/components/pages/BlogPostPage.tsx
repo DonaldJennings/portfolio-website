@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import BlogHeader from '../organisms/BlogHeader';
 import BlogBody from '../organisms/BlogBody';
 
@@ -74,13 +75,13 @@ export default function BlogPostPage({ meta, children }: BlogPostPageProps) {
         </section>
       </BlogBody>
       <nav className="flex justify-between items-center mt-12">
-        <a
+        <Link
           href="/dev-blog"
           className="text-teal-400 hover:text-teal-300 hover:underline text-base font-medium transition-colors duration-200"
         >
           ← Back to Blog
-        </a>
-        {/* <a href="/dev-blog/next-post" className="text-teal-400 hover:text-teal-300 hover:underline text-base font-medium transition-colors duration-200">Next Article →</a> */}
+        </Link>
+        {/* <Link href="/dev-blog/next-post" className="text-teal-400 hover:text-teal-300 hover:underline text-base font-medium transition-colors duration-200">Next Article →</Link> */}
       </nav>
     </main>
   );
