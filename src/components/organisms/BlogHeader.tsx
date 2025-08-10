@@ -9,6 +9,9 @@ type BlogHeaderProps = {
     name: string;
     avatarUrl?: string;
     readingTime?: string;
+    role?: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
   };
   excerpt?: string;
   description?: string;
@@ -35,7 +38,7 @@ export default function BlogHeader({
       }}
     >
       <h1
-        className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-teal-400 to-green-400"
+        className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-teal-400 to-green-400"
         style={{
           WebkitBackgroundClip: 'text',
           backgroundClip: 'text',
@@ -46,11 +49,17 @@ export default function BlogHeader({
       >
         {title}
       </h1>
-      <BlogMeta date={date} tags={tags} />
-      {author && <AuthorMeta {...author} />}
-      {excerpt && <p className="text-slate-300 mt-2 text-lg w-full">{excerpt}</p>}
+      <BlogMeta date={date} tags={tags} className="text-xs sm:text-sm md:text-base mb-2" />
+      {excerpt && (
+        <p className="text-slate-300 mt-2 text-base sm:text-lg md:text-xl w-full">{excerpt}</p>
+      )}
       {!excerpt && description && (
-        <p className="text-slate-300 mt-2 text-lg w-full">{description}</p>
+        <p className="text-slate-300 mt-2 text-base sm:text-lg md:text-xl w-full">{description}</p>
+      )}
+      {author && (
+        <div className="mt-4">
+          <AuthorMeta {...author} className="text-xs sm:text-sm md:text-base" />
+        </div>
       )}
     </header>
   );
