@@ -1,7 +1,6 @@
 import MatrixRain from '@/components/organisms/MatrixRain';
 import { getDevBlogPost, getDevBlogPosts } from '@/lib/devblog';
 import BlogPostPage from '@/components/pages/BlogPostPage';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import { compileMdx } from '@/lib/compileMDX';
 
 export function generateStaticParams() {
@@ -18,7 +17,7 @@ export default async function DevBlogPostPage({ params }: { params: { slug: stri
   const compiledMdx = await compileMdx(content);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen text-white relative overflow-hidden">
       <MatrixRain />
       <div className="relative z-10 py-20">
         <BlogPostPage meta={meta}>{compiledMdx}</BlogPostPage>

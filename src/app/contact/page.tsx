@@ -5,7 +5,7 @@ import MatrixRain from '@/components/organisms/MatrixRain';
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen text-white relative overflow-hidden">
       <MatrixRain />
       <div className="relative z-10 min-h-screen flex items-center justify-center">
         <div className="max-w-2xl mx-auto px-6 text-center">

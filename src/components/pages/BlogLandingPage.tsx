@@ -46,7 +46,7 @@ export default function BlogLandingPage({
           tags={tags}
           activeTag={activeTag}
           onTagSelect={onTagSelect}
-          className="sticky top-16 z-20 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-2 py-3"
+          className="sticky top-16 z-20 backdrop-blur px-2 py-3"
         />
       )}
 

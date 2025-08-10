@@ -1,4 +1,3 @@
-import MatrixRain from '@/components/organisms/MatrixRain';
 import BlogLandingPage from '@/components/pages/BlogLandingPage';
 import { getDevBlogPosts } from '@/lib/devblog';
 
@@ -11,8 +10,8 @@ export default async function DevBlogPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      <MatrixRain />
+    <div className="min-h-screen relative">
+      {/* No MatrixRain or bg-black here; global background and rain are handled in layout.tsx */}
       <div className="relative z-10 py-20">
         <BlogLandingPage posts={posts} />
       </div>

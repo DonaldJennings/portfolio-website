@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
-// app/layout.tsx (or page.tsx)
 import NavBar from '@/components/organisms/NavBar';
 import { ThemeProvider } from '@/components/context/ThemeContext';
 import '../styles/mdx.css';
 
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import dynamic from 'next/dynamic';
+import MatrixRainGlobal from '@/components/organisms/MatrixRainGlobal';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,18 +27,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
-        <ThemeProvider>
-          <NavBar />
-          {children}
-        </ThemeProvider>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased site-bg relative`}>
+        {/* Matrix Rain Layer */}
+        <div className="absolute inset-0 z-5 pointer-events-none">
+          <MatrixRainGlobal />
+        </div>
+        {/* Gradient Overlay */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.4) 85%, rgba(0,0,0,0.2) 100%)',
+          }}
+        />
+        {/* Main Content */}
+        <div className="relative z-20">
+          <ThemeProvider>
+            <NavBar />
+            {children}
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );
