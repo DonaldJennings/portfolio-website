@@ -8,6 +8,7 @@ import '../styles/mdx.css';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 
 import MatrixRainGlobal from '@/components/organisms/MatrixRainGlobal';
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider>
             <NavBar />
             {children}
+            <Analytics />
           </ThemeProvider>
         </div>
       </body>
