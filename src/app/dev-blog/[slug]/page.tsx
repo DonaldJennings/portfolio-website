@@ -1,36 +1,29 @@
 import MatrixRain from '@/components/organisms/MatrixRain';
 import { getDevBlogPost, getDevBlogPosts } from '@/lib/devblog';
+import BlogPostPage from '@/components/pages/BlogPostPage';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import { compileMdx } from '@/lib/compileMDX';
 
 export function generateStaticParams() {
   const posts = getDevBlogPosts();
   return posts.map(post => ({ slug: post.slug }));
 }
 
-export default function DevBlogPostPage({ params }: { params: { slug: string } }) {
-  const { content, meta } = getDevBlogPost(params.slug);
+export default async function DevBlogPostPage({ params }: { params: { slug: string } }) {
+  // Await params in case it's a Promise (App Router best practice)
+  const resolvedParams = await params;
+  const { content, meta } = getDevBlogPost(resolvedParams.slug);
+
+  // Compile MDX content for rendering (make sure your .mdx files are valid)
+  const compiledMdx = await compileMdx(content);
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <MatrixRain />
       <div className="relative z-10 py-20">
-        <article className="max-w-3xl mx-auto px-6">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-            {meta.title}
-          </h1>
-          {meta.date && (
-            <p className="text-slate-400 text-sm mb-4">{new Date(meta.date).toDateString()}</p>
-          )}
-          {meta.tags && meta.tags.length > 0 && (
-            <div className="mb-6 flex flex-wrap gap-2">
-              {meta.tags.map(tag => (
-                <span key={tag} className="text-xs bg-slate-700 text-slate-200 px-2 py-1 rounded">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-          <div dangerouslySetInnerHTML={{ __html: content }} />
-        </article>
+        <BlogPostPage meta={meta}>
+          <MDXRemote source={compiledMdx} />
+        </BlogPostPage>
       </div>
     </div>
   );
