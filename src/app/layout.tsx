@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/components/context/ThemeContext';
 import '../styles/mdx.css';
 
 import { Inter, JetBrains_Mono } from 'next/font/google';
-import dynamic from 'next/dynamic';
+
 import MatrixRainGlobal from '@/components/organisms/MatrixRainGlobal';
 
 const inter = Inter({
