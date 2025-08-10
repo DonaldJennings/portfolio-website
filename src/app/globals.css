@@ -512,3 +512,49 @@ body {
 .light span:not(.bg-gradient-to-r *) {
   color: rgb(30 41 59) !important; /* slate-800 - ensure good contrast */
 }
+
+:root {
+  --font-inter: 'Inter', 'IBM Plex Sans', 'Source Sans Pro', sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+body {
+  font-family: var(--font-inter);
+}
+
+code,
+pre {
+  font-family: var(--font-jetbrains-mono);
+}
+
+.site-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #0a0f1c 60%, #020617 100%);
+  position: relative;
+  z-index: 0;
+}
+
+/* Optional: faint grid overlay */
+.site-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: linear-gradient(to right, #fff2 1px, transparent 1px),
+    linear-gradient(to bottom, #fff2 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Optional: soft noise overlay */
+.site-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: radial-gradient(circle, #fff2 1px, transparent 1px);
+  background-size: 24px 24px;
+}
