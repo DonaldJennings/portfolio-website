@@ -1,12 +1,10 @@
 'use client';
 
 import React from 'react';
-import MatrixRain from '@/components/organisms/MatrixRain';
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      <MatrixRain />
+    <div className="min-h-screen text-white relative overflow-hidden">
       <div className="relative z-10 min-h-screen flex items-center justify-center">
         <div className="max-w-2xl mx-auto px-6 text-center">
           <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-12 border border-slate-800">
