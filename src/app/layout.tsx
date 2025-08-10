@@ -31,19 +31,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased site-bg relative`}>
-        {/* Matrix Rain Layer */}
-        <div className="absolute inset-0 z-5 pointer-events-none">
-          <MatrixRainGlobal />
-        </div>
-        {/* Gradient Overlay */}
-        <div
-          className="absolute inset-0 z-10 pointer-events-none"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.4) 85%, rgba(0,0,0,0.2) 100%)',
-          }}
-        />
+      <body
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased site-bg relative`}
+        style={{
+          background: 'linear-gradient(to bottom, #0f172a 0%, #1e293b 60%, #0a192f 100%)',
+        }}
+      >
+        <MatrixRainGlobal />
         {/* Main Content */}
         <div className="relative z-20">
           <ThemeProvider>

@@ -9,7 +9,7 @@ const links = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/', scrollTo: 'about' },
   { name: 'Projects', href: '/projects' },
-  { name: 'Developer Blog', href: '/dev-blog' },
+  { name: 'Developer Blog', href: '/blog' },
   { name: 'Contact', href: '/contact' },
 ];
 

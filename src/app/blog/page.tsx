@@ -1,31 +1,49 @@
-'use client';
+import BlogLandingPage from '@/components/pages/BlogLandingPage';
+import { getDevBlogPosts } from '@/lib/devblog';
 
-import React from 'react';
-import MatrixRain from '@/components/organisms/MatrixRain';
+export default async function DevBlogPage() {
+  const rawPosts = await getDevBlogPosts();
 
-export default function BlogPage() {
+  const posts = rawPosts.map(post => ({
+    ...post,
+    description: post.description ?? '', // Ensure description is always a string
+  }));
+
+  // Aggregate all unique tags from posts
+  const allTags = Array.from(new Set(posts.flatMap(post => post.tags ?? [])));
+
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      <MatrixRain />
-      <div className="relative z-10 min-h-screen flex items-center justify-center">
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-12 border border-slate-800">
-            <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-              Blog
-            </h1>
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-8 h-8 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin mr-3"></div>
-              <span className="text-yellow-400 font-medium">Under Construction</span>
-            </div>
-            <p className="text-slate-300 text-lg leading-relaxed mb-6">
-              This page is currently being developed. Check back soon for interesting articles,
-              thoughts, and insights!
-            </p>
-            <p className="text-slate-400 text-sm">
-              In the meantime, feel free to explore other sections of my portfolio or get in touch.
-            </p>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Matrix Rain Background (higher opacity) */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* Increase opacity for more visual texture */}
+        <div className="absolute inset-0">
+          <div
+            className="w-full h-full"
+            style={{
+              opacity: 0.6,
+              position: 'absolute',
+              inset: 0,
+            }}
+          >
+            {/* MatrixRainGlobal renders the animated effect */}
+            <div id="matrix-rain-global" />
           </div>
         </div>
+        {/* Radial Gradient Overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 80% 60% at 50% 20%, rgba(59,130,246,0.18) 0%, rgba(15,23,42,0.85) 100%)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
+      {/* Main Content Above Backgrounds */}
+      <div className="relative z-10 py-20">
+        <BlogLandingPage posts={posts} tags={allTags} />
       </div>
     </div>
   );

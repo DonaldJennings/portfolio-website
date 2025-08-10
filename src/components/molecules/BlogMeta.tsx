@@ -1,11 +1,16 @@
 type BlogMetaProps = {
   date: string;
   tags?: string[];
+  className?: string;
 };
 
-export default function BlogMeta({ date, tags }: BlogMetaProps) {
+export default function BlogMeta({ date, tags, className }: BlogMetaProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 text-sm text-[#94a3b8] mb-2">
+    <div
+      className={`flex flex-wrap items-center gap-2 text-sm text-[#94a3b8] mb-2 ${
+        typeof className === 'string' ? className : ''
+      }`}
+    >
       <span>{date}</span>
       {tags && tags.length > 0 && (
         <div className="flex flex-wrap gap-2 ml-2">
