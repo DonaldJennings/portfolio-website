@@ -1,29 +1,27 @@
-import React from 'react';
-import Button from '@/components/atoms/Button';
-
 type FilterBarProps = {
   tags: string[];
-  selectedTag?: string;
-  onTagSelect: (tag: string | undefined) => void;
+  activeTag?: string;
+  onTagSelect?: (tag: string) => void;
+  className?: string;
 };
 
-export default function FilterBar({ tags, selectedTag, onTagSelect }: FilterBarProps) {
+export default function FilterBar({ tags, activeTag, onTagSelect, className }: FilterBarProps) {
   return (
-    <div className="flex gap-2 mb-8 flex-wrap">
-      <Button
-        variant={selectedTag ? 'secondary' : 'primary'}
-        onClick={() => onTagSelect(undefined)}
-      >
-        All
-      </Button>
+    <div className={`flex flex-wrap gap-2 overflow-x-auto ${className || ''}`}>
       {tags.map(tag => (
-        <Button
+        <button
           key={tag}
-          variant={selectedTag === tag ? 'primary' : 'secondary'}
-          onClick={() => onTagSelect(tag)}
+          type="button"
+          onClick={() => onTagSelect?.(tag)}
+          className={`text-sm md:text-xs rounded-full border px-3 py-1.5 transition
+            ${
+              activeTag === tag
+                ? 'border-teal-500 text-teal-600 bg-teal-50'
+                : 'border-slate-300 text-slate-600 bg-transparent hover:border-teal-400 hover:text-teal-500'
+            }`}
         >
           {tag}
-        </Button>
+        </button>
       ))}
     </div>
   );

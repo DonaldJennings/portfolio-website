@@ -512,3 +512,17 @@ body {
 .light span:not(.bg-gradient-to-r *) {
   color: rgb(30 41 59) !important; /* slate-800 - ensure good contrast */
 }
+
+:root {
+  --font-inter: 'Inter', 'IBM Plex Sans', 'Source Sans Pro', sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+body {
+  font-family: var(--font-inter);
+}
+
+code,
+pre {
+  font-family: var(--font-jetbrains-mono);
+}

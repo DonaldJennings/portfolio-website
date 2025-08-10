@@ -24,11 +24,11 @@ export default function BlogHeader({
 }: BlogHeaderProps) {
   return (
     <header className="mb-10">
-      <h1 className="text-4xl font-bold text-blue-300 mb-2">{title}</h1>
+      <h1 className="text-4xl font-bold text-[#f9fafb] mb-2 font-sans">{title}</h1>
       <BlogMeta date={date} tags={tags} />
       {author && <AuthorMeta {...author} />}
-      {excerpt && <p className="text-slate-400 mt-4">{excerpt}</p>}
-      {!excerpt && description && <p className="text-slate-400 mt-4">{description}</p>}
+      {excerpt && <p className="text-[#94a3b8] mt-4 text-lg">{excerpt}</p>}
+      {!excerpt && description && <p className="text-[#94a3b8] mt-4 text-lg">{description}</p>}
     </header>
   );
 }

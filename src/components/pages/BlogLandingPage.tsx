@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import FilterBar from '@/components/organisms/FilterBar';
 import BlogGrid from '@/components/organisms/BlogGrid';
+import FilterBar from '@/components/organisms/FilterBar';
 
 type BlogPost = {
   slug: string;
@@ -20,28 +19,39 @@ type BlogPost = {
 
 type BlogLandingPageProps = {
   posts: BlogPost[];
+  tags?: string[];
+  activeTag?: string;
+  onTagSelect?: (tag: string) => void;
 };
 
-export default function BlogLandingPage({ posts }: BlogLandingPageProps) {
-  const allTags = Array.from(new Set(posts.flatMap(post => post.tags ?? [])));
-  const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
-
-  const filteredPosts = selectedTag
-    ? posts.filter(post => post.tags?.includes(selectedTag))
-    : posts;
-
+export default function BlogLandingPage({
+  posts,
+  tags,
+  activeTag,
+  onTagSelect,
+}: BlogLandingPageProps) {
   return (
-    <main className="max-w-5xl mx-auto px-4 py-12">
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl font-bold text-white mb-2">Developer Blog</h1>
-        <p className="text-slate-400 text-lg">
-          Insights, tutorials, and updates from my journey as a developer.
-          <br />
-          <span className="text-slate-500 text-base">Powered by MDX, Next.js, and TypeScript.</span>
+    <div className="max-w-screen-xl mx-auto px-6 md:px-8 space-y-10 md:space-y-14">
+      {/* Hero Section */}
+      <section className="pt-10 pb-6 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 font-sans">Developer Blog</h1>
+        <p className="max-w-prose mx-auto text-lg opacity-80">
+          Insights, architecture, and technical deep-dives from Donald Jennings.
         </p>
-      </header>
-      <FilterBar tags={allTags} selectedTag={selectedTag} onTagSelect={setSelectedTag} />
-      <BlogGrid posts={filteredPosts} />
-    </main>
+      </section>
+
+      {/* Filter Bar */}
+      {tags && tags.length > 0 && (
+        <FilterBar
+          tags={tags}
+          activeTag={activeTag}
+          onTagSelect={onTagSelect}
+          className="sticky top-16 z-20 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-2 py-3"
+        />
+      )}
+
+      {/* Blog Grid */}
+      <BlogGrid posts={posts} />
+    </div>
   );
 }
