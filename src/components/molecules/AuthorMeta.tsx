@@ -7,6 +7,7 @@ type AuthorMetaProps = {
   role?: string;
   linkedinUrl?: string;
   githubUrl?: string;
+  className?: string;
 };
 
 export default function AuthorMeta({
@@ -16,9 +17,14 @@ export default function AuthorMeta({
   role,
   linkedinUrl,
   githubUrl,
+  className,
 }: AuthorMetaProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-900/80 rounded-lg border border-slate-800 shadow p-4 mt-4 w-fit">
+    <div
+      className={`flex flex-col sm:flex-row items-center gap-4 bg-slate-900/80 rounded-lg border border-slate-800 shadow p-4 mt-4 w-fit ${
+        className ?? ''
+      }`}
+    >
       <Avatar src={avatarUrl} size={48} alt={name} />
       <div className="flex flex-col items-center sm:items-start">
         <span className="text-base font-semibold text-slate-200">{name}</span>

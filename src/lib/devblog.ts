@@ -11,6 +11,8 @@ export type DevBlogMeta = {
   description?: string;
   excerpt?: string;
   tags?: string[];
+  image?: string;
+  imageDir?: string;
   author?: {
     name: string;
     avatarUrl?: string;
@@ -45,6 +47,12 @@ export function getDevBlogPosts(): DevBlogMeta[] {
         };
       }
 
+      const image = data.image || '';
+      let imageDir = '';
+      if (image) {
+        const lastSlash = image.lastIndexOf('/');
+        imageDir = lastSlash !== -1 ? image.substring(0, lastSlash + 1) : '';
+      }
       return {
         title: data.title || filename.replace(/\.mdx$/, ''),
         date: data.date || '',
@@ -52,6 +60,8 @@ export function getDevBlogPosts(): DevBlogMeta[] {
         description: data.description || '',
         excerpt: data.excerpt || '',
         tags: data.tags || [],
+        image,
+        imageDir,
         author,
       } as DevBlogMeta;
     })
@@ -74,6 +84,12 @@ export function getDevBlogPost(slug: string): DevBlogPost {
     };
   }
 
+  const image = data.image || '';
+  let imageDir = '';
+  if (image) {
+    const lastSlash = image.lastIndexOf('/');
+    imageDir = lastSlash !== -1 ? image.substring(0, lastSlash + 1) : '';
+  }
   return {
     meta: {
       title: data.title || slug,
@@ -82,6 +98,8 @@ export function getDevBlogPost(slug: string): DevBlogPost {
       description: data.description || '',
       excerpt: data.excerpt || '',
       tags: data.tags || [],
+      image,
+      imageDir,
       author,
     },
     content, // raw MDX content
