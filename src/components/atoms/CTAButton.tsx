@@ -1,13 +1,15 @@
 type CTAButtonProps = {
   label: string;
   onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
 };
 
-export default function CTAButton({ label, onClick }: CTAButtonProps) {
+export default function CTAButton({ label, onClick, type = 'button' }: CTAButtonProps) {
   return (
     <div>
       <button
         onClick={onClick}
+        type={type}
         className="group px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 hover:from-blue-500 hover:to-cyan-500 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 transform active:scale-95"
       >
         <span className="flex items-center justify-center gap-2">
