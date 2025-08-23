@@ -1,0 +1,13 @@
+[functions]
+  included_files = ["src/app/contact/page.tsx", "src/components/pages/ContactPageContent.tsx"]
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[edge_functions]]
+  path = "/contact"
+  function = "contact-form-handler"
