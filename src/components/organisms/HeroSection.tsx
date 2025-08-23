@@ -7,11 +7,12 @@ import TypingText from '@/components/atoms/TypingText';
 
 interface HeroSectionProps {
   name: string;
-  summary: string;
+  jobTitle: string;
+  signature: string;
   photoUrl: string;
 }
 
-export default function HeroSection({ name, summary, photoUrl }: HeroSectionProps) {
+export default function HeroSection({ name, jobTitle, signature, photoUrl }: HeroSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -59,10 +60,19 @@ export default function HeroSection({ name, summary, photoUrl }: HeroSectionProp
 
         {/* Enhanced typing text with better styling */}
         <div className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed mb-4 md:mb-6 relative">
-          <TypingText text={summary} speed={40} />
+          <TypingText text={jobTitle} speed={40} />
           {/* Subtle text glow */}
           <div className="absolute inset-0 text-gray-300/30 blur-sm pointer-events-none">
-            <TypingText text={summary} speed={40} />
+            <TypingText text={jobTitle} speed={40} />
+          </div>
+        </div>
+
+        {/* Signature with handwritten font */}
+        <div className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed mb-4 md:mb-6 relative">
+          <TypingText text={signature} speed={40} />
+          {/* Subtle text glow */}
+          <div className="absolute inset-0 text-gray-300/30 blur-sm pointer-events-none">
+            <TypingText text={signature} speed={40} />
           </div>
         </div>
 

@@ -7,13 +7,24 @@ import MobileMenuToggle from '@/components/molecules/MobileMenuToggle';
 import ThemeToggle from '@/components/atoms/ThemeToggle';
 
 export default function NavBar() {
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <nav
-      className="fixed top-0 w-full z-50 shadow-md transition-all"
+      className={`fixed top-0 w-full z-50 shadow-md transition-all duration-300 ${
+        scrolled ? 'bg-slate-900/80 backdrop-blur-md' : 'bg-transparent backdrop-blur-none'
+      }`}
       style={{
-        background: 'linear-gradient(90deg, rgba(30,41,59,0.82) 0%, rgba(15,23,42,0.82) 100%)',
-        backdropFilter: 'blur(18px)',
-        WebkitBackdropFilter: 'blur(18px)',
+        background: scrolled
+          ? 'linear-gradient(90deg, rgba(30,41,59,0.82) 0%, rgba(15,23,42,0.82) 100%)'
+          : 'linear-gradient(90deg, rgba(30,41,59,0.32) 0%, rgba(15,23,42,0.12) 100%)',
+        backdropFilter: scrolled ? 'blur(18px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
         boxShadow: '0 4px 24px 0 rgba(59,130,246,0.10)',
         borderBottom: '1px solid rgba(59,130,246,0.10)',
       }}

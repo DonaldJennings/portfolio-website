@@ -1,8 +1,5 @@
 'use client';
 import React from 'react';
-
-import RadialGradientOverlay from '../atoms/RadialGradientOverlay';
-import MatrixRainRender from '../atoms/MatrixRainRender';
 import PageHeader from '../atoms/PageHeader';
 import ContentFilter from '../molecules/ContentFilter';
 import ContentCardsColumn from '../molecules/ContentCardsColumn';
@@ -56,10 +53,6 @@ export default function ContentLandingPage({
 
   return (
     <div className="min-h-screen w-full overflow-hidden relative z-10 py-20">
-      <MatrixRainRender />
-      {/* Radial Gradient Overlay */}
-      <RadialGradientOverlay />
-
       <div className="relative z-10 max-w-screen-xl mx-auto px-4 md:px-8 space-y-8 md:space-y-14">
         <PageHeader
           title={pageTitle}

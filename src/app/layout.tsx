@@ -1,3 +1,4 @@
+import ScrollProgressBar from '@/components/atoms/ScrollProgressBar';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           background: 'linear-gradient(to bottom, #0f172a 0%, #1e293b 60%, #0a192f 100%)',
         }}
       >
+        <ScrollProgressBar />
         <RadialGradientOverlay />
         <MatrixRainGlobal />
         {/* Main Content */}

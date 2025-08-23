@@ -8,7 +8,8 @@ export default function LandingPage() {
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center">
         <HeroSection
           name="Donald Jennings"
-          summary="Software Engineer at Leonardo UK Ltd | MIET | BSc (Hons) Computer Science"
+          jobTitle="Software Engineer @ Leonardo UK Ltd"
+          signature="MIET | BSc (Hons) Computer Science"
           photoUrl="/images/graduation-photo-inf-forum.jpg"
         />
 
@@ -20,9 +21,7 @@ export default function LandingPage() {
               behavior: 'smooth',
             });
           }}
-        >
-          ↓
-        </div>
+        ></div>
       </div>
     </div>
   );

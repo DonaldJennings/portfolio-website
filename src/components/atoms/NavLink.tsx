@@ -21,9 +21,9 @@ export default function NavLink({
   isActive = false,
   onClick,
 }: NavLinkProps) {
-  const baseClass = 'transition-colors px-2 py-1 font-medium';
+  const baseClass = 'transition-colors px-2 py-1 font-medium relative group';
   const activeClass = 'text-white font-semibold';
-  const inactiveClass = 'text-slate-300 hover:text-green-400 hover:underline underline-offset-4';
+  const inactiveClass = 'text-slate-300 hover:text-green-400';
 
   const finalClass = `${baseClass} ${isActive ? activeClass : inactiveClass} ${className}`.trim();
 
@@ -59,7 +59,10 @@ export default function NavLink({
   if (target === '_blank' || href.startsWith('http')) {
     return (
       <a href={href} className={finalClass} target={target} rel={rel} onClick={handleClick}>
-        {children}
+        <span className="relative">
+          {children}
+          <span className="absolute left-0 -bottom-0.5 w-full h-[2px] bg-green-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+        </span>
       </a>
     );
   }
@@ -67,7 +70,10 @@ export default function NavLink({
   // For internal links, use Next.js Link
   return (
     <Link href={href} className={finalClass} onClick={handleClick}>
-      {children}
+      <span className="relative">
+        {children}
+        <span className="absolute left-0 -bottom-0.5 w-full h-[2px] bg-green-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+      </span>
     </Link>
   );
 }

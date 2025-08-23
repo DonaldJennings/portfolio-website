@@ -1,7 +1,7 @@
 // app/page.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LandingPage from '@/components/pages/LandingPage';
 import SectionWithBackground from '@/components/molecules/Section';
 import ExperienceList from '@/components/organisms/ExperienceList';
@@ -10,6 +10,55 @@ import PublicationsSection from '@/components/organisms/PublicationsSection';
 import AboutSidebar from '@/components/organisms/AboutSidebar';
 import CallToActionSection from '@/components/organisms/CallToActionSection';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
+function AboutTOC() {
+  const items = [
+    { id: 'summary', label: 'Summary' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'education', label: 'Education' },
+    { id: 'publications', label: 'Publications' },
+  ];
+  const [active, setActive] = useState('summary');
+  useEffect(() => {
+    function onScroll() {
+      let current = 'summary';
+      for (const item of items) {
+        const el = document.getElementById(item.id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 120) {
+            current = item.id;
+          }
+        }
+      }
+      setActive(current);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <nav className="hidden lg:block lg:col-span-1 sticky top-32 self-start mr-2">
+      <ul className="space-y-2 bg-slate-800/60 rounded-xl p-4 text-sm text-slate-200 shadow-md">
+        {items.map(item => (
+          <li key={item.id}>
+            <a
+              href={`#${item.id}`}
+              className={
+                (active === item.id
+                  ? 'text-green-400 font-semibold border-l-4 border-green-400 pl-2 bg-slate-700/40 '
+                  : 'hover:text-green-400 transition-colors duration-150 pl-2') +
+                ' block rounded-md py-1 px-1'
+              }
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
 
 export default function Home() {
   const isAboutVisible = useScrollAnimation();
@@ -45,14 +94,23 @@ export default function Home() {
         <LandingPage />
       </section>
 
-      {/* About Section */}
+      {/* About Section Divider & Cue */}
+      <div className="flex flex-col items-center justify-center mt-[-2rem] mb-4">
+        <div className="w-24 h-1 bg-gradient-to-r from-green-400/0 via-green-400/80 to-green-400/0 rounded-full mb-2" />
+        <div
+          className="text-green-400 text-sm animate-bounce-slow select-none"
+          style={{ animationDelay: '0.2s' }}
+        >
+          ↓ About Me
+        </div>
+      </div>
       <section
         id="about"
         className={`min-h-screen w-full relative z-20 transition-all duration-1000 ${
           isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           {/* Header */}
           <div
             className={`text-center mb-12 transition-all duration-1000 delay-200 ${
@@ -61,16 +119,18 @@ export default function Home() {
           >
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About Me</h1>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-              Graduate software engineer with a focus on innovation and systems programming
+              Software Engineer with a focus on innovation and systems programming
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-4 gap-12">
+          <div className="grid lg:grid-cols-6 gap-12">
+            <AboutTOC />
             {/* Main Content */}
             <div
-              className={`lg:col-span-3 space-y-8 transition-all duration-1000 delay-400 ${
+              className={`lg:col-span-4 space-y-8 transition-all duration-1000 delay-400 ${
                 isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
+              id="summary"
             >
               {/* Introduction */}
               <SectionWithBackground
@@ -79,18 +139,24 @@ export default function Home() {
               />
 
               {/* Experience */}
-              <ExperienceList />
+              <div id="experience">
+                <ExperienceList />
+              </div>
 
               {/* Education */}
-              <EducationSection />
+              <div id="education">
+                <EducationSection />
+              </div>
 
               {/* Publications */}
-              <PublicationsSection />
+              <div id="publications">
+                <PublicationsSection />
+              </div>
             </div>
 
             {/* Sidebar */}
             <div
-              className={`transition-all duration-1000 delay-600 ${
+              className={`lg:col-span-1 min-w-[260px] max-w-xs transition-all duration-1000 delay-600 ${
                 isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
