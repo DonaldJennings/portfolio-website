@@ -112,7 +112,6 @@ export default function ContentPostPage({ meta, children }: ContentPostPageProps
                       space-y-6 md:space-y-8
                       blog-content-link-fade
                       px-2 md:px-0
-                      prose-section-divider
                     "
                     style={{
                       maxWidth: '100%',

@@ -1,22 +1,23 @@
 import React from 'react';
-import { projects } from '@/content/projects';
 import ContentLandingPage from './ContentLandingPage';
+import { getAllProjects } from '@/lib/projects';
 
-// Convert projects to the BlogPost shape expected by BlogLandingPage
-const projectPosts = projects.map(project => ({
-  slug: project.slug || '',
-  title: project.title,
-  description: project.description || '',
-  date: '', // No date for projects, but required by BlogCard
-  tags: project.tags || [],
-  author: undefined,
-  excerpt: '',
-  image: project.image,
-}));
+export default async function ProjectsLandingPage() {
+  const rawProjectsPosts = await getAllProjects();
 
-const allTags = Array.from(new Set(projects.flatMap(p => p.tags || [])));
+  const projectPosts = rawProjectsPosts.map(project => ({
+    slug: project.slug || '',
+    title: project.title,
+    description: project.description || '',
+    date: '', // No date for projects, but required by BlogCard
+    tags: project.tags || [],
+    author: undefined,
+    excerpt: '',
+    image: project.image,
+  }));
 
-export default function ProjectsLandingPage() {
+  const allTags = Array.from(new Set(rawProjectsPosts.flatMap(p => p.tags || [])));
+
   // Custom hero section padding for projects
   return (
     <ContentLandingPage
