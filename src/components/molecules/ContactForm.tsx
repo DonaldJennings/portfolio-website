@@ -1,25 +1,32 @@
+import React, { useEffect, useState } from 'react';
 import CTAButton from '../atoms/CTAButton';
 
 export default function ContactForm() {
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.target as HTMLFormElement);
-    await fetch('/__forms.html', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(
-        Array.from(formData.entries()).map(([k, v]) => [k, typeof v === 'string' ? v : '']),
-      ).toString(),
-    });
-    // Success and error handling ...
-  };
+  const [showSuccess, setShowSuccess] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success') === '1') {
+        setShowSuccess(true);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+  }, []);
+
+  if (showSuccess) {
+    return (
+      <div className="mb-6 p-4 rounded-lg bg-green-600/90 text-white text-center font-semibold shadow">
+        Thank you! Your message has been sent successfully.
+      </div>
+    );
+  }
 
   return (
     <form
       className="space-y-6"
       name="contact"
       method="POST"
-      onSubmit={handleFormSubmit}
+      data-netlify="true"
       netlify-honeypot="bot-field"
     >
       {/* Netlify hidden input */}
@@ -88,9 +95,7 @@ export default function ContactForm() {
           placeholder="Tell me about your project or just say hello..."
         />
 
-        <button className="mt-6 w-full" type="submit">
-          <CTAButton label="Send Message" />
-        </button>
+        <CTAButton label="Send Message" type="submit" />
       </div>
     </form>
   );
