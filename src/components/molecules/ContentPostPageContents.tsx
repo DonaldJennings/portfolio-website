@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react';
 
-export type TOCItem = {
+export type ContentsItem = {
   id: string;
   text: string;
   level: number;
 };
 
-export default function BlogTOC({ toc }: { toc: TOCItem[] }) {
+export default function ContentPostPageContents({ toc }: { toc: ContentsItem[] }) {
   const [collapsed, setCollapsed] = useState(false);
 
   // Smooth scroll handler

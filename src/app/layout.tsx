@@ -1,3 +1,4 @@
+import ScrollProgressBar from '@/components/atoms/ScrollProgressBar';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -8,6 +9,7 @@ import '../styles/mdx.css';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 
 import MatrixRainGlobal from '@/components/organisms/MatrixRainGlobal';
+import RadialGradientOverlay from '@/components/atoms/RadialGradientOverlay';
 import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
@@ -37,6 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           background: 'linear-gradient(to bottom, #0f172a 0%, #1e293b 60%, #0a192f 100%)',
         }}
       >
+        <ScrollProgressBar />
+        <RadialGradientOverlay />
         <MatrixRainGlobal />
         {/* Main Content */}
         <div className="relative z-20">

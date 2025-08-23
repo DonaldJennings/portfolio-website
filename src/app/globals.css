@@ -1,3 +1,15 @@
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(0.5rem);
+  }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 2.2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
 @import 'tailwindcss';
 
 /* Add smooth scrolling behavior */

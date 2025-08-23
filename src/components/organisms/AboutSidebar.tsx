@@ -6,7 +6,7 @@ import AwardsSection from '@/components/organisms/AwardsSection';
 
 export default function AboutSidebar() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 w-full min-w-[220px] max-w-xs mx-auto">
       <SkillsSection />
       <CertificationsSection />
       <AwardsSection />
