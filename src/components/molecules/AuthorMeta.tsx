@@ -21,7 +21,7 @@ export default function AuthorMeta({
 }: AuthorMetaProps) {
   return (
     <div
-      className={`flex flex-col sm:flex-row items-center gap-4 bg-slate-900/80 rounded-lg border border-slate-800 shadow p-4 mt-4 w-fit ${
+      className={`flex flex-col sm:flex-row items-center gap-4 bg-slate-900/80 rounded-lg border border-slate-800 shadow p-3 md:p-4 mt-4 w-fit max-w-xs md:max-w-sm lg:max-w-xs xl:max-w-xs ${
         className ?? ''
       }`}
     >

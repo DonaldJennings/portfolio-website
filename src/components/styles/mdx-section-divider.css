@@ -1,0 +1,13 @@
+/* Divider between top-level sections in blog content body */
+.mdx-content.prose-section-divider > * + * {
+  border-top: 1px solid rgba(100, 116, 139, 0.12); /* subtle slate border */
+  margin-top: 2.5rem !important;
+  padding-top: 2.5rem !important;
+}
+
+@media (max-width: 768px) {
+  .mdx-content.prose-section-divider > * + * {
+    margin-top: 1.5rem !important;
+    padding-top: 1.5rem !important;
+  }
+}

@@ -1,7 +1,7 @@
 import BlogMeta from '../molecules/BlogMeta';
 import AuthorMeta from '../molecules/AuthorMeta';
 
-type BlogHeaderProps = {
+type ContentPostHeaderProps = {
   title: string;
   date: string;
   tags?: string[];
@@ -17,14 +17,14 @@ type BlogHeaderProps = {
   description?: string;
 };
 
-export default function BlogHeader({
+export default function ContentPostHeader({
   title,
   date,
   tags,
   author,
   excerpt,
   description,
-}: BlogHeaderProps) {
+}: ContentPostHeaderProps) {
   return (
     <header
       className="w-full rounded-xl mb-8 px-0 sm:px-0"
