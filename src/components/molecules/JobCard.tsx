@@ -93,7 +93,7 @@ export default function JobCard({
             </div>
           )}
           <div className="space-y-8 mt-2">
-            {roles.map((r, idx) =>
+            {roles.map(r =>
               renderRoleBlock({
                 ...r,
                 dotWrapperClassName:

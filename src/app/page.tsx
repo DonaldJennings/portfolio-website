@@ -1,7 +1,7 @@
 // app/page.tsx
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import LandingPage from '@/components/pages/LandingPage';
 import SectionWithBackground from '@/components/molecules/Section';
 import ExperienceList from '@/components/organisms/ExperienceList';
