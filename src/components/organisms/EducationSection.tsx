@@ -5,6 +5,7 @@ import EducationCard from '@/components/molecules/EducationCard';
 
 type EducationEntry = {
   degree: string;
+  degreeTitle?: string;
   institution?: string;
   results?: string;
   dateRange?: string;
@@ -21,7 +22,28 @@ export default function EducationSection() {
       .then(r => r.json())
       .then(data => {
         if (!mounted) return;
-        setEducation(data.education || []);
+        const items: EducationEntry[] = data.education || [];
+
+        // Parse start year from dateRange (e.g. "2020 - 2024" or "2020 - Present")
+        const parseStartYear = (dr?: string): number | null => {
+          if (!dr) return null;
+          const m = dr.match(/(\d{4})/);
+          if (!m) return null;
+          const y = parseInt(m[1], 10);
+          if (Number.isNaN(y)) return null;
+          return y;
+        };
+
+        const sorted = [...items].sort((a, b) => {
+          const aYear = parseStartYear(a.dateRange);
+          const bYear = parseStartYear(b.dateRange);
+          if (aYear === null && bYear === null) return 0;
+          if (aYear === null) return 1; // put a after b
+          if (bYear === null) return -1; // put b after a
+          return bYear - aYear; // most recent start year first
+        });
+
+        setEducation(sorted);
       })
       .catch(() => {
         if (!mounted) return;
@@ -39,6 +61,7 @@ export default function EducationSection() {
         {education.map((edu, idx) => (
           <EducationCard
             key={`${edu.degree}-${idx}`}
+            degreeTitle={edu.degreeTitle}
             degree={edu.degree}
             institution={edu.institution}
             results={edu.results}

@@ -46,6 +46,7 @@ export type ExperienceEntry = {
 
 export type EducationEntry = {
   degree: string;
+  degreeTitle?: string;
   institution?: string;
   results?: string;
   dateRange?: string;
@@ -100,6 +101,7 @@ const defaultExperience: ExperienceEntry[] = [
 const defaultEducation: EducationEntry[] = [
   {
     degree: 'BSc (Hons) Computer Science',
+    degreeTitle: 'Bachelor of Science (Hons)',
     institution: 'University of Edinburgh',
     results: 'First Class Honours (79%, 4.0 GPA)',
     dateRange: '2020 - 2024',
@@ -170,6 +172,22 @@ export function getContentStore(): AdminContentStore {
     // ensure backward compatibility when existing store file lacks education
     if (!('education' in stored) || !Array.isArray((stored as any).education)) {
       (stored as any).education = defaultEducation;
+    }
+    // backfill degreeTitle for older entries
+    if (Array.isArray((stored as any).education)) {
+      (stored as any).education = (stored as any).education.map((e: any) => ({
+        degree: e.degree || '',
+        degreeTitle: 'degreeTitle' in e ? e.degreeTitle : e.degreeTitle ?? '',
+        institution: e.institution || '',
+        results: e.results || '',
+        dateRange: e.dateRange || '',
+        description: Array.isArray(e.description)
+          ? e.description
+          : e.description
+          ? [e.description]
+          : [],
+        borderColor: e.borderColor || 'border-green-500',
+      }));
     }
     return stored;
   }

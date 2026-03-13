@@ -32,6 +32,7 @@ type ExperienceEntry = {
 
 type EducationEntry = {
   degree: string;
+  degreeTitle?: string;
   institution?: string;
   results?: string;
   dateRange?: string;
@@ -199,6 +200,7 @@ export default function AdminPortalClient({
     const next = [...store.education];
     const newEdu: EducationEntry = {
       degree: 'New Degree',
+      degreeTitle: '',
       institution: '',
       results: '',
       dateRange: '',
@@ -735,6 +737,21 @@ export default function AdminPortalClient({
 
                 {selectedEducationData && (
                   <div className="space-y-3">
+                    <label className="block text-sm text-slate-300">
+                      Degree title (e.g. Bachelor of Science)
+                    </label>
+                    <input
+                      className="w-full px-3 py-2 bg-slate-800 rounded"
+                      value={selectedEducationData.degreeTitle || ''}
+                      onChange={e => {
+                        const next = [...store.education];
+                        next[selectedEducation] = {
+                          ...selectedEducationData,
+                          degreeTitle: e.target.value,
+                        };
+                        setStore({ ...store, education: next });
+                      }}
+                    />
                     <label className="block text-sm text-slate-300">Degree</label>
                     <input
                       className="w-full px-3 py-2 bg-slate-800 rounded"
@@ -799,12 +816,11 @@ export default function AdminPortalClient({
                       value={(selectedEducationData.description || []).join('\n\n')}
                       onChange={e => {
                         const next = [...store.education];
+                        // Preserve spaces exactly as the user types. Split paragraphs on blank lines,
+                        // but do not trim paragraph content here to avoid removing intentional spaces.
                         next[selectedEducation] = {
                           ...selectedEducationData,
-                          description: e.target.value
-                            .split(/\n\s*\n/)
-                            .map(s => s.trim())
-                            .filter(Boolean),
+                          description: e.target.value.split(/\n\s*\n/),
                         };
                         setStore({ ...store, education: next });
                       }}

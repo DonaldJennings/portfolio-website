@@ -6,7 +6,13 @@
       "slug": "faasm-funclets",
       "description": "A deep dive into my contribution to dynamic, multi-tiered load balancing for scalable serverless systems.",
       "excerpt": "How I redesigned the AutoNDP architecture to support modular, policy-driven load balancing—achieving greater scalability and flexibility in serverless computing.",
-      "tags": ["serverless", "load-balancing", "architecture", "faasm", "distributed-systems"],
+      "tags": [
+        "serverless",
+        "load-balancing",
+        "architecture",
+        "faasm",
+        "distributed-systems"
+      ],
       "image": "/images/funclets-card-image.png",
       "imageDir": "/images/",
       "author": {
@@ -14,7 +20,7 @@
         "avatarUrl": "/images/dj-avatar.png",
         "readingTime": "3 min read"
       },
-      "content": "\r\nIn the evolving landscape of cloud computing, serverless architectures promise effortless scalability and reduced operational overhead. But beneath the abstraction lies a real challenge: **efficiently distributing work** across a heterogeneous, distributed runtime without creating bottlenecks or single points of failure.\r\n\r\nIn my final-year dissertation—later incorporated into the [SoCC'24 paper on dynamic multi-tiered load balancing](https://dl.acm.org/doi/10.1145/3652892.3700755)—I tackled this challenge by **redesigning the load balancing system for AutoNDP**, a funclet-migration runtime built on [Faasm](https://faasm.readthedocs.io/).\r\n\r\n## The Problem\r\n\r\n---\r\n\r\nThe original AutoNDP runtime relied on:\r\n\r\n- **A single compute node** as the entry point for all invocations.\r\n- **Static round-robin balancing** between compute nodes.\r\n- Minimal configurability and no real adaptation to workload changes.\r\n\r\nThis design created clear scaling limits:\r\n\r\n- One node acted as a bottleneck and single point of failure.\r\n- The scheduler only redistributed work _after_ a node hit capacity.\r\n- No flexibility for cloud providers to tune or replace policies.\r\n\r\n## My Contribution: Multi-Tiered, Modular Load Balancing\r\n\r\n---\r\n\r\nI implemented a **three-layer balancing framework** designed around three principles: **Configurability**, **Modularity**, and **Scalability**.\r\n\r\n### 1. Invocation Layer Distribution\r\n\r\nAt the system's entry point, I introduced a configurable dispatcher:\r\n\r\n- Replaced the single-node invoker with a **round-robin dispatcher** across all compute nodes.\r\n- Supported pluggable policies—administrators can select or implement their own by conforming to an `ILoadBalancerStrategy` interface.\r\n- State persisted across invocations using Redis, enabling distribution decisions without losing context.\r\n\r\n### 2. Inter-Node Balancing\r\n\r\nI refactored Faasm’s tightly coupled scheduler into a **policy-driven engine**:\r\n\r\n- Decoupled scheduling logic from core runtime to support modular policies like `MostSlots` and `LeastLoad`.\r\n- Integrated a **metrics collection module** to provide live CPU, RAM, and load average data from each node via `/proc`.\r\n- Allowed policies to make **real-time, informed** balancing decisions.\r\n\r\n### 3. Storage Layer Data Distribution\r\n\r\nAt the Ceph storage layer:\r\n\r\n- Increased placement groups from **1 → 128** for better parallelism.\r\n- Enabled autoscaling and rebalanced data to prevent hot-spotting.\r\n- Extended offloading decisions beyond simple thread availability to include CPU, memory, and load thresholds—fully configurable per deployment.\r\n\r\n## Why Modularity Matters\r\n\r\n---\r\n\r\nBy designing the balancer as a **set of interchangeable components**, AutoNDP now:\r\n\r\n- Supports deployment-specific tuning without modifying core code.\r\n- Allows experimentation with new strategies (including future ML-based policies).\r\n- Can scale horizontally without major re-architecture.\r\n\r\n## Results\r\n\r\n---\r\n\r\nBenchmarks showed:\r\n\r\n- **3.13× lower median latency** for I/O-intensive workloads.\r\n- **10× reduction in latency variance** under high concurrency.\r\n- More stable throughput with reduced queuing effects.\r\n\r\nWhile some end-to-end workloads showed the storage offloading bottlenecks still need attention, the architectural flexibility I introduced positions the system for future scaling without major rewrites.\r\n\r\n## Looking Ahead\r\n\r\n---\r\n\r\nThe multi-tiered load balancer opens the door to:\r\n\r\n- **Adaptive policies** that evolve with workload patterns.\r\n- Integration with predictive schedulers and demand forecasting.\r\n- Applying the modular approach to other runtime services in distributed FaaS systems.\r\n\r\nThis work was not just an exercise in squeezing out performance—it was a case study in **engineering for flexibility**, ensuring that when workloads, hardware, or requirements change, the system can adapt without tearing apart its foundation.\r\n"
+      "content": "TEST\nIn the evolving landscape of cloud computing, serverless architectures promise effortless scalability and reduced operational overhead. But beneath the abstraction lies a real challenge: **efficiently distributing work** across a heterogeneous, distributed runtime without creating bottlenecks or single points of failure.\n\nIn my final-year dissertation—later incorporated into the [SoCC'24 paper on dynamic multi-tiered load balancing](https://dl.acm.org/doi/10.1145/3652892.3700755)—I tackled this challenge by **redesigning the load balancing system for AutoNDP**, a funclet-migration runtime built on [Faasm](https://faasm.readthedocs.io/).\n\n## The Problem\n\n---\n\nThe original AutoNDP runtime relied on:\n\n- **A single compute node** as the entry point for all invocations.\n- **Static round-robin balancing** between compute nodes.\n- Minimal configurability and no real adaptation to workload changes.\n\nThis design created clear scaling limits:\n\n- One node acted as a bottleneck and single point of failure.\n- The scheduler only redistributed work _after_ a node hit capacity.\n- No flexibility for cloud providers to tune or replace policies.\n\n## My Contribution: Multi-Tiered, Modular Load Balancing\n\n---\n\nI implemented a **three-layer balancing framework** designed around three principles: **Configurability**, **Modularity**, and **Scalability**.\n\n### 1. Invocation Layer Distribution\n\nAt the system's entry point, I introduced a configurable dispatcher:\n\n- Replaced the single-node invoker with a **round-robin dispatcher** across all compute nodes.\n- Supported pluggable policies—administrators can select or implement their own by conforming to an `ILoadBalancerStrategy` interface.\n- State persisted across invocations using Redis, enabling distribution decisions without losing context.\n\n### 2. Inter-Node Balancing\n\nI refactored Faasm’s tightly coupled scheduler into a **policy-driven engine**:\n\n- Decoupled scheduling logic from core runtime to support modular policies like `MostSlots` and `LeastLoad`.\n- Integrated a **metrics collection module** to provide live CPU, RAM, and load average data from each node via `/proc`.\n- Allowed policies to make **real-time, informed** balancing decisions.\n\n### 3. Storage Layer Data Distribution\n\nAt the Ceph storage layer:\n\n- Increased placement groups from **1 → 128** for better parallelism.\n- Enabled autoscaling and rebalanced data to prevent hot-spotting.\n- Extended offloading decisions beyond simple thread availability to include CPU, memory, and load thresholds—fully configurable per deployment.\n\n## Why Modularity Matters\n\n---\n\nBy designing the balancer as a **set of interchangeable components**, AutoNDP now:\n\n- Supports deployment-specific tuning without modifying core code.\n- Allows experimentation with new strategies (including future ML-based policies).\n- Can scale horizontally without major re-architecture.\n\n## Results\n\n---\n\nBenchmarks showed:\n\n- **3.13× lower median latency** for I/O-intensive workloads.\n- **10× reduction in latency variance** under high concurrency.\n- More stable throughput with reduced queuing effects.\n\nWhile some end-to-end workloads showed the storage offloading bottlenecks still need attention, the architectural flexibility I introduced positions the system for future scaling without major rewrites.\n\n## Looking Ahead\n\n---\n\nThe multi-tiered load balancer opens the door to:\n\n- **Adaptive policies** that evolve with workload patterns.\n- Integration with predictive schedulers and demand forecasting.\n- Applying the modular approach to other runtime services in distributed FaaS systems.\n\nThis work was not just an exercise in squeezing out performance—it was a case study in **engineering for flexibility**, ensuring that when workloads, hardware, or requirements change, the system can adapt without tearing apart its foundation.\n"
     },
     {
       "title": "Introducing the Developer Blog",
@@ -22,7 +28,11 @@
       "slug": "hello-world",
       "description": "A look at how this MDX-powered developer blog is built.",
       "excerpt": "Welcome to the developer blog! Learn how this site is powered by MDX and Next.js.",
-      "tags": ["nextjs", "mdx", "typescript"],
+      "tags": [
+        "nextjs",
+        "mdx",
+        "typescript"
+      ],
       "image": "",
       "imageDir": "",
       "author": {
@@ -40,7 +50,13 @@
       "slug": "faasm-load-balancer",
       "description": "A deep dive into my contribution to dynamic, multi-tiered load balancing for scalable serverless systems.",
       "excerpt": "How I redesigned the AutoNDP architecture to support modular, policy-driven load balancing—achieving greater scalability and flexibility in serverless computing.",
-      "tags": ["serverless", "load-balancing", "architecture", "faasm", "distributed-systems"],
+      "tags": [
+        "serverless",
+        "load-balancing",
+        "architecture",
+        "faasm",
+        "distributed-systems"
+      ],
       "image": "/images/funclets-card-image.png",
       "imageDir": "/images/",
       "repoUrl": "",
@@ -58,7 +74,15 @@
       "role": "Software Engineer ✈️",
       "dates": "2025 - Present",
       "description": "I design and develop high-assurance software solutions for safety-critical and mission-critical defence systems while mentoring junior engineers and supporting architecture decisions.",
-      "skills": ["C++", "C", "Linux", "Qt", "Git", "Agile", "System Design"],
+      "skills": [
+        "C++",
+        "C",
+        "Linux",
+        "Qt",
+        "Git",
+        "Agile",
+        "System Design"
+      ],
       "isCurrent": true
     },
     {
@@ -66,40 +90,69 @@
       "role": "Graduate Software Engineer",
       "dates": "2024 - 2025",
       "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products. I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones. I also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
-      "skills": ["C++", "Embedded Systems", "Testing", "Teamwork"]
+      "skills": [
+        "C++",
+        "Embedded Systems",
+        "Testing",
+        "Teamwork"
+      ]
     },
     {
       "company": "Leonardo UK Ltd",
       "role": "Undergraduate Software Engineer",
       "dates": "2023 - 2024",
       "description": "Hired as first undergraduate software engineer in the company. Worked alongside the Solution team to develop safety-critical software solutions while balancing a final year of undergraduate studies.",
-      "skills": ["C++", "Embedded Systems", "Teamwork", "Research"]
+      "skills": [
+        "C++",
+        "Embedded Systems",
+        "Teamwork",
+        "Research"
+      ]
     },
     {
       "company": "Leonardo UK Ltd",
       "role": "SWE Intern",
       "dates": "2023 - 2023",
       "description": "Completed a summer internship where I led the development of an internal software tool for mechanical engineers. I cleared a backlog of features for the tool and initiated an internal release process.",
-      "skills": ["C++", "Python", "Prototyping", "Research"]
+      "skills": [
+        "C++",
+        "Python",
+        "Prototyping",
+        "Research"
+      ]
     },
     {
       "company": "Altra ERC",
       "role": "Junior Software Engineer 👨‍🏫",
       "dates": "2021 - 2022",
       "description": "I led development of platform features for an education technology startup across a React frontend, Java backend, and AWS serverless workloads.",
-      "skills": ["React", "Node.js", "JavaScript", "AWS", "NoSQL", "Java"]
+      "skills": [
+        "React",
+        "Node.js",
+        "JavaScript",
+        "AWS",
+        "NoSQL",
+        "Java"
+      ]
     },
     {
       "company": "HYPED",
       "role": "Software Quality Assurance Project Lead 🚆",
       "dates": "2020 - 2021",
       "description": "As Project Lead of the Software Quality Assurance team for HYPED (University of Edinburgh’s award-winning Hyperloop competition entry), I was responsible for managing weekly operations, technical direction, and strategic alignment of the QA function within a multi-disciplinary engineering team. I led the design and implementation of automated test suites, set up CI/CD pipelines, and developed scalable testing infrastructure across the codebase to ensure robustness, performance, and reliability of mission-critical systems. I authored the team’s software testing strategy and specification documents for international hyperloop competitions, and ensured the QA effort remained aligned with project roadmaps, competition deadlines, and engineering priorities.",
-      "skills": ["C++", "Test Automation", "CI/CD", "Quality Assurance", "Team Leadership"]
+      "skills": [
+        "C++",
+        "Test Automation",
+        "CI/CD",
+        "Quality Assurance",
+        "Team Leadership"
+      ]
     }
   ],
   "education": [
     {
-      "degree": "BSc (Hons) Computer Science",
+      "degree": "Computer Science",
+      "degreeTitle": "Bachelor of Science (Hons)",
       "institution": "University of Edinburgh",
       "results": "First Class Honours (79%, 4.0 GPA)",
       "dateRange": "2020 - 2024",
@@ -111,11 +164,14 @@
       "borderColor": "border-blue-500"
     },
     {
-      "degree": "Sensing, Processing and AI for Defence and Secuity (PhD)",
+      "degree": "Sensing, Processing and AI for Defence and Secuity",
+      "degreeTitle": "Doctor of Engineering",
       "institution": "University of Edinburgh",
       "results": "",
       "dateRange": "2026 - Present",
-      "description": [""],
+      "description": [
+        "Undertaking part-time research into constrained heterogeneous processing runtimes for signal processing workloads. Working with the Edinburgh Parallel Computing Centre (EPCC) to get specialist training in high-performance computing."
+      ],
       "borderColor": "border-green-500"
     }
   ],

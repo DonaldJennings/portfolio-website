@@ -22,11 +22,41 @@ export function createSessionToken(githubLogin: string) {
 }
 
 export function verifySessionToken(token: string) {
-  const parts = token.split(':');
-  if (parts.length < 3) return false;
-  const signature = parts.pop();
-  const payload = parts.join(':');
-  return signature === sign(payload);
+  try {
+    // token format: <githubLogin>:<timestamp>:<signature>
+    const lastColon = token.lastIndexOf(':');
+    if (lastColon === -1) return false;
+
+    const payload = token.slice(0, lastColon);
+    const signature = token.slice(lastColon + 1);
+
+    const expected = sign(payload);
+
+    const sigBuf = Buffer.from(signature, 'utf8');
+    const expBuf = Buffer.from(expected, 'utf8');
+
+    // Prevent timing attacks when comparing signatures
+    if (sigBuf.length !== expBuf.length) return false;
+    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return false;
+
+    // Validate payload timestamp and username
+    const parts = payload.split(':');
+    if (parts.length < 2) return false;
+    const githubLogin = parts[0];
+    const ts = Number(parts[1]);
+    if (!Number.isFinite(ts)) return false;
+
+    const maxAgeSeconds = 60 * 60 * 12; // match cookie maxAge
+    const ageMs = Date.now() - ts;
+    if (ageMs < 0 || ageMs > maxAgeSeconds * 1000) return false;
+
+    const allowed = getAllowedGithubUsername();
+    if (allowed && githubLogin.toLowerCase() !== allowed.toLowerCase()) return false;
+
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function createOauthState() {
