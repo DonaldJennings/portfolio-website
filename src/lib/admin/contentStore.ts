@@ -44,6 +44,15 @@ export type ExperienceEntry = {
   isCurrent?: boolean;
 };
 
+export type EducationEntry = {
+  degree: string;
+  institution?: string;
+  results?: string;
+  dateRange?: string;
+  description: string[];
+  borderColor?: string;
+};
+
 export type GithubRepoEntry = {
   owner: string;
   repo: string;
@@ -54,6 +63,7 @@ export type AdminContentStore = {
   posts: AdminPost[];
   projects: AdminProject[];
   experience: ExperienceEntry[];
+  education: EducationEntry[];
   githubRepos: GithubRepoEntry[];
 };
 
@@ -77,6 +87,21 @@ const defaultExperience: ExperienceEntry[] = [
   },
 ];
 
+const defaultEducation: EducationEntry[] = [
+  {
+    degree: 'BSc (Hons) Computer Science',
+    institution: 'University of Edinburgh',
+    results: 'First Class Honours (79%, 4.0 GPA)',
+    dateRange: '2020 - 2024',
+    description: [
+      'Graduated with First Class Honours, specializing in software engineering and system design.',
+      'Developed a distributed load-balancing framework for an undergraduate dissertation which was published in the ACM Digital Library.',
+      'Recipient of the Edinburgh Award (twice) in recognition of significant professional development and extra-curricular contribution.',
+    ],
+    borderColor: 'border-blue-500',
+  },
+];
+
 function fromBlogMeta(meta: DevBlogMeta): AdminPost {
   const { content } = getDevBlogPostFromMdx(meta.slug);
   return { ...meta, content };
@@ -95,6 +120,7 @@ function createDefaultStore(): AdminContentStore {
     posts,
     projects,
     experience: defaultExperience,
+    education: defaultEducation,
     githubRepos: projects
       .filter(project => project.repoUrl?.includes('github.com'))
       .map(project => {
@@ -109,7 +135,13 @@ function createDefaultStore(): AdminContentStore {
 
 export function getContentStore(): AdminContentStore {
   const stored = readStoreFile<AdminContentStore>();
-  if (stored) return stored;
+  if (stored) {
+    // ensure backward compatibility when existing store file lacks education
+    if (!('education' in stored) || !Array.isArray((stored as any).education)) {
+      (stored as any).education = defaultEducation;
+    }
+    return stored;
+  }
 
   const initial = createDefaultStore();
   writeStoreFile(initial);

@@ -4,12 +4,15 @@ type JobDescriptionProps = {
 };
 
 export default function JobDescription({ description, className = '' }: JobDescriptionProps) {
+  // Normalize line endings so CRLF doesn't interfere with paragraph splitting.
+  const normalized = description.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
   // First try to split by double line breaks, then by single line breaks, then by sentences for very long text
-  let paragraphs = description.split('\n\n').filter(paragraph => paragraph.trim().length > 0);
+  let paragraphs = normalized.split('\n\n').filter(paragraph => paragraph.trim().length > 0);
 
   // If no double line breaks found, try single line breaks
   if (paragraphs.length === 1) {
-    paragraphs = description.split('\n').filter(paragraph => paragraph.trim().length > 0);
+    paragraphs = normalized.split('\n').filter(paragraph => paragraph.trim().length > 0);
   }
 
   // If still one long paragraph, split by sentences for better readability

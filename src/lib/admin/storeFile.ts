@@ -10,5 +10,10 @@ export function readStoreFile<T>() {
 }
 
 export function writeStoreFile<T>(data: T) {
+  // Ensure the directory exists so writing the JSON file never fails due to missing folders.
+  const dir = path.dirname(storePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
   fs.writeFileSync(storePath, JSON.stringify(data, null, 2), 'utf8');
 }

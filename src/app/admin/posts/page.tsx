@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import AdminPortalClient from '@/components/pages/AdminPortalClient';
 import { isAdminAuthenticated } from '@/lib/admin/auth';
 import { getContentStore } from '@/lib/admin/contentStore';
@@ -13,13 +13,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function AdminPage() {
+export default async function AdminPostsPage() {
   const authenticated = await isAdminAuthenticated();
-
   if (!authenticated) {
     notFound();
   }
 
-  // Redirect to the content editor by default.
-  redirect('/admin/content');
+  const store = getContentStore();
+  if (!store) {
+    notFound();
+  }
+
+  return <AdminPortalClient initialStore={store} mode="posts" />;
 }
