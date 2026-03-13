@@ -1,27 +1,36 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import PublicationItem from '@/components/atoms/PublicationItem';
 
-const publications = [
-  {
-    title: 'Near-Storage Processing in FaaS environments with Funclets',
-    authors: 'Alan Nair, Raven Szewczyk, Donald Jennings, Antonio Barbalace',
-    venue: 'ACM Digital Library',
-    year: '2024',
-    url: 'http://dl.acm.org/doi/10.1145/3652892.3700755',
-    doi: '10.1145/3652892.3700755',
-  },
-  {
-    title:
-      'Breaking the monolith: Dynamic multi-tiered load balancing for scalable serverless computing',
-    authors: 'Donald Jennings',
-    venue: 'University of Edinburgh Undergraduate Dissertation',
-    year: '2024',
-    url: 'https://drive.google.com/file/d/11ZHiQSHvoXia47pfWY72DMCQYCDeXCyN/view?usp=drive_link',
-    doi: 'N/A',
-  },
-];
+type PublicationEntry = {
+  title: string;
+  authors: string;
+  venue: string;
+  year: string;
+  url?: string;
+  doi?: string;
+};
 
 export default function PublicationsSection() {
+  const [publications, setPublications] = useState<PublicationEntry[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch('/api/publications')
+      .then(res => res.json())
+      .then(data => {
+        if (!mounted) return;
+        setPublications(data.publications || []);
+      })
+      .catch(() => {
+        /* ignore */
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-8 border border-slate-800">
       <h2 className="text-2xl font-semibold text-white mb-6">Publications</h2>

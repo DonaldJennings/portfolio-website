@@ -50,11 +50,21 @@ type GithubMetric = {
   avgCloseTimeDays: number;
 };
 
+type PublicationEntry = {
+  title: string;
+  authors: string;
+  venue: string;
+  year: string;
+  url?: string;
+  doi?: string;
+};
+
 type Store = {
   posts: AdminPost[];
   projects: AdminProject[];
   experience: ExperienceEntry[];
   education: EducationEntry[];
+  publications: PublicationEntry[];
   githubRepos: { owner: string; repo: string; projectName?: string }[];
 };
 
@@ -79,6 +89,7 @@ export default function AdminPortalClient({
   const [selectedProject, setSelectedProject] = useState(0);
   const [selectedExperience, setSelectedExperience] = useState(0);
   const [selectedEducation, setSelectedEducation] = useState(0);
+  const [selectedPublication, setSelectedPublication] = useState(0);
   const [metrics, setMetrics] = useState<GithubMetric[]>([]);
   const [message, setMessage] = useState('');
   const showContent = mode === 'all' || mode === 'content';
@@ -103,6 +114,10 @@ export default function AdminPortalClient({
   const selectedEducationData = useMemo(
     () => store.education[selectedEducation] ?? null,
     [store.education, selectedEducation],
+  );
+  const selectedPublicationData = useMemo(
+    () => store.publications[selectedPublication] ?? null,
+    [store.publications, selectedPublication],
   );
 
   async function saveContent() {
@@ -201,6 +216,29 @@ export default function AdminPortalClient({
     next.splice(index, 1);
     setStore({ ...store, education: next });
     setSelectedEducation(Math.max(0, index - 1));
+  }
+
+  function addPublication() {
+    const next = [...store.publications];
+    const newPub: PublicationEntry = {
+      title: 'New Publication',
+      authors: '',
+      venue: '',
+      year: new Date().getFullYear().toString(),
+      url: '',
+      doi: '',
+    };
+    next.push(newPub);
+    setStore({ ...store, publications: next });
+    setSelectedPublication(next.length - 1);
+  }
+
+  function deletePublication(index: number) {
+    if (!window.confirm('Delete this publication? This action cannot be undone.')) return;
+    const next = [...store.publications];
+    next.splice(index, 1);
+    setStore({ ...store, publications: next });
+    setSelectedPublication(Math.max(0, index - 1));
   }
 
   async function loadMetrics() {
@@ -769,6 +807,135 @@ export default function AdminPortalClient({
                             .filter(Boolean),
                         };
                         setStore({ ...store, education: next });
+                      }}
+                    />
+                  </div>
+                )}
+              </section>
+            )}
+
+            {(showContent || showEducationOnly) && (
+              <section className="bg-slate-900/70 border border-slate-700 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Edit Publications</h2>
+                  <div className="flex gap-2">
+                    <button
+                      className="px-3 py-1 bg-green-600 rounded text-sm"
+                      onClick={addPublication}
+                    >
+                      Add Publication
+                    </button>
+                    <button
+                      className="px-3 py-1 bg-red-600 rounded text-sm"
+                      onClick={() => deletePublication(selectedPublication)}
+                      disabled={store.publications.length === 0}
+                    >
+                      Delete Publication
+                    </button>
+                  </div>
+                </div>
+
+                <label className="block text-sm text-slate-300">Choose publication</label>
+                <select
+                  value={selectedPublication}
+                  onChange={e => setSelectedPublication(Number(e.target.value))}
+                  className="w-full px-2 py-2 rounded bg-slate-800"
+                >
+                  {store.publications.map((p, idx) => (
+                    <option key={`${p.title}-${idx}`} value={idx}>
+                      {p.title} — {p.authors}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedPublicationData && (
+                  <div className="space-y-3">
+                    <label className="block text-sm text-slate-300">Title</label>
+                    <input
+                      className="w-full px-3 py-2 bg-slate-800 rounded"
+                      value={selectedPublicationData.title}
+                      onChange={e => {
+                        const next = [...store.publications];
+                        next[selectedPublication] = {
+                          ...selectedPublicationData,
+                          title: e.target.value,
+                        };
+                        setStore({ ...store, publications: next });
+                      }}
+                    />
+
+                    <label className="block text-sm text-slate-300">Authors</label>
+                    <input
+                      className="w-full px-3 py-2 bg-slate-800 rounded"
+                      value={selectedPublicationData.authors}
+                      onChange={e => {
+                        const next = [...store.publications];
+                        next[selectedPublication] = {
+                          ...selectedPublicationData,
+                          authors: e.target.value,
+                        };
+                        setStore({ ...store, publications: next });
+                      }}
+                    />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-sm text-slate-300">Venue</label>
+                        <input
+                          className="w-full px-3 py-2 bg-slate-800 rounded"
+                          value={selectedPublicationData.venue}
+                          onChange={e => {
+                            const next = [...store.publications];
+                            next[selectedPublication] = {
+                              ...selectedPublicationData,
+                              venue: e.target.value,
+                            };
+                            setStore({ ...store, publications: next });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-slate-300">Year</label>
+                        <input
+                          className="w-full px-3 py-2 bg-slate-800 rounded"
+                          value={selectedPublicationData.year}
+                          onChange={e => {
+                            const next = [...store.publications];
+                            next[selectedPublication] = {
+                              ...selectedPublicationData,
+                              year: e.target.value,
+                            };
+                            setStore({ ...store, publications: next });
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <label className="block text-sm text-slate-300">URL</label>
+                    <input
+                      className="w-full px-3 py-2 bg-slate-800 rounded"
+                      value={selectedPublicationData.url || ''}
+                      onChange={e => {
+                        const next = [...store.publications];
+                        next[selectedPublication] = {
+                          ...selectedPublicationData,
+                          url: e.target.value,
+                        };
+                        setStore({ ...store, publications: next });
+                      }}
+                    />
+
+                    <label className="block text-sm text-slate-300">DOI</label>
+                    <input
+                      className="w-full px-3 py-2 bg-slate-800 rounded"
+                      value={selectedPublicationData.doi || ''}
+                      onChange={e => {
+                        const next = [...store.publications];
+                        next[selectedPublication] = {
+                          ...selectedPublicationData,
+                          doi: e.target.value,
+                        };
+                        setStore({ ...store, publications: next });
                       }}
                     />
                   </div>
