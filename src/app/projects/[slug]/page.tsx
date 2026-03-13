@@ -2,6 +2,8 @@ import ContentPostPage from '@/components/pages/ContentPostPage';
 import { getAllProjects, getProject, ProjectMeta } from '@/lib/projects';
 import { compileMdx } from '@/lib/compileMDX';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   const projects = await getAllProjects();
   return projects.map((project: ProjectMeta) => ({ slug: project.slug }));

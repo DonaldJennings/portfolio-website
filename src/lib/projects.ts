@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { readStoreFile } from '@/lib/admin/storeFile';
 
 const projectsDirectory = path.join(process.cwd(), 'src', 'content', 'projects');
 
@@ -26,7 +27,7 @@ export type Project = {
   content: string;
 };
 
-export function getAllProjects(): ProjectMeta[] {
+export function getAllProjectsFromMdx(): ProjectMeta[] {
   if (!fs.existsSync(projectsDirectory)) return [];
 
   const files = fs.readdirSync(projectsDirectory);
@@ -70,7 +71,7 @@ export function getAllProjects(): ProjectMeta[] {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
-export function getProject(slug: string): Project {
+export function getProjectFromMdx(slug: string): Project {
   const fullPath = path.join(projectsDirectory, `${slug}.mdx`);
   const fileContent = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContent);
@@ -105,6 +106,52 @@ export function getProject(slug: string): Project {
       demoUrl: data.demoUrl || '',
       author,
     },
-    content, // raw MDX content
+    content,
+  };
+}
+
+export function getAllProjects(): ProjectMeta[] {
+  const store = readStoreFile<{ projects: Array<{ title: string; date: string; slug: string; description?: string; excerpt?: string; tags?: string[]; image?: string; repoUrl?: string; demoUrl?: string; author?: { name: string; avatarUrl?: string }; content: string; }> }>();
+  if (!store || !store.projects.length) return getAllProjectsFromMdx();
+
+  return store.projects
+    .map(project => ({
+      title: project.title,
+      date: project.date,
+      slug: project.slug,
+      description: project.description,
+      excerpt: project.excerpt,
+      tags: project.tags,
+      image: project.image,
+      imageDir: project.image ? project.image.substring(0, project.image.lastIndexOf('/') + 1) : '',
+      repoUrl: project.repoUrl,
+      demoUrl: project.demoUrl,
+      author: project.author,
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export function getProject(slug: string): Project {
+  const store = readStoreFile<{ projects: Array<{ title: string; date: string; slug: string; description?: string; excerpt?: string; tags?: string[]; image?: string; repoUrl?: string; demoUrl?: string; author?: { name: string; avatarUrl?: string }; content: string; }> }>();
+  const project = store?.projects.find(entry => entry.slug === slug);
+  if (!project) return getProjectFromMdx(slug);
+
+  return {
+    meta: {
+      title: project.title,
+      date: project.date,
+      slug: project.slug,
+      description: project.description,
+      excerpt: project.excerpt,
+      tags: project.tags,
+      image: project.image,
+      imageDir: project.image
+        ? project.image.substring(0, project.image.lastIndexOf('/') + 1)
+        : '',
+      repoUrl: project.repoUrl,
+      demoUrl: project.demoUrl,
+      author: project.author,
+    },
+    content: project.content,
   };
 }

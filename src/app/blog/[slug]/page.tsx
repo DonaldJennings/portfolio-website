@@ -2,6 +2,8 @@ import ContentPostPage from '@/components/pages/ContentPostPage';
 import { getDevBlogPost, getDevBlogPosts } from '@/lib/devblog';
 import { compileMdx } from '@/lib/compileMDX';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   const posts = await getDevBlogPosts();
   return posts.map(post => ({ slug: post.slug }));
@@ -12,7 +14,6 @@ export default async function DevBlogPostPage({ params }: { params: Promise<{ sl
   const { content, meta } = await getDevBlogPost(slug);
   const compiledMdx = await compileMdx(content);
 
-  // Add the required parent property to meta
   const metaWithParent = {
     ...meta,
     parent: {
