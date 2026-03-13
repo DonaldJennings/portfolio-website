@@ -169,27 +169,42 @@ function createDefaultStore(): AdminContentStore {
 export function getContentStore(): AdminContentStore {
   const stored = readStoreFile<AdminContentStore>();
   if (stored) {
-    // ensure backward compatibility when existing store file lacks education
-    if (!('education' in stored) || !Array.isArray((stored as any).education)) {
-      (stored as any).education = defaultEducation;
+    // Work with a looser record to safely normalize older persisted shapes
+    const result = stored as Partial<AdminContentStore> & Record<string, unknown>;
+
+    const rawEducation = result.education;
+    if (!Array.isArray(rawEducation)) {
+      result.education = defaultEducation;
+    } else {
+      const mapped = (rawEducation as unknown as Array<Record<string, unknown>>).map(e => {
+        const degree = e.degree ?? '';
+        const degreeTitle = e.degreeTitle ?? '';
+        const institution = e.institution ?? '';
+        const results = e.results ?? '';
+        const dateRange = e.dateRange ?? '';
+        const descriptionRaw = e.description;
+        const description = Array.isArray(descriptionRaw)
+          ? (descriptionRaw as unknown[]).map(d => String(d))
+          : descriptionRaw
+          ? [String(descriptionRaw)]
+          : [];
+        const borderColor = e.borderColor ?? 'border-green-500';
+
+        return {
+          degree: String(degree),
+          degreeTitle: String(degreeTitle),
+          institution: String(institution),
+          results: String(results),
+          dateRange: String(dateRange),
+          description,
+          borderColor: String(borderColor),
+        } as EducationEntry;
+      });
+
+      result.education = mapped;
     }
-    // backfill degreeTitle for older entries
-    if (Array.isArray((stored as any).education)) {
-      (stored as any).education = (stored as any).education.map((e: any) => ({
-        degree: e.degree || '',
-        degreeTitle: 'degreeTitle' in e ? e.degreeTitle : e.degreeTitle ?? '',
-        institution: e.institution || '',
-        results: e.results || '',
-        dateRange: e.dateRange || '',
-        description: Array.isArray(e.description)
-          ? e.description
-          : e.description
-          ? [e.description]
-          : [],
-        borderColor: e.borderColor || 'border-green-500',
-      }));
-    }
-    return stored;
+
+    return result as AdminContentStore;
   }
 
   const initial = createDefaultStore();
