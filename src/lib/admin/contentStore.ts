@@ -156,13 +156,13 @@ function createDefaultStore(): AdminContentStore {
     publications: defaultPublications,
     githubRepos: projects
       .filter(project => project.repoUrl?.includes('github.com'))
-      .map(project => {
+      .flatMap(project => {
         const match = project.repoUrl?.match(/github\.com\/([^/]+)\/([^/]+)/);
-        return match
-          ? { owner: match[1], repo: match[2].replace(/\.git$/, ''), projectName: project.title }
-          : null;
-      })
-      .filter((item): item is GithubRepoEntry => item !== null),
+        if (!match) return [] as GithubRepoEntry[];
+        return [
+          { owner: match[1], repo: match[2].replace(/\.git$/, ''), projectName: project.title },
+        ];
+      }),
   };
 }
 

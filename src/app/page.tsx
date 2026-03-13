@@ -11,18 +11,19 @@ import AboutSidebar from '@/components/organisms/AboutSidebar';
 import CallToActionSection from '@/components/organisms/CallToActionSection';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
+const ABOUT_ITEMS = [
+  { id: 'summary', label: 'Summary' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'education', label: 'Education' },
+  { id: 'publications', label: 'Publications' },
+];
+
 function AboutTOC() {
-  const items = [
-    { id: 'summary', label: 'Summary' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'education', label: 'Education' },
-    { id: 'publications', label: 'Publications' },
-  ];
   const [active, setActive] = useState('summary');
   useEffect(() => {
     function onScroll() {
       let current = 'summary';
-      for (const item of items) {
+      for (const item of ABOUT_ITEMS) {
         const el = document.getElementById(item.id);
         if (el) {
           const rect = el.getBoundingClientRect();
@@ -40,7 +41,7 @@ function AboutTOC() {
   return (
     <nav className="hidden lg:block lg:col-span-1 sticky top-32 self-start mr-2">
       <ul className="space-y-2 bg-slate-800/60 rounded-xl p-4 text-sm text-slate-200 shadow-md">
-        {items.map(item => (
+        {ABOUT_ITEMS.map(item => (
           <li key={item.id}>
             <a
               href={`#${item.id}`}
