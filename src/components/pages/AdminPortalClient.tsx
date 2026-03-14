@@ -128,7 +128,36 @@ export default function AdminPortalClient({
       body: JSON.stringify(store),
     });
 
-    setMessage(response.ok ? 'Saved successfully' : 'Save failed');
+    let body: unknown = null;
+    try {
+      body = await response.json();
+    } catch {
+      // ignore parse errors
+    }
+
+    if (response.ok) {
+      // If PR URL returned, show link to created PR
+      if (body && typeof body === 'object' && 'prUrl' in (body as Record<string, unknown>)) {
+        const prUrl = String((body as Record<string, unknown>).prUrl);
+        setMessage(`Saved — PR opened: ${prUrl}`);
+        // open PR in new tab for convenience
+        try {
+          window.open(prUrl, '_blank', 'noopener');
+        } catch {}
+      } else {
+        setMessage('Saved successfully');
+      }
+    } else {
+      let errMsg = 'Save failed';
+      if (body && typeof body === 'object') {
+        const obj = body as Record<string, unknown>;
+        if (obj.error) errMsg = String(obj.error);
+        else if (obj.message) errMsg = String(obj.message);
+      }
+      setMessage(`Save failed: ${errMsg}`);
+      // also log to console for debugging
+      console.error('Save failed', { status: response.status, body });
+    }
   }
 
   // --- Content manipulation helpers ---
