@@ -14,7 +14,7 @@
     "@mdx-js/mdx": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@netlify/plugin-nextjs": "^5.12.1",
-    "@next/codemod": "^15.3.4",
+    "@next/codemod": "^16.0.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
     "@types/mdx-js__react": "^1.5.8",
@@ -27,8 +27,8 @@
     "framer-motion": "^12.23.12",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.525.0",
-    "next": "15.3.4",
-    "next-mdx-remote": "^5.0.0",
+    "next": "^16.0.0",
+    "next-mdx-remote": "^6.0.0",
     "postcss": "^8.5.6",
     "rehype-pretty-code": "^0.14.1",
     "react": "^19.0.0",
@@ -37,6 +37,6 @@
     "tailwindcss-cli": "^0.1.2",
     "typescript": "^5",
     "eslint": "^9",
-    "eslint-config-next": "15.3.4"
+    "eslint-config-next": "^16.0.0"
   }
 }
