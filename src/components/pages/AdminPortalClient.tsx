@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 type AdminPost = {
   slug: string;
@@ -86,6 +86,48 @@ export default function AdminPortalClient({
   mode?: AdminPortalMode;
 }) {
   const [store, setStore] = useState<Store>(initialStore);
+  // Persist in-progress edits in sessionStorage so switching admin pages doesn't lose changes.
+  // Keyed by a fixed key for the admin session.
+  const STORAGE_KEY = 'admin_pending_store_v1';
+
+  // On mount: prefer any pending edits in sessionStorage; otherwise attempt to fetch the
+  // latest store from the server (in case server state changed). Fall back to server-rendered
+  // `initialStore` if the fetch fails.
+  useEffect(() => {
+    const pending = typeof window !== 'undefined' ? sessionStorage.getItem(STORAGE_KEY) : null;
+    if (pending) {
+      try {
+        setStore(JSON.parse(pending) as Store);
+        return; // preserve pending edits
+      } catch {
+        // ignore parse errors and continue to fetch
+      }
+    }
+
+    // Fetch the authoritative store from the API (requires admin auth cookie)
+    (async () => {
+      try {
+        const res = await fetch('/api/admin/content');
+        if (res.ok) {
+          const payload = await res.json();
+          setStore(payload as Store);
+        } else {
+          // keep the server-rendered initialStore as a fallback
+        }
+      } catch {
+        // network error: keep initialStore
+      }
+    })();
+  }, []);
+
+  // Persist changes to sessionStorage so they survive client-side navigation.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    } catch {
+      // ignore storage errors
+    }
+  }, [store]);
   const [selectedPost, setSelectedPost] = useState(0);
   const [selectedProject, setSelectedProject] = useState(0);
   const [selectedExperience, setSelectedExperience] = useState(0);
