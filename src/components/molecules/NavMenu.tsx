@@ -15,6 +15,20 @@ const links = [
 
 export default function NavMenu({ vertical }: { vertical?: boolean }) {
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    async function checkAdmin() {
+      try {
+        const res = await fetch('/api/admin/content');
+        if (res.ok) setIsAdmin(true);
+      } catch {
+        // ignore
+      }
+    }
+
+    void checkAdmin();
+  }, []);
 
   return (
     <div className={vertical ? 'flex flex-col space-y-3' : 'flex space-x-4'}>
@@ -59,6 +73,20 @@ export default function NavMenu({ vertical }: { vertical?: boolean }) {
           </NavLink>
         );
       })}
+
+      {isAdmin && (
+        <NavLink
+          href="/admin/content"
+          className={
+            vertical
+              ? 'block py-3 px-4 text-lg font-medium text-center border-b border-slate-800 last:border-b-0 hover:bg-slate-700/50 transition-all'
+              : 'px-2 py-1 transition-colors'
+          }
+          isActive={pathname.startsWith('/admin')}
+        >
+          Admin
+        </NavLink>
+      )}
     </div>
   );
 }

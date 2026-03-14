@@ -1,76 +1,132 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import JobCard from '@/components/molecules/JobCard';
 import type { JobCardProps } from '@/components/molecules/JobCard';
 
-const jobs: JobCardProps[] = [
-  {
-    company: 'Leonardo UK Ltd',
-    roles: [
-      {
-        title: 'Software Engineer ✈️',
-        dates: '2025 - Present',
-        description: `I design and develop high-assurance software solutions for safety-critical and mission-critical defence systems, working primarily in modern C++ within the stringent compliance framework of DO-178C.\n\nAs Product Designer, I report directly to the System Architect and hold technical leadership responsibility for the design integrity, quality, and consistency of all software work products delivered by the team. I lead design discussions, perform technical reviews, and ensure alignment with both project requirements and architectural direction.\n\nAlongside my development responsibilities, I mentor two graduate apprentices, providing hands-on support in C++ engineering and guiding their understanding of core Computer Science principles, from system architecture to low-level implementation.`,
-        skills: ['C++', 'C', 'Linux', 'Qt', 'Git', 'Agile', 'System Design'],
-        isCurrent: true,
-      },
-      {
-        title: 'Graduate Software Engineer',
-        dates: '2024 - 2025',
-        description: `I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products.
-
-        I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones.
-
-        I obtained my Scrum Master certification during this period.
-
-        I also held responsibility as Product Designer (Juniour Architect) for my team, working closely with Solutions Architect to ensure alignment between design and technical implementation.`,
-        skills: ['C++', 'Embedded Systems', 'Testing', 'Teamwork'],
-      },
-      {
-        title: 'Undergraduate Software Engineer',
-        dates: '2023 - 2024',
-        description: `Hired as first undergraduate software engineer in the company. Worked alongside Solution team to develop safety-critical software solutions. Balanced role with final year of undergraduate studies.`,
-      },
-      {
-        title: 'SWE Intern',
-        dates: '2023 - 2023',
-        description: `Completed a summer internship with Leonardo UK where I led the development of an internal software tool for Mechanical engineers. Cleared backlog of features for this tool and initiated internal release process.`,
-        skills: ['C++', 'Python', 'Prototyping', 'Research'],
-      },
-    ],
-  },
-  {
-    role: 'Junior Software Engineer 👨‍🏫',
-    company: 'Altra ERC',
-    dates: '2021 - 2022',
-    description: `At Altra, an education-technology startup, I led the development of core platform features including a document scraping tool and a resource exporting system, enabling users to ingest and distribute educational content seamlessly through the web platform.
-
-The system was built on a hybrid architecture: a React frontend, a Java-based backend, and a suite of AWS Lambda functions supporting event-driven, serverless processing. I worked closely with senior engineers to define the data schema and shape the backend architecture, focusing on scalability, modularity, and responsiveness.
-
-The infrastructure leveraged services such as API Gateway, S3, and Lambda to orchestrate dynamic workflows and support content-heavy operations. This role gave me end-to-end ownership of feature delivery — from concept and architecture through implementation and deployment — and strengthened my ability to build and integrate cloud-native systems with real-world impact.`,
-    skills: ['React', 'Node.js', 'JavaScript', 'AWS', 'NoSQL', 'Java'],
-  },
-  {
-    role: 'Software Quality Assurance Project Lead 🚄',
-    company: 'HYPED',
-    dates: '2020 - 2021',
-    description: `As Project Lead of the Software Quality Assurance team for HYPED — the University of Edinburgh’s award-winning Hyperloop competition entry — I was responsible for managing the weekly operations, technical direction, and strategic alignment of the QA function within a multi-disciplinary engineering team.
-
-I led the design and implementation of automated test suites, set up CI/CD pipelines, and developed scalable testing infrastructure across the software codebase to ensure the robustness, performance, and reliability of mission-critical systems. I drove cross-functional collaboration between software and hardware teams to embed quality assurance early in the development cycle.
-
-I authored the team’s software testing strategy and specification documents, which were submitted as part of the team’s technical entry to international hyperloop competitions, showcasing our systematic approach to verification and validation.
-
-Reporting directly to the Head of Software, I ensured the QA team's efforts remained aligned with project roadmaps, competition deadlines, and engineering priorities. This role sharpened my leadership and technical decision-making skills in a high-pressure, real-world engineering context.`,
-    skills: ['C++', 'Test Automation', 'CI/CD', 'Quality Assurance', 'Team Leadership'],
-  },
-];
+type ExperienceEntry = {
+  company: string;
+  role: string;
+  dates: string;
+  description: string;
+  skills: string[];
+  isCurrent?: boolean;
+};
 
 export default function ExperienceList() {
+  const [jobs, setJobs] = useState<JobCardProps[]>([]);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    async function loadExperience() {
+      const response = await fetch('/api/experience');
+      if (!response.ok) return;
+
+      const data = (await response.json()) as { experience: ExperienceEntry[] };
+      setJobs(
+        data.experience.map(job => ({
+          company: job.company,
+          role: job.role,
+          dates: job.dates,
+          description: job.description,
+          skills: job.skills,
+          isCurrent: job.isCurrent,
+        })),
+      );
+    }
+
+    void loadExperience();
+  }, []);
+
   return (
     <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-8 border border-slate-800">
       <h2 className="text-2xl font-semibold text-white mb-8">Experience</h2>
       <div className="relative">
-        {jobs.map((job, idx) => (
-          <JobCard key={job.company + job.role + idx} {...job} />
-        ))}
+        {(() => {
+          // parse start year from dates string (e.g. "2020 - 2024" or "2020 - Present")
+          const parseStartYear = (dates?: string): number | null => {
+            if (!dates) return null;
+            const m = dates.match(/(\d{4})/);
+            if (!m) return null;
+            const y = parseInt(m[1], 10);
+            return Number.isNaN(y) ? null : y;
+          };
+
+          const sorted = [...jobs].sort((a, b) => {
+            const aYear = parseStartYear(a.dates);
+            const bYear = parseStartYear(b.dates);
+            if (aYear === null && bYear === null) return 0;
+            if (aYear === null) return 1;
+            if (bYear === null) return -1;
+            return bYear - aYear;
+          });
+
+          const top = sorted.slice(0, 2);
+          const rest = sorted.slice(2);
+
+          return (
+            <>
+              {top.map((job, idx) => (
+                <JobCard key={job.company + job.role + idx} {...job} />
+              ))}
+
+              {rest.length > 0 && (
+                <div className="mt-4">
+                  <div
+                    className="relative overflow-hidden transition-all duration-500"
+                    style={{
+                      maxHeight: expanded ? `${rest.length * 220}px` : '0px',
+                      opacity: expanded ? 1 : 0.9,
+                    }}
+                    aria-hidden={!expanded}
+                  >
+                    <div className="space-y-4 p-2">
+                      {rest.map((job, idx) => (
+                        <JobCard key={job.company + job.role + idx + '-rest'} {...job} />
+                      ))}
+                    </div>
+
+                    {/* fade overlay when collapsed */}
+                    {!expanded && (
+                      <div
+                        className="absolute inset-x-0 bottom-0 h-20 pointer-events-none"
+                        style={{
+                          background:
+                            'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(15,23,42,0.85) 60%, rgba(15,23,42,0.95) 100%)',
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  <div className="flex justify-center mt-3">
+                    <button
+                      aria-expanded={expanded}
+                      onClick={() => setExpanded(s => !s)}
+                      className="inline-flex items-center gap-2 px-3 py-2 bg-slate-800/60 hover:bg-slate-700 rounded text-sm"
+                    >
+                      <span>{expanded ? 'Show less' : `Show ${rest.length} more`}</span>
+                      <svg
+                        className={`w-4 h-4 transition-transform ${
+                          expanded ? 'rotate-180' : 'rotate-0'
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        })()}
       </div>
     </div>
   );
