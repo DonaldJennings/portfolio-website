@@ -80,7 +80,7 @@
       "company": "Leonardo UK Ltd",
       "role": "Software Engineer ✈️",
       "dates": "2025 - Present",
-      "description": "I design and develop high-assurance software solutions for safety-critical and mission-critical defence systems while mentoring junior engineers and supporting architecture decisions.",
+      "description": "Lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
       "skills": [
         "C++",
         "C",
