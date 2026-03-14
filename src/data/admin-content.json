@@ -68,14 +68,11 @@
       "content": "This project was written for my dissertation"
     },
     {
-      "slug": "arche-game-engine",
-      "title": "Arche - 3D Physics Engien",
+      "slug": "arche-engine",
+      "title": "Arche",
       "date": "2026-03-14",
-      "content": "This project is about my Arche Engine\n\nTBD",
-      "description": "A 3D physics engine with a Dear-IMGUI presentation layer",
-      "tags": [
-        "graphics-programming"
-      ]
+      "content": "TBD",
+      "description": "3D Physics Engine developed in C++ with an ImGUI UI"
     }
   ],
   "experience": [
