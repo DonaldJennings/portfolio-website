@@ -1,9 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import { readStoreFile } from '@/lib/admin/storeFile';
-
-const projectsDirectory = path.join(process.cwd(), 'src', 'content', 'projects');
 
 export type ProjectMeta = {
   title: string;
@@ -27,131 +22,47 @@ export type Project = {
   content: string;
 };
 
-export function getAllProjectsFromMdx(): ProjectMeta[] {
-  if (!fs.existsSync(projectsDirectory)) return [];
+type StoreProject = {
+  title: string;
+  date: string;
+  slug: string;
+  description?: string;
+  excerpt?: string;
+  tags?: string[];
+  image?: string;
+  repoUrl?: string;
+  demoUrl?: string;
+  author?: { name: string; avatarUrl?: string };
+  content: string;
+};
 
-  const files = fs.readdirSync(projectsDirectory);
-  return files
-    .filter(file => file.endsWith('.mdx'))
-    .map(filename => {
-      const fullPath = path.join(projectsDirectory, filename);
-      const fileContent = fs.readFileSync(fullPath, 'utf8');
-      const { data } = matter(fileContent);
-
-      let author;
-      if (typeof data.author === 'string') {
-        author = { name: data.author };
-      } else if (typeof data.author === 'object' && data.author !== null) {
-        author = {
-          name: data.author.name || '',
-          avatarUrl: data.author.avatarUrl || '',
-        };
-      }
-
-      const image = data.image || '';
-      let imageDir = '';
-      if (image) {
-        const lastSlash = image.lastIndexOf('/');
-        imageDir = lastSlash !== -1 ? image.substring(0, lastSlash + 1) : '';
-      }
-      return {
-        title: data.title || filename.replace(/\.mdx$/, ''),
-        date: data.date || '',
-        slug: filename.replace(/\.mdx$/, ''),
-        description: data.description || '',
-        excerpt: data.excerpt || '',
-        tags: data.tags || [],
-        image,
-        imageDir,
-        repoUrl: data.repoUrl || '',
-        demoUrl: data.demoUrl || '',
-        author,
-      } as ProjectMeta;
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-}
-
-export function getProjectFromMdx(slug: string): Project {
-  const fullPath = path.join(projectsDirectory, `${slug}.mdx`);
-  const fileContent = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = matter(fileContent);
-
-  let author;
-  if (typeof data.author === 'string') {
-    author = { name: data.author };
-  } else if (typeof data.author === 'object' && data.author !== null) {
-    author = {
-      name: data.author.name || '',
-      avatarUrl: data.author.avatarUrl || '',
-    };
-  }
-
-  const image = data.image || '';
-  let imageDir = '';
-  if (image) {
-    const lastSlash = image.lastIndexOf('/');
-    imageDir = lastSlash !== -1 ? image.substring(0, lastSlash + 1) : '';
-  }
+function toMeta(project: StoreProject): ProjectMeta {
   return {
-    meta: {
-      title: data.title || slug,
-      date: data.date || '',
-      slug,
-      description: data.description || '',
-      excerpt: data.excerpt || '',
-      tags: data.tags || [],
-      image,
-      imageDir,
-      repoUrl: data.repoUrl || '',
-      demoUrl: data.demoUrl || '',
-      author,
-    },
-    content,
+    title: project.title,
+    date: project.date,
+    slug: project.slug,
+    description: project.description,
+    excerpt: project.excerpt,
+    tags: project.tags,
+    image: project.image,
+    imageDir: project.image ? project.image.substring(0, project.image.lastIndexOf('/') + 1) : '',
+    repoUrl: project.repoUrl,
+    demoUrl: project.demoUrl,
+    author: project.author,
   };
 }
 
 export function getAllProjects(): ProjectMeta[] {
-  const store = readStoreFile<{ projects: Array<{ title: string; date: string; slug: string; description?: string; excerpt?: string; tags?: string[]; image?: string; repoUrl?: string; demoUrl?: string; author?: { name: string; avatarUrl?: string }; content: string; }> }>();
-  if (!store || !store.projects.length) return getAllProjectsFromMdx();
-
+  const store = readStoreFile<{ projects: StoreProject[] }>();
+  if (!store?.projects?.length) return [];
   return store.projects
-    .map(project => ({
-      title: project.title,
-      date: project.date,
-      slug: project.slug,
-      description: project.description,
-      excerpt: project.excerpt,
-      tags: project.tags,
-      image: project.image,
-      imageDir: project.image ? project.image.substring(0, project.image.lastIndexOf('/') + 1) : '',
-      repoUrl: project.repoUrl,
-      demoUrl: project.demoUrl,
-      author: project.author,
-    }))
+    .map(toMeta)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
-export function getProject(slug: string): Project {
-  const store = readStoreFile<{ projects: Array<{ title: string; date: string; slug: string; description?: string; excerpt?: string; tags?: string[]; image?: string; repoUrl?: string; demoUrl?: string; author?: { name: string; avatarUrl?: string }; content: string; }> }>();
-  const project = store?.projects.find(entry => entry.slug === slug);
-  if (!project) return getProjectFromMdx(slug);
-
-  return {
-    meta: {
-      title: project.title,
-      date: project.date,
-      slug: project.slug,
-      description: project.description,
-      excerpt: project.excerpt,
-      tags: project.tags,
-      image: project.image,
-      imageDir: project.image
-        ? project.image.substring(0, project.image.lastIndexOf('/') + 1)
-        : '',
-      repoUrl: project.repoUrl,
-      demoUrl: project.demoUrl,
-      author: project.author,
-    },
-    content: project.content,
-  };
+export function getProject(slug: string): Project | null {
+  const store = readStoreFile<{ projects: StoreProject[] }>();
+  const project = store?.projects.find(p => p.slug === slug);
+  if (!project) return null;
+  return { meta: toMeta(project), content: project.content };
 }

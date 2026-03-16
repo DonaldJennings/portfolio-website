@@ -1,5 +1,10 @@
 [functions]
-  included_files = ["src/app/contact/page.tsx", "src/components/pages/ContactPageContent.tsx"]
+  included_files = [
+    "src/app/contact/page.tsx",
+    "src/components/pages/ContactPageContent.tsx",
+    "src/data/**",
+    "src/content/**"
+  ]
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

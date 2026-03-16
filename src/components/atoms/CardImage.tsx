@@ -8,16 +8,16 @@ interface CardImageProps {
 
 const CardImage: React.FC<CardImageProps> = ({ src, alt }) => (
   <div
-    className="flex items-center justify-center"
-    style={{ minWidth: '180px', width: '240px', height: '180px' }}
+    className="hidden md:flex items-center justify-center"
+    style={{ minWidth: '120px', width: '140px', height: '100px' }}
   >
     <div
-      className="relative w-[220px] h-[160px]"
+      className="relative w-[130px] h-[90px]"
       style={{
         position: 'relative',
-        width: '220px',
-        height: '160px',
-        aspectRatio: '220 / 160',
+        width: '130px',
+        height: '90px',
+        aspectRatio: '130 / 90',
       }}
     >
       <Image

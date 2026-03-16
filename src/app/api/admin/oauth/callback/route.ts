@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import {
   createSessionToken,
-  getAllowedGithubUsername,
   setAdminSessionCookie,
   validateOauthState,
+  getAllowedGithubUsername,
 } from '@/lib/admin/auth';
 
 type GithubTokenResponse = {
@@ -75,15 +75,45 @@ export async function GET(request: Request) {
   }
 
   try {
-    const allowedUser = getAllowedGithubUsername();
-    if (!allowedUser) {
-      throw new Error('Missing ADMIN_GITHUB_USERNAME');
-    }
-
     const accessToken = await exchangeCodeForToken(code);
     const user = await fetchGithubUser(accessToken);
 
-    if (user.login.toLowerCase() !== allowedUser.toLowerCase()) {
+    // Require that the authenticated GitHub user is a collaborator on the target repo.
+    // This uses the server-side `GITHUB_TOKEN` and `GITHUB_REPOSITORY` env vars.
+    async function isRepoCollaborator(username: string) {
+      const repo = process.env.GITHUB_REPOSITORY;
+      const token = process.env.GITHUB_TOKEN;
+      if (!repo || !token) {
+        throw new Error('Missing GITHUB_REPOSITORY or GITHUB_TOKEN for collaborator check');
+      }
+
+      const [owner, repoName] = repo.split('/');
+      if (!owner || !repoName) throw new Error('Invalid GITHUB_REPOSITORY format');
+
+      const res = await fetch(
+        `https://api.github.com/repos/${owner}/${repoName}/collaborators/${username}`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        },
+      );
+
+      // GitHub returns 204 No Content for a collaborator, 404 if not a collaborator.
+      return res.status === 204 || res.status === 200;
+    }
+
+    const isCollaborator = await isRepoCollaborator(user.login);
+    if (!isCollaborator) {
+      return NextResponse.redirect(new URL('/admin/login?error=unauthorized', url.origin));
+    }
+
+    // If an explicit allowed username is configured, enforce it as an additional guard.
+    const allowedUser = getAllowedGithubUsername();
+    if (allowedUser && user.login.toLowerCase() !== allowedUser.toLowerCase()) {
       return NextResponse.redirect(new URL('/admin/login?error=unauthorized', url.origin));
     }
 
