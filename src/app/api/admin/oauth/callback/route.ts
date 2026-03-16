@@ -106,9 +106,6 @@ export async function GET(request: Request) {
       return res.status === 204 || res.status === 200;
     }
 
-    const accessToken = await exchangeCodeForToken(code);
-    const user = await fetchGithubUser(accessToken);
-
     const isCollaborator = await isRepoCollaborator(user.login);
     if (!isCollaborator) {
       return NextResponse.redirect(new URL('/admin/login?error=unauthorized', url.origin));
