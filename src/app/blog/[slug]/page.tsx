@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import ContentPostPage from '@/components/pages/ContentPostPage';
 import { getDevBlogPost, getDevBlogPosts } from '@/lib/devblog';
 import { compileMdx } from '@/lib/compileMDX';
@@ -11,7 +12,9 @@ export async function generateStaticParams() {
 
 export default async function DevBlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { content, meta } = await getDevBlogPost(slug);
+  const post = getDevBlogPost(slug);
+  if (!post) notFound();
+  const { content, meta } = post;
   const compiledMdx = await compileMdx(content);
 
   const metaWithParent = {
