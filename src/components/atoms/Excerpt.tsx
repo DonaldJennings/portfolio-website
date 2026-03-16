@@ -9,11 +9,11 @@ interface ExcerptProps {
 
 const Excerpt: React.FC<ExcerptProps> = ({ text, isTruncated, showFull, onShowMore }) => (
   <p
-    className={showFull ? 'mt-2' : 'mt-2 line-clamp-2'}
+    className={showFull ? 'mt-1' : 'mt-1 line-clamp-2'}
     style={{
       color: 'rgba(236,240,245,0.96)',
-      lineHeight: '1.8',
-      fontSize: '1.08rem',
+      lineHeight: '1.5',
+      fontSize: '0.85rem',
       maxWidth: '100%',
     }}
   >

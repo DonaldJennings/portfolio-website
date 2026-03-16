@@ -6,7 +6,6 @@ import Title from '../atoms/Title';
 import TagList from '../molecules/TagList';
 import MetaRow from '../molecules/MetaRow';
 import ExcerptBlock from '../molecules/ExcerptBlock';
-import CTAArrow from '../atoms/CTAArrow';
 import CardImage from '../atoms/CardImage';
 
 export interface ContentPostCardProps {
@@ -41,7 +40,7 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
     <Link href={href} className="group no-underline">
       <motion.div
         layoutId={layoutId}
-        className="relative rounded-2xl border flex flex-col md:flex-row items-center p-5 md:p-8 transition-all duration-300 cursor-pointer w-full gap-6 md:gap-8 group"
+        className="relative rounded-xl border flex flex-col md:flex-row items-center p-3 md:p-4 transition-all duration-300 cursor-pointer w-full gap-3 md:gap-5 group"
         style={{
           background: 'rgba(15,23,42,0.65)',
           backdropFilter: 'blur(12px)',
@@ -72,12 +71,6 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
           {tags && tags.length > 0 && (
             <TagList tags={tags} hoveredTag={hoveredTag} setHoveredTag={setHoveredTag} />
           )}
-          {/* Spacer */}
-          <div className="flex-1" />
-          {/* CTA Arrow (for visual cue) */}
-          <div className="flex justify-end mt-4">
-            <CTAArrow />
-          </div>
         </div>
         {/* Optional Image on the right */}
         {image && <CardImage src={image} alt={title + ' image'} />}

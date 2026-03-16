@@ -5,7 +5,7 @@ interface TitleProps {
 }
 
 const Title: React.FC<TitleProps> = ({ children }) => (
-  <h2 className="text-2xl md:text-3xl font-bold mt-1 mb-3 line-clamp-2 leading-tight">
+  <h2 className="text-base md:text-lg font-bold mt-1 mb-1 line-clamp-2 leading-tight">
     {children}
   </h2>
 );

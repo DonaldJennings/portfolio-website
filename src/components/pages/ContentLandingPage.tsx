@@ -63,7 +63,7 @@ export default function ContentLandingPage({
 
         <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-stretch md:items-start">
           {/* Combined Filter/Search Box */}
-          <div className="w-full md:min-w-[260px] md:max-w-[320px] flex flex-col justify-start mb-6 md:mb-0">
+          <div className="w-full md:min-w-[200px] md:max-w-[240px] flex flex-col justify-start mb-6 md:mb-0">
             <ContentFilter
               search={search}
               searchPlaceholder={searchPlaceholder}

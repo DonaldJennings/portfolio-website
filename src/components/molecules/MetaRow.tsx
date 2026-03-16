@@ -6,7 +6,7 @@ interface MetaRowProps {
 }
 
 const MetaRow: React.FC<MetaRowProps> = ({ date, author }) => (
-  <div className="mb-4 text-sm opacity-70 flex flex-wrap gap-2">
+  <div className="mb-1 text-xs opacity-70 flex flex-wrap gap-2">
     <span>{date}</span>
     {author?.name && <span>· {author.name}</span>}
     {author?.readingTime && <span>· {author.readingTime}</span>}
