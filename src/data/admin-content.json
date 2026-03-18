@@ -73,7 +73,11 @@
       "date": "2026-03-14",
       "content": "TBD",
       "description": "3D Physics Engine developed in C++ with an ImGUI UI",
-      "image": "/images/1773837042956-508589839-2b027d58-8341-4efb-9a05-e611fad85ab5.png"
+      "image": "/images/1773837042956-508589839-2b027d58-8341-4efb-9a05-e611fad85ab5.png",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      }
     }
   ],
   "experience": [

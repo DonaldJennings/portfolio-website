@@ -73,13 +73,13 @@ export default function ContentPostPage({ meta, children }: ContentPostPageProps
               title={meta.title}
               date={meta.date}
               tags={meta.tags}
-              author={{
-                name: meta.author?.name ?? '',
-                avatarUrl: meta.author?.avatarUrl,
-                readingTime: meta.author?.readingTime,
+              author={meta.author?.name ? {
+                name: meta.author.name,
+                avatarUrl: meta.author.avatarUrl,
+                readingTime: meta.author.readingTime,
                 linkedinUrl: 'https://www.linkedin.com/in/donald-jennings-675081191/',
                 githubUrl: 'https://github.com/DonaldJennings/',
-              }}
+              } : undefined}
               excerpt={meta.excerpt}
               description={meta.description}
             />
