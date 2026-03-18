@@ -3,11 +3,12 @@ import ExperienceList from '@/components/organisms/ExperienceList';
 import EducationSection from '@/components/organisms/EducationSection';
 import AboutSidebar from '@/components/organisms/AboutSidebar';
 import CallToActionSection from '@/components/organisms/CallToActionSection';
+import { getContentStore } from '@/lib/admin/contentStore';
 import React from 'react';
 
-export const dynamic = 'force-dynamic';
-
 export default function AboutPage() {
+  const store = getContentStore();
+
   return (
     <div className="relative min-h-screen font-mono">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
@@ -25,8 +26,8 @@ export default function AboutPage() {
               bodyText="Hello! I'm Donald, a Software Engineer currently working at Leonardo UK Ltd. I graduated with a 1st Class BSc (Hons) in Computer Science from University of Edinburgh. I am interested in developing innovative and smart solutions to complex technical challenges with my skills spanning a wide range from cloud computing to systems programming."
             />
 
-            <ExperienceList />
-            <EducationSection />
+            <ExperienceList jobs={store.experience} />
+            <EducationSection education={store.education} />
           </div>
 
           <AboutSidebar />

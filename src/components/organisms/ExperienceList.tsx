@@ -1,44 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import JobCard from '@/components/molecules/JobCard';
-import type { JobCardProps } from '@/components/molecules/JobCard';
+import type { ExperienceEntry } from '@/lib/admin/contentStore';
 
-type ExperienceEntry = {
-  company: string;
-  role: string;
-  dates: string;
-  description: string;
-  skills: string[];
-  isCurrent?: boolean;
+type ExperienceListProps = {
+  jobs: ExperienceEntry[];
 };
 
 const COLLAPSED_HEIGHT = 600;
 
-export default function ExperienceList() {
-  const [jobs, setJobs] = useState<JobCardProps[]>([]);
+export default function ExperienceList({ jobs }: ExperienceListProps) {
   const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    async function loadExperience() {
-      const response = await fetch('/api/experience');
-      if (!response.ok) return;
-
-      const data = (await response.json()) as { experience: ExperienceEntry[] };
-      setJobs(
-        data.experience.map(job => ({
-          company: job.company,
-          role: job.role,
-          dates: job.dates,
-          description: job.description,
-          skills: job.skills,
-          isCurrent: job.isCurrent,
-        })),
-      );
-    }
-
-    void loadExperience();
-  }, []);
 
   const parseStartYear = (dates?: string): number | null => {
     if (!dates) return null;

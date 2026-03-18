@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import React from 'react';
 
@@ -6,7 +7,6 @@ import Title from '../atoms/Title';
 import TagList from '../molecules/TagList';
 import MetaRow from '../molecules/MetaRow';
 import ExcerptBlock from '../molecules/ExcerptBlock';
-import CardImage from '../atoms/CardImage';
 
 export interface ContentPostCardProps {
   href: string;
@@ -40,7 +40,7 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
     <Link href={href} className="group no-underline">
       <motion.div
         layoutId={layoutId}
-        className="relative rounded-xl border flex flex-col md:flex-row items-center p-3 md:p-4 transition-all duration-300 cursor-pointer w-full gap-3 md:gap-5 group"
+        className="relative rounded-xl border flex flex-row overflow-hidden transition-all duration-300 cursor-pointer w-full group"
         style={{
           background: 'rgba(15,23,42,0.65)',
           backdropFilter: 'blur(12px)',
@@ -55,25 +55,41 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
         transition={{ type: 'spring', bounce: 0.3, duration: 0.4 }}
       >
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Title */}
+        <div className="flex-1 flex flex-col p-4 md:p-5 min-w-0">
           <Title>{title}</Title>
-          {/* Meta row */}
           <MetaRow date={date} author={author} />
-          {/* Excerpt */}
           <ExcerptBlock
             excerptText={excerptText}
             isTruncated={isTruncated}
             showFullExcerpt={showFullExcerpt}
             onShowMore={() => setShowFullExcerpt(true)}
           />
-          {/* Tags row */}
           {tags && tags.length > 0 && (
             <TagList tags={tags} hoveredTag={hoveredTag} setHoveredTag={setHoveredTag} />
           )}
         </div>
-        {/* Optional Image on the right */}
-        {image && <CardImage src={image} alt={title + ' image'} />}
+
+        {/* Full-height image on the right */}
+        {image && (
+          <div className="relative hidden md:block flex-shrink-0 w-48 self-stretch">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="192px"
+              className="object-cover"
+              style={{ display: 'block' }}
+            />
+            {/* Subtle left-side fade so image blends into card */}
+            <div
+              className="absolute inset-y-0 left-0 w-8"
+              style={{
+                background:
+                  'linear-gradient(to right, rgba(15,23,42,0.65) 0%, transparent 100%)',
+              }}
+            />
+          </div>
+        )}
       </motion.div>
     </Link>
   );

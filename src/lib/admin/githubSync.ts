@@ -1,6 +1,113 @@
 // Uses the global `fetch` available in the Next.js server/runtime environment.
 type Repo = { owner: string; repo: string };
 
+async function getDefaultBranch(owner: string, repo: string, headers: Record<string, string>) {
+  const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers });
+  if (!repoRes.ok) throw new Error('Failed to get repo info');
+  const repoJson = await repoRes.json();
+  return repoJson.default_branch || 'main';
+}
+
+async function ensureBranch(
+  owner: string,
+  repo: string,
+  headers: Record<string, string>,
+  branchName: string,
+  baseSha: string,
+) {
+  const branchRefUrl = `https://api.github.com/repos/${owner}/${repo}/git/refs/heads/${branchName}`;
+  const branchCheckRes = await fetch(branchRefUrl, { headers });
+  if (!branchCheckRes.ok) {
+    if (branchCheckRes.status === 404) {
+      const createRefRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha: baseSha }),
+      });
+      if (!createRefRes.ok) {
+        const body = await createRefRes.text();
+        throw new Error(`Failed to create branch: ${createRefRes.status} ${body}`);
+      }
+    } else {
+      const body = await branchCheckRes.text();
+      throw new Error(`Failed to check branch existence: ${branchCheckRes.status} ${body}`);
+    }
+  }
+}
+
+async function commitFileOnBranch(
+  owner: string,
+  repo: string,
+  headers: Record<string, string>,
+  filePath: string,
+  base64Content: string,
+  branchName: string,
+  commitMessage: string,
+) {
+  let existingFileSha: string | undefined;
+  const getContentsRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${branchName}`,
+    { headers },
+  );
+  if (getContentsRes.ok) {
+    const contentsJson = await getContentsRes.json();
+    if (contentsJson && typeof contentsJson === 'object' && 'sha' in contentsJson) {
+      existingFileSha = String(contentsJson.sha);
+    }
+  } else if (getContentsRes.status !== 404) {
+    const body = await getContentsRes.text();
+    throw new Error(`Failed to check existing file contents: ${getContentsRes.status} ${body}`);
+  }
+
+  const putBody: Record<string, unknown> = {
+    message: commitMessage,
+    content: base64Content,
+    branch: branchName,
+  };
+  if (existingFileSha) putBody.sha = existingFileSha;
+
+  const putRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
+    {
+      method: 'PUT',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify(putBody),
+    },
+  );
+  if (!putRes.ok) {
+    const body = await putRes.text();
+    throw new Error(`Failed to create/update file via contents API: ${putRes.status} ${body}`);
+  }
+}
+
+/**
+ * Commit a binary file (already base64-encoded) to the admin-content-update branch.
+ * Does not create a PR — images are committed alongside the content JSON update.
+ */
+export async function commitFileToBranch(
+  filePath: string,
+  base64Content: string,
+  options?: { branchName?: string; commitMessage?: string },
+) {
+  const { owner, repo } = getRepoFromEnv();
+  const headers = githubHeaders();
+  const branchName = options?.branchName || 'admin-content-update';
+  const commitMessage = options?.commitMessage || `Admin: upload file ${filePath}`;
+
+  const defaultBranch = await getDefaultBranch(owner, repo, headers);
+  const refRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/git/refs/heads/${defaultBranch}`,
+    { headers },
+  );
+  if (!refRes.ok) throw new Error('Failed to get default branch ref');
+  const refJson = await refRes.json();
+  const baseSha = refJson.object?.sha || refJson?.sha;
+  if (!baseSha) throw new Error('Unable to determine base commit SHA');
+
+  await ensureBranch(owner, repo, headers, branchName, baseSha);
+  await commitFileOnBranch(owner, repo, headers, filePath, base64Content, branchName, commitMessage);
+}
+
 function getRepoFromEnv(): Repo {
   const repoEnv = process.env.GITHUB_REPOSITORY;
   if (repoEnv && repoEnv.includes('/')) {
@@ -41,13 +148,8 @@ export async function createBranchCommitAndPR(
   const { owner, repo } = getRepoFromEnv();
   const headers = githubHeaders();
 
-  // 1) Get repo metadata to find default branch
-  const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers });
-  if (!repoRes.ok) throw new Error('Failed to get repo info');
-  const repoJson = await repoRes.json();
-  const defaultBranch = repoJson.default_branch || 'main';
+  const defaultBranch = await getDefaultBranch(owner, repo, headers);
 
-  // 2) Get the commit SHA of default branch
   const refRes = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/git/refs/heads/${defaultBranch}`,
     { headers },
@@ -57,73 +159,16 @@ export async function createBranchCommitAndPR(
   const baseSha = refJson.object?.sha || refJson?.sha;
   if (!baseSha) throw new Error('Unable to determine base commit SHA');
 
-  // 3) Determine branch name (use a stable dedicated branch so repeated saves update same PR)
   const prefix = options?.branchPrefix || 'admin-content-update';
   const branchName = options?.branchName || prefix;
 
-  // 4) Ensure branch exists: if not, create it from default branch
-  const branchRefUrl = `https://api.github.com/repos/${owner}/${repo}/git/refs/heads/${branchName}`;
-  const branchCheckRes = await fetch(branchRefUrl, { headers });
-  if (!branchCheckRes.ok) {
-    if (branchCheckRes.status === 404) {
-      // Branch doesn't exist; create it
-      const createRefRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha: baseSha }),
-      });
-      if (!createRefRes.ok) {
-        const body = await createRefRes.text();
-        throw new Error(`Failed to create branch: ${createRefRes.status} ${body}`);
-      }
-    } else {
-      const body = await branchCheckRes.text();
-      throw new Error(`Failed to check branch existence: ${branchCheckRes.status} ${body}`);
-    }
-  }
+  await ensureBranch(owner, repo, headers, branchName, baseSha);
 
-  // 5) Update file contents on the new branch using the Contents API
   const contentBase64 = Buffer.from(fileContent, 'utf8').toString('base64');
   const commitMessage = options?.commitMessage || 'Admin: update site content (via admin UI)';
-  // Before PUT, check whether the file already exists on the branch so we can include
-  // the required `sha` when updating. If it doesn't exist, the PUT should create it.
-  let existingFileSha: string | undefined;
-  const getContentsRes = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${branchName}`,
-    { headers },
-  );
+  await commitFileOnBranch(owner, repo, headers, filePath, contentBase64, branchName, commitMessage);
 
-  if (getContentsRes.ok) {
-    const contentsJson = await getContentsRes.json();
-    // The contents API returns either a single file object or an array for directories.
-    if (contentsJson && typeof contentsJson === 'object' && 'sha' in contentsJson) {
-      existingFileSha = String(contentsJson.sha);
-    }
-  } else if (getContentsRes.status !== 404) {
-    // If we got an error other than 404 (not found), surface it for debugging.
-    const body = await getContentsRes.text();
-    throw new Error(`Failed to check existing file contents: ${getContentsRes.status} ${body}`);
-  }
-
-  const putBody: Record<string, unknown> = {
-    message: commitMessage,
-    content: contentBase64,
-    branch: branchName,
-  };
-  if (existingFileSha) putBody.sha = existingFileSha;
-
-  const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-    method: 'PUT',
-    headers: { ...headers, 'Content-Type': 'application/json' },
-    body: JSON.stringify(putBody),
-  });
-
-  if (!putRes.ok) {
-    const body = await putRes.text();
-    throw new Error(`Failed to create/update file via contents API: ${putRes.status} ${body}`);
-  }
-
-  // 6) Create or reuse a Pull Request for the branch
+  // Create or reuse a Pull Request for the branch
   const prTitle = options?.prTitle || 'Admin content updates';
   const prBody = options?.prBody || 'This PR contains content changes made via the admin UI.';
 

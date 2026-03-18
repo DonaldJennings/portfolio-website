@@ -8,6 +8,8 @@ type AdminPost = {
   date: string;
   description?: string;
   tags?: string[];
+  image?: string;
+  author?: { name: string; avatarUrl?: string; readingTime?: string };
   content: string;
 };
 
@@ -17,6 +19,8 @@ type AdminProject = {
   date: string;
   description?: string;
   tags?: string[];
+  image?: string;
+  author?: { name: string; avatarUrl?: string };
   repoUrl?: string;
   content: string;
 };
@@ -135,6 +139,33 @@ export default function AdminPortalClient({
   const [selectedPublication, setSelectedPublication] = useState(0);
   const [metrics, setMetrics] = useState<GithubMetric[]>([]);
   const [message, setMessage] = useState('');
+  const [postImageUploading, setPostImageUploading] = useState(false);
+  const [projectImageUploading, setProjectImageUploading] = useState(false);
+  const [postAvatarUploading, setPostAvatarUploading] = useState(false);
+  const [projectAvatarUploading, setProjectAvatarUploading] = useState(false);
+
+  async function uploadImage(
+    file: File,
+    onSuccess: (path: string) => void,
+    setUploading: (v: boolean) => void,
+  ) {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/upload-image', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        onSuccess(data.path as string);
+      } else {
+        setMessage(`Image upload failed: ${data.error || 'unknown error'}`);
+      }
+    } catch {
+      setMessage('Image upload failed: network error');
+    } finally {
+      setUploading(false);
+    }
+  }
   const showContent = mode === 'all' || mode === 'content';
   const showMetrics = mode === 'all' || mode === 'metrics';
   const showPostsOnly = mode === 'posts';
@@ -209,6 +240,7 @@ export default function AdminPortalClient({
       slug: `new-post-${Date.now()}`,
       title: 'New Post',
       date: new Date().toISOString().slice(0, 10),
+      author: { name: 'Donald Jennings', avatarUrl: '/images/dj-avatar.png', readingTime: '3 min read' },
       content: '',
     };
     next.push(newPost);
@@ -230,6 +262,7 @@ export default function AdminPortalClient({
       slug: `new-project-${Date.now()}`,
       title: 'New Project',
       date: new Date().toISOString().slice(0, 10),
+      author: { name: 'Donald Jennings', avatarUrl: '/images/dj-avatar.png' },
       content: '',
     };
     next.push(newProject);
@@ -495,6 +528,141 @@ export default function AdminPortalClient({
                         placeholder="Tags (comma separated)"
                       />
 
+                      <label className="block text-sm text-slate-300">Card Image</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          className="flex-1 px-3 py-2 bg-slate-800 rounded text-sm"
+                          value={selectedPostData.image || ''}
+                          onChange={e => {
+                            const next = [...store.posts];
+                            next[selectedPost] = { ...selectedPostData, image: e.target.value };
+                            setStore({ ...store, posts: next });
+                          }}
+                          placeholder="/images/my-image.png"
+                        />
+                        <label className="px-3 py-2 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer whitespace-nowrap">
+                          {postImageUploading ? 'Uploading…' : 'Upload'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={postImageUploading}
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              uploadImage(
+                                file,
+                                path => {
+                                  const next = [...store.posts];
+                                  next[selectedPost] = { ...selectedPostData, image: path };
+                                  setStore({ ...store, posts: next });
+                                },
+                                setPostImageUploading,
+                              );
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                        {selectedPostData.image && (
+                          <button
+                            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm"
+                            onClick={() => {
+                              const next = [...store.posts];
+                              next[selectedPost] = { ...selectedPostData, image: '' };
+                              setStore({ ...store, posts: next });
+                            }}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      {selectedPostData.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={selectedPostData.image}
+                          alt="Preview"
+                          className="h-24 rounded object-cover border border-slate-600"
+                        />
+                      )}
+
+                      <label className="block text-sm text-slate-300">Author</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1">Name</label>
+                          <input
+                            className="w-full px-3 py-2 bg-slate-800 rounded"
+                            value={selectedPostData.author?.name ?? ''}
+                            onChange={e => {
+                              const next = [...store.posts];
+                              next[selectedPost] = {
+                                ...selectedPostData,
+                                author: { ...selectedPostData.author, name: e.target.value },
+                              };
+                              setStore({ ...store, posts: next });
+                            }}
+                            placeholder="Donald Jennings"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1">Reading Time</label>
+                          <input
+                            className="w-full px-3 py-2 bg-slate-800 rounded"
+                            value={selectedPostData.author?.readingTime ?? ''}
+                            onChange={e => {
+                              const next = [...store.posts];
+                              next[selectedPost] = {
+                                ...selectedPostData,
+                                author: { ...selectedPostData.author, name: selectedPostData.author?.name ?? '', readingTime: e.target.value },
+                              };
+                              setStore({ ...store, posts: next });
+                            }}
+                            placeholder="3 min read"
+                          />
+                        </div>
+                      </div>
+                      <label className="block text-xs text-slate-400 mb-1">Avatar</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          className="flex-1 px-3 py-2 bg-slate-800 rounded text-sm"
+                          value={selectedPostData.author?.avatarUrl ?? ''}
+                          onChange={e => {
+                            const next = [...store.posts];
+                            next[selectedPost] = {
+                              ...selectedPostData,
+                              author: { ...selectedPostData.author, name: selectedPostData.author?.name ?? '', avatarUrl: e.target.value },
+                            };
+                            setStore({ ...store, posts: next });
+                          }}
+                          placeholder="/images/dj-avatar.png"
+                        />
+                        <label className="px-3 py-2 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer whitespace-nowrap">
+                          {postAvatarUploading ? 'Uploading…' : 'Upload'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={postAvatarUploading}
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              uploadImage(
+                                file,
+                                path => {
+                                  const next = [...store.posts];
+                                  next[selectedPost] = {
+                                    ...selectedPostData,
+                                    author: { ...selectedPostData.author, name: selectedPostData.author?.name ?? '', avatarUrl: path },
+                                  };
+                                  setStore({ ...store, posts: next });
+                                },
+                                setPostAvatarUploading,
+                              );
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                      </div>
+
                       <label className="block text-sm text-slate-300">Content (MDX)</label>
                       <textarea
                         className="w-full min-h-64 bg-slate-800 rounded p-3"
@@ -625,6 +793,126 @@ export default function AdminPortalClient({
                         }}
                         placeholder="Tags (comma separated)"
                       />
+
+                      <label className="block text-sm text-slate-300">Card Image</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          className="flex-1 px-3 py-2 bg-slate-800 rounded text-sm"
+                          value={selectedProjectData.image || ''}
+                          onChange={e => {
+                            const next = [...store.projects];
+                            next[selectedProject] = {
+                              ...selectedProjectData,
+                              image: e.target.value,
+                            };
+                            setStore({ ...store, projects: next });
+                          }}
+                          placeholder="/images/my-image.png"
+                        />
+                        <label className="px-3 py-2 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer whitespace-nowrap">
+                          {projectImageUploading ? 'Uploading…' : 'Upload'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={projectImageUploading}
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              uploadImage(
+                                file,
+                                path => {
+                                  const next = [...store.projects];
+                                  next[selectedProject] = { ...selectedProjectData, image: path };
+                                  setStore({ ...store, projects: next });
+                                },
+                                setProjectImageUploading,
+                              );
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                        {selectedProjectData.image && (
+                          <button
+                            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm"
+                            onClick={() => {
+                              const next = [...store.projects];
+                              next[selectedProject] = { ...selectedProjectData, image: '' };
+                              setStore({ ...store, projects: next });
+                            }}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      {selectedProjectData.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={selectedProjectData.image}
+                          alt="Preview"
+                          className="h-24 rounded object-cover border border-slate-600"
+                        />
+                      )}
+
+                      <label className="block text-sm text-slate-300">Author</label>
+                      <div>
+                        <label className="block text-xs text-slate-400 mb-1">Name</label>
+                        <input
+                          className="w-full px-3 py-2 bg-slate-800 rounded"
+                          value={selectedProjectData.author?.name ?? ''}
+                          onChange={e => {
+                            const next = [...store.projects];
+                            next[selectedProject] = {
+                              ...selectedProjectData,
+                              author: { ...selectedProjectData.author, name: e.target.value },
+                            };
+                            setStore({ ...store, projects: next });
+                          }}
+                          placeholder="Donald Jennings"
+                        />
+                      </div>
+                      <label className="block text-xs text-slate-400 mb-1">Avatar</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          className="flex-1 px-3 py-2 bg-slate-800 rounded text-sm"
+                          value={selectedProjectData.author?.avatarUrl ?? ''}
+                          onChange={e => {
+                            const next = [...store.projects];
+                            next[selectedProject] = {
+                              ...selectedProjectData,
+                              author: { ...selectedProjectData.author, name: selectedProjectData.author?.name ?? '', avatarUrl: e.target.value },
+                            };
+                            setStore({ ...store, projects: next });
+                          }}
+                          placeholder="/images/dj-avatar.png"
+                        />
+                        <label className="px-3 py-2 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer whitespace-nowrap">
+                          {projectAvatarUploading ? 'Uploading…' : 'Upload'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={projectAvatarUploading}
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              uploadImage(
+                                file,
+                                path => {
+                                  const next = [...store.projects];
+                                  next[selectedProject] = {
+                                    ...selectedProjectData,
+                                    author: { ...selectedProjectData.author, name: selectedProjectData.author?.name ?? '', avatarUrl: path },
+                                  };
+                                  setStore({ ...store, projects: next });
+                                },
+                                setProjectAvatarUploading,
+                              );
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                      </div>
 
                       <label className="block text-sm text-slate-300">Content (MDX)</label>
                       <textarea

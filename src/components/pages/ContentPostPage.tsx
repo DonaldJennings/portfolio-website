@@ -3,7 +3,6 @@ import Link from 'next/link';
 import ContentPostPageContents, { ContentsItem } from '../molecules/ContentPostPageContents';
 import { useEffect, useRef, useState } from 'react';
 import ContentPostHeader from '../organisms/ContentPostHeader';
-import ContentPostBody from '../organisms/ContentPostBody';
 import RadialGradientOverlay from '../atoms/RadialGradientOverlay';
 
 type ContentPostPageProps = {
@@ -66,7 +65,7 @@ export default function ContentPostPage({ meta, children }: ContentPostPageProps
       <RadialGradientOverlay />
 
       {/* Main Content Above Backgrounds */}
-      <main className="w-full flex-1 font-sans transition-all relative z-10 px-4 md:px-32 py-4 md:py-10 flex flex-col">
+      <main className="w-full flex-1 font-sans transition-all relative z-10 px-4 md:px-12 lg:px-20 py-4 md:py-8 flex flex-col">
         {/* On mobile, remove all containers and backgrounds for flat design */}
         <div className="w-full mx-auto flex flex-col flex-1 transition-all">
           <div className="mt-20 md:mt-24">
@@ -74,13 +73,13 @@ export default function ContentPostPage({ meta, children }: ContentPostPageProps
               title={meta.title}
               date={meta.date}
               tags={meta.tags}
-              author={{
-                name: meta.author?.name ?? '',
-                avatarUrl: meta.author?.avatarUrl,
-                readingTime: meta.author?.readingTime,
+              author={meta.author?.name ? {
+                name: meta.author.name,
+                avatarUrl: meta.author.avatarUrl,
+                readingTime: meta.author.readingTime,
                 linkedinUrl: 'https://www.linkedin.com/in/donald-jennings-675081191/',
                 githubUrl: 'https://github.com/DonaldJennings/',
-              }}
+              } : undefined}
               excerpt={meta.excerpt}
               description={meta.description}
             />
@@ -90,39 +89,31 @@ export default function ContentPostPage({ meta, children }: ContentPostPageProps
             <div className="hidden md:block md:sticky md:top-24 md:self-start md:h-fit md:max-w-[260px] lg:max-w-[320px]">
               <ContentPostPageContents toc={toc} />
             </div>
-            <div className="flex-1 min-w-0 flex" ref={contentRef}>
-              <div className="rounded-2xl bg-slate-900/80 shadow-xl border border-slate-800 px-2 md:px-8 py-6 md:py-10 transition-all w-full min-h-full flex flex-col">
-                <ContentPostBody>
-                  <section
-                    className="
-                      mdx-content
-                      prose
-                      prose-invert
-                      prose-h1:text-2xl md:prose-h1:text-3xl prose-h1:font-bold prose-h1:mb-4 md:prose-h1:mb-6 prose-h1:text-blue-400 prose-h1:underline prose-h1:decoration-2 prose-h1:decoration-blue-400
-                      prose-h2:text-xl md:prose-h2:text-2xl prose-h2:font-semibold prose-h2:mt-8 md:prose-h2:mt-10 prose-h2:mb-3 md:prose-h2:mb-4 prose-h2:text-teal-400 prose-h2:underline prose-h2:decoration-2 prose-h2:decoration-teal-400
-                      prose-h3:text-lg md:prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 md:prose-h3:mt-8 prose-h3:mb-2 md:prose-h3:mb-3 prose-h3:text-green-400 prose-h3:underline prose-h3:decoration-2 prose-h3:decoration-green-400
-                      prose-p:text-[1rem] md:prose-p:text-[1.08rem] prose-p:leading-[1.75] prose-p:mb-4 md:prose-p:mb-6 prose-p:text-justify break-words whitespace-pre-line overflow-wrap break-word
-                      prose-ul:mb-4 md:prose-ul:mb-6 prose-ul:pl-6
-                      prose-li:mb-1 md:prose-li:mb-2
-                      prose-code:bg-[#23272e] prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono
-                      prose-pre:bg-[#23272e] prose-pre:p-4 prose-pre:rounded prose-pre:overflow-x-auto prose-pre:font-mono
-                      prose-blockquote:border-l-4 prose-blockquote:border-teal-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:bg-[#23272e] prose-blockquote:my-6 md:prose-blockquote:my-8
-                      w-full
-                      text-[#e5e7eb]
-                      space-y-6 md:space-y-8
-                      blog-content-link-fade
-                      px-2 md:px-0
-                    "
-                    style={{
-                      maxWidth: '100%',
-                      wordBreak: 'break-word',
-                      overflowWrap: 'break-word',
-                      whiteSpace: 'pre-line',
-                    }}
-                  >
-                    {children}
-                  </section>
-                </ContentPostBody>
+            <div className="flex-1 min-w-0" ref={contentRef}>
+              <div className="rounded-xl bg-slate-900/80 shadow-xl border border-slate-800 px-4 md:px-10 py-8 w-full">
+                <section
+                  className="
+                    mdx-content prose prose-invert max-w-none w-full
+                    text-slate-200
+                    prose-p:leading-relaxed prose-p:mb-3 prose-p:text-[1rem]
+                    prose-h1:text-2xl prose-h1:font-bold prose-h1:mt-12 prose-h1:mb-3 prose-h1:text-blue-400
+                    prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-2 prose-h2:text-teal-400
+                    prose-h3:text-lg prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-1.5 prose-h3:text-green-400
+                    prose-ul:pl-5 prose-ul:mb-3 prose-ul:mt-0
+                    prose-ol:pl-5 prose-ol:mb-3 prose-ol:mt-0
+                    prose-li:mb-1
+                    prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:text-green-300
+                    prose-pre:bg-[#1e2433] prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:font-mono prose-pre:my-4
+                    prose-blockquote:border-l-4 prose-blockquote:border-teal-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-300 prose-blockquote:my-4 prose-blockquote:not-italic
+                    prose-a:text-teal-400 prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-slate-100
+                    prose-hr:border-slate-700 prose-hr:my-6
+                    break-words blog-content-link-fade
+                  "
+                  style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                >
+                  {children}
+                </section>
               </div>
             </div>
           </div>
