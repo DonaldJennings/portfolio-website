@@ -45,10 +45,10 @@
   ],
   "projects": [
     {
-      "title": "Breaking the Monolith: Modular Multi-Tiered Load Balancing in Serverless Computing",
+      "title": "AutoNDP Load Balancer",
       "date": "2024-06-15",
       "slug": "faasm-load-balancer",
-      "description": "A deep dive into my contribution to dynamic, multi-tiered load balancing for scalable serverless systems.",
+      "description": "A policy-driven load balancing framework for a novel serverless runtime developed by the ICSA within the School of Informatics ",
       "excerpt": "How I redesigned the AutoNDP architecture to support modular, policy-driven load balancing—achieving greater scalability and flexibility in serverless computing.",
       "tags": [
         "serverless",
@@ -69,10 +69,15 @@
     },
     {
       "slug": "arche-engine",
-      "title": "Arche",
+      "title": "Arche Simulation Engine",
       "date": "2026-03-14",
       "content": "TBD",
-      "description": "3D Physics Engine developed in C++ with an ImGUI UI"
+      "description": "3D Physics Engine developed in C++ with an ImGUI UI",
+      "image": "/images/1773837042956-508589839-2b027d58-8341-4efb-9a05-e611fad85ab5.png",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      }
     }
   ],
   "experience": [
@@ -118,7 +123,7 @@
     },
     {
       "company": "Leonardo UK Ltd",
-      "role": "SWE Intern",
+      "role": "Software Engineering Intern",
       "dates": "2023 - 2023",
       "description": "Completed a summer internship where I led the development of an internal software tool for mechanical engineers. I cleared a backlog of features for the tool and initiated an internal release process.",
       "skills": [
