@@ -8,6 +8,7 @@ type AdminPost = {
   date: string;
   description?: string;
   tags?: string[];
+  image?: string;
   content: string;
 };
 
@@ -17,6 +18,7 @@ type AdminProject = {
   date: string;
   description?: string;
   tags?: string[];
+  image?: string;
   repoUrl?: string;
   content: string;
 };
@@ -135,6 +137,31 @@ export default function AdminPortalClient({
   const [selectedPublication, setSelectedPublication] = useState(0);
   const [metrics, setMetrics] = useState<GithubMetric[]>([]);
   const [message, setMessage] = useState('');
+  const [postImageUploading, setPostImageUploading] = useState(false);
+  const [projectImageUploading, setProjectImageUploading] = useState(false);
+
+  async function uploadImage(
+    file: File,
+    onSuccess: (path: string) => void,
+    setUploading: (v: boolean) => void,
+  ) {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/upload-image', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        onSuccess(data.path as string);
+      } else {
+        setMessage(`Image upload failed: ${data.error || 'unknown error'}`);
+      }
+    } catch {
+      setMessage('Image upload failed: network error');
+    } finally {
+      setUploading(false);
+    }
+  }
   const showContent = mode === 'all' || mode === 'content';
   const showMetrics = mode === 'all' || mode === 'metrics';
   const showPostsOnly = mode === 'posts';
@@ -495,6 +522,63 @@ export default function AdminPortalClient({
                         placeholder="Tags (comma separated)"
                       />
 
+                      <label className="block text-sm text-slate-300">Card Image</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          className="flex-1 px-3 py-2 bg-slate-800 rounded text-sm"
+                          value={selectedPostData.image || ''}
+                          onChange={e => {
+                            const next = [...store.posts];
+                            next[selectedPost] = { ...selectedPostData, image: e.target.value };
+                            setStore({ ...store, posts: next });
+                          }}
+                          placeholder="/images/my-image.png"
+                        />
+                        <label className="px-3 py-2 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer whitespace-nowrap">
+                          {postImageUploading ? 'Uploading…' : 'Upload'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={postImageUploading}
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              uploadImage(
+                                file,
+                                path => {
+                                  const next = [...store.posts];
+                                  next[selectedPost] = { ...selectedPostData, image: path };
+                                  setStore({ ...store, posts: next });
+                                },
+                                setPostImageUploading,
+                              );
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                        {selectedPostData.image && (
+                          <button
+                            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm"
+                            onClick={() => {
+                              const next = [...store.posts];
+                              next[selectedPost] = { ...selectedPostData, image: '' };
+                              setStore({ ...store, posts: next });
+                            }}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      {selectedPostData.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={selectedPostData.image}
+                          alt="Preview"
+                          className="h-24 rounded object-cover border border-slate-600"
+                        />
+                      )}
+
                       <label className="block text-sm text-slate-300">Content (MDX)</label>
                       <textarea
                         className="w-full min-h-64 bg-slate-800 rounded p-3"
@@ -625,6 +709,66 @@ export default function AdminPortalClient({
                         }}
                         placeholder="Tags (comma separated)"
                       />
+
+                      <label className="block text-sm text-slate-300">Card Image</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          className="flex-1 px-3 py-2 bg-slate-800 rounded text-sm"
+                          value={selectedProjectData.image || ''}
+                          onChange={e => {
+                            const next = [...store.projects];
+                            next[selectedProject] = {
+                              ...selectedProjectData,
+                              image: e.target.value,
+                            };
+                            setStore({ ...store, projects: next });
+                          }}
+                          placeholder="/images/my-image.png"
+                        />
+                        <label className="px-3 py-2 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer whitespace-nowrap">
+                          {projectImageUploading ? 'Uploading…' : 'Upload'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={projectImageUploading}
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              uploadImage(
+                                file,
+                                path => {
+                                  const next = [...store.projects];
+                                  next[selectedProject] = { ...selectedProjectData, image: path };
+                                  setStore({ ...store, projects: next });
+                                },
+                                setProjectImageUploading,
+                              );
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                        {selectedProjectData.image && (
+                          <button
+                            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm"
+                            onClick={() => {
+                              const next = [...store.projects];
+                              next[selectedProject] = { ...selectedProjectData, image: '' };
+                              setStore({ ...store, projects: next });
+                            }}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      {selectedProjectData.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={selectedProjectData.image}
+                          alt="Preview"
+                          className="h-24 rounded object-cover border border-slate-600"
+                        />
+                      )}
 
                       <label className="block text-sm text-slate-300">Content (MDX)</label>
                       <textarea
