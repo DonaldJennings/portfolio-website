@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type EducationCardProps = {
   degreeTitle?: string;
@@ -29,9 +31,11 @@ export default function EducationCard({
         {results && <p className="text-slate-400 text-sm mb-2">{results}</p>}
         {institution && <p className="text-blue-400 font-medium">{institution}</p>}
         {dateRange && <p className="text-slate-400 text-sm mb-2">{dateRange}</p>}
-        <div className="text-slate-300 space-y-2">
+        <div className="prose prose-sm prose-invert max-w-none text-slate-300 space-y-1">
           {description.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
+            <ReactMarkdown key={index} remarkPlugins={[remarkGfm]}>
+              {paragraph}
+            </ReactMarkdown>
           ))}
         </div>
       </div>

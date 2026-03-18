@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import ContentPostPage from '@/components/pages/ContentPostPage';
 import { getAllProjects, getProject, ProjectMeta } from '@/lib/projects';
+import { compileMdx } from '@/lib/compileMDX';
 
 export async function generateStaticParams() {
   const projects = getAllProjects();
@@ -12,6 +13,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const project = getProject(slug);
   if (!project) notFound();
   const { content, meta } = project;
+  const compiled = await compileMdx(content);
 
   const metaWithParent = {
     ...meta,
@@ -26,7 +28,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="min-h-screen relative">
-      <ContentPostPage meta={metaWithParent}>{content}</ContentPostPage>
+      <ContentPostPage meta={metaWithParent}>{compiled}</ContentPostPage>
     </div>
   );
 }
