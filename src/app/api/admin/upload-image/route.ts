@@ -4,6 +4,27 @@ import { commitFileToBranch } from '@/lib/admin/githubSync';
 import path from 'path';
 import fs from 'fs';
 
+const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+/** Verify file is a real image by inspecting magic bytes, not the browser-reported MIME type. */
+function isValidImageBuffer(buf: Buffer): boolean {
+  if (buf.length < 12) return false;
+  const isPng = buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47;
+  const isJpeg = buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+  const isGif = buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38;
+  // WebP: "RIFF????WEBP"
+  const isWebp =
+    buf[0] === 0x52 &&
+    buf[1] === 0x49 &&
+    buf[2] === 0x46 &&
+    buf[3] === 0x46 &&
+    buf[8] === 0x57 &&
+    buf[9] === 0x45 &&
+    buf[10] === 0x42 &&
+    buf[11] === 0x50;
+  return isPng || isJpeg || isGif || isWebp;
+}
+
 export async function POST(request: Request) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -21,18 +42,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 });
   }
 
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
+  // Enforce size limit before reading the full buffer into memory
+  if (file.size > MAX_SIZE_BYTES) {
+    return NextResponse.json({ error: 'File too large (max 5 MB)' }, { status: 413 });
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  // Validate actual image format via magic bytes, not the browser-supplied MIME type
+  if (!isValidImageBuffer(buffer)) {
+    return NextResponse.json(
+      { error: 'Unsupported file type. Only PNG, JPEG, GIF, and WebP are accepted.' },
+      { status: 415 },
+    );
   }
 
   // Sanitize and prefix filename with timestamp to avoid collisions
   const sanitized = file.name.replace(/[^a-zA-Z0-9._-]/g, '-').toLowerCase();
   const filename = `${Date.now()}-${sanitized}`;
   const publicPath = `/images/${filename}`;
-
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
   const base64Content = buffer.toString('base64');
 
   const isProd = process.env.NODE_ENV === 'production';

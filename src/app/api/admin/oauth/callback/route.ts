@@ -111,9 +111,17 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/admin/login?error=unauthorized', url.origin));
     }
 
-    // If an explicit allowed username is configured, enforce it as an additional guard.
+    // ADMIN_GITHUB_USERNAME is required — the system fails closed if it is not
+    // configured rather than falling back to collaborator-only access.
     const allowedUser = getAllowedGithubUsername();
-    if (allowedUser && user.login.toLowerCase() !== allowedUser.toLowerCase()) {
+    if (!allowedUser) {
+      console.error(
+        'Admin login blocked: ADMIN_GITHUB_USERNAME is not set. ' +
+          'Set it to your GitHub username to enable admin access.',
+      );
+      return NextResponse.redirect(new URL('/admin/login?error=misconfigured', url.origin));
+    }
+    if (user.login.toLowerCase() !== allowedUser.toLowerCase()) {
       return NextResponse.redirect(new URL('/admin/login?error=unauthorized', url.origin));
     }
 

@@ -5,7 +5,18 @@ const SESSION_COOKIE = 'admin_session';
 const OAUTH_STATE_COOKIE = 'admin_oauth_state';
 
 function secret() {
-  return process.env.ADMIN_SECRET || 'dev-admin-secret-change-me';
+  const s = process.env.ADMIN_SECRET;
+  if (!s) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'ADMIN_SECRET environment variable must be set in production. ' +
+          'Generate a value with: openssl rand -hex 32',
+      );
+    }
+    // Dev-only fallback — never reaches production
+    return 'dev-only-secret-not-for-production';
+  }
+  return s;
 }
 
 export function getAllowedGithubUsername() {
@@ -35,18 +46,16 @@ export function verifySessionToken(token: string) {
     const sigBuf = Buffer.from(signature, 'utf8');
     const expBuf = Buffer.from(expected, 'utf8');
 
-    // Prevent timing attacks when comparing signatures
     if (sigBuf.length !== expBuf.length) return false;
     if (!crypto.timingSafeEqual(sigBuf, expBuf)) return false;
 
-    // Validate payload timestamp and username
     const parts = payload.split(':');
     if (parts.length < 2) return false;
     const githubLogin = parts[0];
     const ts = Number(parts[1]);
     if (!Number.isFinite(ts)) return false;
 
-    const maxAgeSeconds = 60 * 60 * 12; // match cookie maxAge
+    const maxAgeSeconds = 60 * 60 * 12;
     const ageMs = Date.now() - ts;
     if (ageMs < 0 || ageMs > maxAgeSeconds * 1000) return false;
 
@@ -65,6 +74,8 @@ export function createOauthState() {
 
 export async function setOauthStateCookie(state: string) {
   const cookieStore = await cookies();
+  // sameSite: 'lax' required here so the cookie is sent when GitHub
+  // redirects back to the callback (a cross-site top-level navigation).
   cookieStore.set(OAUTH_STATE_COOKIE, state, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -77,6 +88,8 @@ export async function setOauthStateCookie(state: string) {
 export async function validateOauthState(state?: string | null) {
   const cookieStore = await cookies();
   const expected = cookieStore.get(OAUTH_STATE_COOKIE)?.value;
+
+  // Clear the state cookie immediately regardless of outcome
   cookieStore.set(OAUTH_STATE_COOKIE, '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -85,15 +98,24 @@ export async function validateOauthState(state?: string | null) {
     expires: new Date(0),
   });
 
-  return Boolean(state && expected && state === expected);
+  if (!state || !expected) return false;
+
+  // Timing-safe comparison to prevent oracle attacks
+  const stateBuf = Buffer.from(state, 'utf8');
+  const expectedBuf = Buffer.from(expected, 'utf8');
+  if (stateBuf.length !== expectedBuf.length) return false;
+  return crypto.timingSafeEqual(stateBuf, expectedBuf);
 }
 
 export async function setAdminSessionCookie(token: string) {
   const cookieStore = await cookies();
+  // sameSite: 'strict' — the session cookie never needs to be sent on a
+  // cross-site request; the OAuth callback sets it during a same-origin
+  // server response, so 'strict' is safe here.
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60 * 12,
   });
@@ -104,7 +126,7 @@ export async function clearAdminSessionCookie() {
   cookieStore.set(SESSION_COOKIE, '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'strict',
     path: '/',
     expires: new Date(0),
   });
