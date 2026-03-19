@@ -1,36 +1,45 @@
 import React from 'react';
-import SkillCategory from '@/components/molecules/SkillCategory';
+import type { SkillCategoryEntry } from '@/lib/admin/contentStore';
 
-const skillsData = [
-  {
-    title: 'Programming Languages',
-    skills: ['C++', 'C', 'Python', 'Java', 'Haskell'],
-    variant: 'blue' as const,
-  },
-  {
-    title: 'Frameworks & Tools',
-    skills: ['React', 'Next.js', 'Node.js', 'Git', 'Docker', 'Qt'],
-    variant: 'green' as const,
-  },
-  {
-    title: 'Specializations',
-    skills: ['Software Engineering', 'System Design', 'Software Architecture'],
-    variant: 'purple' as const,
-  },
+const ACCENT_MAP: Record<string, string> = {
+  blue: 'text-blue-400',
+  teal: 'text-teal-400',
+  purple: 'text-purple-400',
+  green: 'text-green-400',
+  amber: 'text-amber-400',
+};
+
+const CHIP_COLORS = [
+  'bg-blue-500/15 text-blue-300 border-blue-500/25',
+  'bg-teal-500/15 text-teal-300 border-teal-500/25',
+  'bg-purple-500/15 text-purple-300 border-purple-500/25',
+  'bg-green-500/15 text-green-300 border-green-500/25',
+  'bg-amber-500/15 text-amber-300 border-amber-500/25',
 ];
 
-export default function SkillsSection() {
+function chipColor(skill: string, catIdx: number) {
+  let h = catIdx;
+  for (let i = 0; i < skill.length; i++) h = (h * 31 + skill.charCodeAt(i)) & 0xffff;
+  return CHIP_COLORS[h % CHIP_COLORS.length];
+}
+
+export default function SkillsSection({ categories }: { categories: SkillCategoryEntry[] }) {
+  if (categories.length === 0) return null;
   return (
-    <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-8 border border-slate-800">
-      <h2 className="text-2xl font-semibold text-white mb-6">Skills</h2>
+    <div>
+      <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Skills</h3>
       <div className="space-y-4">
-        {skillsData.map(category => (
-          <SkillCategory
-            key={category.title}
-            title={category.title}
-            skills={category.skills}
-            variant={category.variant}
-          />
+        {categories.map((cat, catIdx) => (
+          <div key={cat.title}>
+            <p className={`text-xs font-semibold mb-2 ${ACCENT_MAP[cat.accent] ?? 'text-slate-400'}`}>{cat.title}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {cat.skills.map(skill => (
+                <span key={skill} className={`px-2.5 py-0.5 rounded text-xs font-medium border ${chipColor(skill, catIdx)}`}>
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>

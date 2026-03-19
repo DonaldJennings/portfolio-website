@@ -2,79 +2,46 @@
 
 import { useEffect, useState } from 'react';
 import LandingPage from '@/components/pages/LandingPage';
-import SectionWithBackground from '@/components/molecules/Section';
 import ExperienceList from '@/components/organisms/ExperienceList';
 import EducationSection from '@/components/organisms/EducationSection';
 import PublicationsSection from '@/components/organisms/PublicationsSection';
-import AboutSidebar from '@/components/organisms/AboutSidebar';
+import SkillsSection from '@/components/organisms/SkillsSection';
+import CertificationsSection from '@/components/organisms/CertificationsSection';
+import AwardsSection from '@/components/organisms/AwardsSection';
+import InterestsSection from '@/components/organisms/InterestsSection';
 import CallToActionSection from '@/components/organisms/CallToActionSection';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import type { ExperienceEntry, EducationEntry, PublicationEntry } from '@/lib/admin/contentStore';
+import type { ExperienceEntry, EducationEntry, PublicationEntry, ProfileData, HighlightEntry, SkillCategoryEntry, AwardEntry, InterestEntry } from '@/lib/admin/contentStore';
+
+type Tab = 'experience' | 'education' | 'publications';
 
 type HomeClientProps = {
   experience: ExperienceEntry[];
   education: EducationEntry[];
   publications: PublicationEntry[];
+  profile: ProfileData;
+  highlights: HighlightEntry[];
+  skillCategories: SkillCategoryEntry[];
+  certifications: string[];
+  awards: AwardEntry[];
+  interests: InterestEntry[];
   isOpenForOpportunities: boolean;
 };
-
-const ABOUT_ITEMS = [
-  { id: 'summary', label: 'Summary' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'education', label: 'Education' },
-  { id: 'publications', label: 'Publications' },
-];
-
-function AboutTOC() {
-  const [active, setActive] = useState('summary');
-  useEffect(() => {
-    function onScroll() {
-      let current = 'summary';
-      for (const item of ABOUT_ITEMS) {
-        const el = document.getElementById(item.id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 120) {
-            current = item.id;
-          }
-        }
-      }
-      setActive(current);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  return (
-    <nav className="hidden lg:block lg:col-span-1 sticky top-32 self-start mr-2">
-      <ul className="space-y-2 bg-slate-800/60 rounded-xl p-4 text-sm text-slate-200 shadow-md">
-        {ABOUT_ITEMS.map(item => (
-          <li key={item.id}>
-            <a
-              href={`#${item.id}`}
-              className={
-                (active === item.id
-                  ? 'text-green-400 font-semibold border-l-4 border-green-400 pl-2 bg-slate-700/40 '
-                  : 'hover:text-green-400 transition-colors duration-150 pl-2') +
-                ' block rounded-md py-1 px-1'
-              }
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
 
 export default function HomeClient({
   experience,
   education,
   publications,
+  profile,
+  highlights,
+  skillCategories,
+  certifications,
+  awards,
+  interests,
   isOpenForOpportunities,
 }: HomeClientProps) {
   const isAboutVisible = useScrollAnimation();
+  const [activeTab, setActiveTab] = useState<Tab>('experience');
 
   useEffect(() => {
     const scrollToSection = sessionStorage.getItem('scrollToSection');
@@ -85,14 +52,23 @@ export default function HomeClient({
         if (element) {
           const navbarHeight = 80;
           const elementPosition = element.offsetTop - navbarHeight;
-          window.scrollTo({
-            top: elementPosition,
-            behavior: 'smooth',
-          });
+          window.scrollTo({ top: elementPosition, behavior: 'smooth' });
         }
       }, 100);
     }
   }, []);
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'experience', label: 'Experience' },
+    { id: 'education', label: 'Education' },
+    ...(publications.length > 0 ? [{ id: 'publications' as Tab, label: 'Publications' }] : []),
+  ];
+
+  const panelStyle = {
+    background: 'rgba(15,23,42,0.68)',
+    backdropFilter: 'blur(14px)',
+    border: '1.5px solid rgba(100,116,139,0.22)',
+  };
 
   return (
     <main className="relative w-full font-mono">
@@ -101,7 +77,7 @@ export default function HomeClient({
         <LandingPage />
       </section>
 
-      {/* About Section Divider & Cue */}
+      {/* Scroll cue */}
       <div className="flex flex-col items-center justify-center mt-[-2rem] mb-4">
         <div className="w-24 h-1 bg-gradient-to-r from-green-400/0 via-green-400/80 to-green-400/0 rounded-full mb-2" />
         <div
@@ -111,78 +87,141 @@ export default function HomeClient({
           ↓ About Me
         </div>
       </div>
+
       <section
         id="about"
         className={`min-h-screen w-full relative z-20 transition-all duration-1000 ${
           isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
-          {/* Header */}
-          <div
-            className={`text-center mb-12 transition-all duration-1000 delay-200 ${
-              isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About Me</h1>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-              Software Engineer with a focus on innovation and systems programming
-            </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-20 pb-24">
+          <div className="flex flex-col lg:flex-row gap-6 items-start">
+
+            {/* ── LEFT SIDEBAR (sticky) ── */}
+            <aside
+              className={`w-full lg:w-72 xl:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 space-y-5 transition-all duration-1000 delay-200 ${
+                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              {/* Bio card */}
+              <div className="rounded-2xl p-6" style={panelStyle}>
+                {/* Avatar + name */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center text-white text-lg font-bold flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #14b8a6 0%, #3b82f6 100%)' }}
+                  >
+                    {profile.avatarUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
+                    ) : (
+                      profile.name?.charAt(0)?.toUpperCase() ?? 'D'
+                    )}
+                  </div>
+                  <div>
+                    <h1 className="text-white font-bold text-lg leading-tight">{profile.name}</h1>
+                    <p className="text-teal-400 text-xs font-medium">{profile.role}</p>
+                  </div>
+                </div>
+
+                <p className="text-slate-500 text-xs mb-3">{profile.company} · {profile.location}</p>
+
+                <p className="text-slate-300 text-sm leading-relaxed mb-4">
+                  {profile.bio}
+                </p>
+
+                {/* Status badge */}
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/25">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                  {profile.statusLabel}
+                </span>
+              </div>
+
+              {/* Quick highlights */}
+              <div className="rounded-2xl p-5 space-y-2" style={panelStyle}>
+                {highlights.map(h => (
+                  <HighlightRow key={h.label} icon={h.icon} label={h.label} sub={h.sub} />
+                ))}
+              </div>
+
+              {/* Skills */}
+              <div className="rounded-2xl p-5" style={panelStyle}>
+                <SkillsSection categories={skillCategories} />
+              </div>
+
+              {/* Interests */}
+              <div className="rounded-2xl p-5" style={panelStyle}>
+                <InterestsSection interests={interests} />
+              </div>
+            </aside>
+
+            {/* ── RIGHT MAIN PANEL (tabs) ── */}
+            <div
+              className={`flex-1 min-w-0 transition-all duration-1000 delay-400 ${
+                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              {/* Tab panel */}
+              <div className="rounded-2xl overflow-hidden" style={panelStyle}>
+                {/* Tab bar */}
+                <div className="flex border-b border-slate-700/60 overflow-x-auto">
+                  {tabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-all relative flex-shrink-0 ${
+                        activeTab === tab.id
+                          ? 'text-teal-400'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {tab.label}
+                      {activeTab === tab.id && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-teal-500 to-blue-500" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab content */}
+                <div className="p-6 md:p-8">
+                  {activeTab === 'experience' && <ExperienceList jobs={experience} />}
+                  {activeTab === 'education' && <EducationSection education={education} />}
+                  {activeTab === 'publications' && <PublicationsSection publications={publications} />}
+                </div>
+              </div>
+
+              {/* Awards — below the tab panel, always visible */}
+              <div className="rounded-2xl p-6 md:p-8 mt-6" style={panelStyle}>
+                <AwardsSection awards={awards} />
+              </div>
+
+              {/* Certifications — compact row below awards */}
+              <div className="rounded-2xl p-6 mt-6" style={panelStyle}>
+                <CertificationsSection certifications={certifications} />
+              </div>
+
+              {isOpenForOpportunities && (
+                <div className="mt-6">
+                  <CallToActionSection />
+                </div>
+              )}
+            </div>
           </div>
-
-          <div className="grid lg:grid-cols-6 gap-12">
-            <AboutTOC />
-            {/* Main Content */}
-            <div
-              className={`lg:col-span-4 space-y-8 transition-all duration-1000 delay-400 ${
-                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-              id="summary"
-            >
-              {/* Introduction */}
-              <SectionWithBackground
-                title="Introduction"
-                bodyText="Hello! I'm Donald, a Software Engineer currently working at Leonardo UK Ltd. I graduated with a 1st Class BSc (Hons) in Computer Science from University of Edinburgh. I am interested in developing innovative and smart solutions to complex technical challenges with my skills spanning a wide range from cloud computing to systems programming"
-              />
-
-              {/* Experience */}
-              <div id="experience">
-                <ExperienceList jobs={experience} />
-              </div>
-
-              {/* Education */}
-              <div id="education">
-                <EducationSection education={education} />
-              </div>
-
-              {/* Publications */}
-              <div id="publications">
-                <PublicationsSection publications={publications} />
-              </div>
-            </div>
-
-            {/* Sidebar */}
-            <div
-              className={`lg:col-span-1 min-w-[260px] max-w-xs transition-all duration-1000 delay-600 ${
-                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-            >
-              <AboutSidebar />
-            </div>
-          </div>
-
-          {/* Call to Action - Only show when open for opportunities */}
-          {isOpenForOpportunities && (
-            <div
-              className={`mt-12 transition-all duration-1000 delay-800 ${
-                isAboutVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-            >
-              <CallToActionSection />
-            </div>
-          )}
         </div>
       </section>
     </main>
+  );
+}
+
+function HighlightRow({ icon, label, sub }: { icon: string; label: string; sub: string }) {
+  return (
+    <div className="flex items-start gap-2.5 py-1.5 border-b border-slate-700/40 last:border-0">
+      <span className="text-base flex-shrink-0 mt-0.5">{icon}</span>
+      <div className="min-w-0">
+        <p className="text-slate-200 text-xs font-medium leading-snug">{label}</p>
+        <p className="text-slate-500 text-[11px]">{sub}</p>
+      </div>
+    </div>
   );
 }

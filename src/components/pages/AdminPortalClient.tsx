@@ -37,13 +37,19 @@ type AdminProject = {
   architectureDiagram?: string;
 };
 
-type ExperienceEntry = {
-  company: string;
+type ExperienceRole = {
   role: string;
   dates: string;
   description: string;
   skills: string[];
   isCurrent?: boolean;
+};
+
+type ExperienceEntry = {
+  company: string;
+  logoUrl?: string;
+  websiteUrl?: string;
+  roles: ExperienceRole[];
 };
 
 type EducationEntry = {
@@ -95,6 +101,40 @@ type PublicationEntry = {
   doi?: string;
 };
 
+type ProfileData = {
+  name: string;
+  role: string;
+  company: string;
+  location: string;
+  bio: string;
+  statusLabel: string;
+  avatarUrl?: string;
+};
+
+type HighlightEntry = {
+  icon: string;
+  label: string;
+  sub: string;
+};
+
+type SkillCategoryEntry = {
+  title: string;
+  skills: string[];
+  accent: string;
+};
+
+type AwardEntry = {
+  title: string;
+  org: string;
+  year: string;
+  description: string;
+};
+
+type InterestEntry = {
+  icon: string;
+  label: string;
+};
+
 type Store = {
   posts: AdminPost[];
   projects: AdminProject[];
@@ -102,6 +142,12 @@ type Store = {
   education: EducationEntry[];
   publications: PublicationEntry[];
   githubRepos: { owner: string; repo: string; projectName?: string }[];
+  profile: ProfileData;
+  highlights: HighlightEntry[];
+  skillCategories: SkillCategoryEntry[];
+  certifications: string[];
+  awards: AwardEntry[];
+  interests: InterestEntry[];
 };
 
 type AdminPortalMode =
@@ -112,7 +158,8 @@ type AdminPortalMode =
   | 'projects'
   | 'experience'
   | 'education'
-  | 'publications';
+  | 'publications'
+  | 'profile';
 
 // ─── Markdown preview (client-side, no extra deps) ─────────────────────────────
 
@@ -326,6 +373,7 @@ function ItemList<T>({
 // ─── Main component ────────────────────────────────────────────────────────────
 
 const NAV = [
+  { mode: 'profile',    href: '/admin/profile',    label: 'Profile',      icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
   { mode: 'posts',      href: '/admin/posts',      label: 'Blog Posts',   icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6m-6-4h6' },
   { mode: 'projects',   href: '/admin/projects',   label: 'Projects',     icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' },
   { mode: 'experience', href: '/admin/experience', label: 'Experience',   icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
@@ -342,24 +390,17 @@ export default function AdminPortalClient({
   mode?: AdminPortalMode;
 }) {
   const [store, setStore] = useState<Store>(initialStore);
-  const STORAGE_KEY = 'admin_pending_store_v1';
 
+  // Always load fresh data from the server on mount — no sessionStorage caching
+  // to avoid stale schema issues when fields are added.
   useEffect(() => {
-    const pending = typeof window !== 'undefined' ? sessionStorage.getItem(STORAGE_KEY) : null;
-    if (pending) {
-      try { setStore(JSON.parse(pending) as Store); return; } catch { /* ignore */ }
-    }
     (async () => {
       try {
         const res = await fetch('/api/admin/content');
         if (res.ok) setStore(await res.json() as Store);
-      } catch { /* ignore */ }
+      } catch { /* ignore — fall back to initialStore */ }
     })();
   }, []);
-
-  useEffect(() => {
-    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch { /* ignore */ }
-  }, [store]);
 
   const [selectedPost, setSelectedPost] = useState(0);
   const [selectedProject, setSelectedProject] = useState(0);
@@ -376,6 +417,7 @@ export default function AdminPortalClient({
   const [postAvatarUploading, setPostAvatarUploading] = useState(false);
   const [projectAvatarUploading, setProjectAvatarUploading] = useState(false);
   const [projectDiagramUploading, setProjectDiagramUploading] = useState(false);
+  const [companyLogoUploading, setCompanyLogoUploading] = useState(false);
 
   // Auto-clear status message
   useEffect(() => {
@@ -475,21 +517,110 @@ export default function AdminPortalClient({
   }
 
   function addExperience() {
-    const next = [...store.experience, { company: 'New Company', role: 'New Role', dates: new Date().getFullYear().toString(), description: '', skills: [] }];
+    const next: ExperienceEntry[] = [...store.experience, {
+      company: 'New Company',
+      logoUrl: '',
+      roles: [{ role: 'New Role', dates: new Date().getFullYear().toString(), description: '', skills: [], isCurrent: false }],
+    }];
     setStore({ ...store, experience: next });
     setSelectedExperience(next.length - 1);
   }
   function deleteExperience(i: number) {
-    if (!window.confirm('Delete this experience entry?')) return;
+    if (!window.confirm('Delete this company and all its roles?')) return;
     const next = [...store.experience];
     next.splice(i, 1);
     setStore({ ...store, experience: next });
     setSelectedExperience(Math.max(0, i - 1));
   }
-  function patchExperience(patch: Partial<ExperienceEntry>) {
+  function patchExperienceMeta(patch: Partial<Pick<ExperienceEntry, 'company' | 'logoUrl' | 'websiteUrl'>>) {
     const next = [...store.experience];
     next[selectedExperience] = { ...selectedExperienceData!, ...patch };
     setStore({ ...store, experience: next });
+  }
+  function addExperienceRole() {
+    const entry = selectedExperienceData!;
+    const next = [...store.experience];
+    next[selectedExperience] = {
+      ...entry,
+      roles: [...entry.roles, { role: 'New Role', dates: new Date().getFullYear().toString(), description: '', skills: [], isCurrent: false }],
+    };
+    setStore({ ...store, experience: next });
+  }
+  function deleteExperienceRole(roleIdx: number) {
+    if (!window.confirm('Delete this role?')) return;
+    const entry = selectedExperienceData!;
+    const roles = [...entry.roles];
+    roles.splice(roleIdx, 1);
+    const next = [...store.experience];
+    next[selectedExperience] = { ...entry, roles };
+    setStore({ ...store, experience: next });
+  }
+  function patchExperienceRole(roleIdx: number, patch: Partial<ExperienceRole>) {
+    const entry = selectedExperienceData!;
+    const roles = [...entry.roles];
+    roles[roleIdx] = { ...roles[roleIdx], ...patch };
+    const next = [...store.experience];
+    next[selectedExperience] = { ...entry, roles };
+    setStore({ ...store, experience: next });
+  }
+
+  function patchProfile(patch: Partial<ProfileData>) {
+    setStore(s => ({ ...s, profile: { ...s.profile, ...patch } }));
+  }
+
+  // Highlights
+  function addHighlight() {
+    setStore(s => ({ ...s, highlights: [...(s.highlights ?? []), { icon: '⭐', label: 'New highlight', sub: '' }] }));
+  }
+  function deleteHighlight(i: number) {
+    setStore(s => { const next = [...(s.highlights ?? [])]; next.splice(i, 1); return { ...s, highlights: next }; });
+  }
+  function patchHighlight(i: number, patch: Partial<HighlightEntry>) {
+    setStore(s => { const next = [...(s.highlights ?? [])]; next[i] = { ...next[i], ...patch }; return { ...s, highlights: next }; });
+  }
+
+  // Skill categories
+  function addSkillCategory() {
+    setStore(s => ({ ...s, skillCategories: [...(s.skillCategories ?? []), { title: 'New Category', skills: [], accent: 'blue' }] }));
+  }
+  function deleteSkillCategory(i: number) {
+    setStore(s => { const next = [...(s.skillCategories ?? [])]; next.splice(i, 1); return { ...s, skillCategories: next }; });
+  }
+  function patchSkillCategory(i: number, patch: Partial<SkillCategoryEntry>) {
+    setStore(s => { const next = [...(s.skillCategories ?? [])]; next[i] = { ...next[i], ...patch }; return { ...s, skillCategories: next }; });
+  }
+
+  // Certifications
+  function addCertification() {
+    setStore(s => ({ ...s, certifications: [...(s.certifications ?? []), 'New Certification'] }));
+  }
+  function deleteCertification(i: number) {
+    setStore(s => { const next = [...(s.certifications ?? [])]; next.splice(i, 1); return { ...s, certifications: next }; });
+  }
+  function patchCertification(i: number, val: string) {
+    setStore(s => { const next = [...(s.certifications ?? [])]; next[i] = val; return { ...s, certifications: next }; });
+  }
+
+  // Awards
+  function addAward() {
+    setStore(s => ({ ...s, awards: [...(s.awards ?? []), { title: 'New Award', org: '', year: new Date().getFullYear().toString(), description: '' }] }));
+  }
+  function deleteAward(i: number) {
+    setStore(s => { const next = [...(s.awards ?? [])]; next.splice(i, 1); return { ...s, awards: next }; });
+  }
+  function patchAward(i: number, patch: Partial<AwardEntry>) {
+    setStore(s => { const next = [...(s.awards ?? [])]; next[i] = { ...next[i], ...patch }; return { ...s, awards: next }; });
+  }
+
+  // Interests
+  function addInterest() {
+    setStore(s => ({ ...s, interests: [...(s.interests ?? []), { icon: '✨', label: 'New Interest' }] }));
+  }
+  function deleteInterest(i: number) {
+    setStore(s => { const next = [...(s.interests ?? [])]; next.splice(i, 1); return { ...s, interests: next }; });
+  }
+  function patchInterest(i: number, patch: Partial<InterestEntry>) {
+    setStore(s => { const next = [...(s.interests ?? [])]; next[i] = { ...next[i], ...patch }; return { ...s, interests: next }; });
   }
 
   function addEducation() {
@@ -549,6 +680,7 @@ export default function AdminPortalClient({
   // Determine active section from mode
   // Derive active section before any effects that depend on it
   const activeSection: typeof NAV[number]['mode'] =
+    mode === 'profile' ? 'profile' :
     mode === 'metrics' ? 'metrics' :
     mode === 'projects' ? 'projects' :
     mode === 'experience' ? 'experience' :
@@ -821,6 +953,158 @@ export default function AdminPortalClient({
             </>
           )}
 
+          {/* ══ Profile ══ */}
+          {activeSection === 'profile' && (
+            <div className="flex-1 overflow-y-auto px-8 py-6 space-y-10">
+              {/* Bio */}
+              <FieldGroup title="Bio">
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Name">
+                    <input className={inputCls} value={store.profile?.name ?? ''} onChange={e => patchProfile({ name: e.target.value })} />
+                  </Field>
+                  <Field label="Role / Title">
+                    <input className={inputCls} value={store.profile?.role ?? ''} onChange={e => patchProfile({ role: e.target.value })} />
+                  </Field>
+                  <Field label="Company">
+                    <input className={inputCls} value={store.profile?.company ?? ''} onChange={e => patchProfile({ company: e.target.value })} />
+                  </Field>
+                  <Field label="Location">
+                    <input className={inputCls} value={store.profile?.location ?? ''} onChange={e => patchProfile({ location: e.target.value })} />
+                  </Field>
+                </div>
+                <Field label="Bio text">
+                  <textarea className={`${inputCls} min-h-24 resize-y`} value={store.profile?.bio ?? ''} onChange={e => patchProfile({ bio: e.target.value })} />
+                </Field>
+                <Field label="Status badge label" hint='e.g. "Currently at Leonardo UK"'>
+                  <input className={inputCls} value={store.profile?.statusLabel ?? ''} onChange={e => patchProfile({ statusLabel: e.target.value })} />
+                </Field>
+                <Field label="Avatar / profile photo">
+                  <ImageField
+                    value={store.profile?.avatarUrl ?? ''}
+                    onChange={v => patchProfile({ avatarUrl: v })}
+                    uploading={companyLogoUploading}
+                    onUpload={f => uploadImage(f, p => patchProfile({ avatarUrl: p }), setCompanyLogoUploading)}
+                  />
+                </Field>
+              </FieldGroup>
+
+              {/* Highlights */}
+              <FieldGroup title="Quick highlights">
+                <div className="space-y-3">
+                  {(store.highlights ?? []).map((h, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input className={`${inputCls} w-14`} value={h.icon} onChange={e => patchHighlight(i, { icon: e.target.value })} placeholder="🎓" />
+                      <input className={`${inputCls} flex-1`} value={h.label} onChange={e => patchHighlight(i, { label: e.target.value })} placeholder="Label" />
+                      <input className={`${inputCls} flex-1`} value={h.sub} onChange={e => patchHighlight(i, { sub: e.target.value })} placeholder="Sub-label" />
+                      <button onClick={() => deleteHighlight(i)} className="text-slate-600 hover:text-red-400 transition-colors shrink-0">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={addHighlight} className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add highlight
+                  </button>
+                </div>
+              </FieldGroup>
+
+              {/* Skills */}
+              <FieldGroup title="Skill categories">
+                <div className="space-y-5">
+                  {(store.skillCategories ?? []).map((cat, ci) => (
+                    <div key={ci} className="rounded-lg border border-slate-700/60 bg-slate-800/30 p-4 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <input className={`${inputCls} flex-1`} value={cat.title} onChange={e => patchSkillCategory(ci, { title: e.target.value })} placeholder="Category name" />
+                        <select className={`${inputCls} w-28`} value={cat.accent} onChange={e => patchSkillCategory(ci, { accent: e.target.value })}>
+                          {['blue','teal','purple','green','amber'].map(a => <option key={a} value={a}>{a}</option>)}
+                        </select>
+                        <button onClick={() => deleteSkillCategory(ci)} className="text-slate-600 hover:text-red-400 transition-colors shrink-0">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                      </div>
+                      <Field label="Skills" hint="Comma-separated">
+                        <CommaSeparatedInput className={inputCls} value={cat.skills} onChange={skills => patchSkillCategory(ci, { skills })} placeholder="React, Node.js, Docker" />
+                      </Field>
+                    </div>
+                  ))}
+                  <button onClick={addSkillCategory} className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add category
+                  </button>
+                </div>
+              </FieldGroup>
+
+              {/* Certifications */}
+              <FieldGroup title="Certifications">
+                <div className="space-y-2">
+                  {(store.certifications ?? []).map((cert, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input className={`${inputCls} flex-1`} value={cert} onChange={e => patchCertification(i, e.target.value)} placeholder="Certification name" />
+                      <button onClick={() => deleteCertification(i)} className="text-slate-600 hover:text-red-400 transition-colors shrink-0">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={addCertification} className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add certification
+                  </button>
+                </div>
+              </FieldGroup>
+
+              {/* Awards */}
+              <FieldGroup title="Awards">
+                <div className="space-y-5">
+                  {(store.awards ?? []).map((award, i) => (
+                    <div key={i} className="rounded-lg border border-slate-700/60 bg-slate-800/30 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Award {i + 1}</span>
+                        <button onClick={() => deleteAward(i)} className="text-xs text-slate-600 hover:text-red-400 transition-colors">Remove</button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Field label="Title">
+                          <input className={inputCls} value={award.title} onChange={e => patchAward(i, { title: e.target.value })} />
+                        </Field>
+                        <Field label="Year">
+                          <input className={inputCls} value={award.year} onChange={e => patchAward(i, { year: e.target.value })} />
+                        </Field>
+                      </div>
+                      <Field label="Organisation">
+                        <input className={inputCls} value={award.org} onChange={e => patchAward(i, { org: e.target.value })} />
+                      </Field>
+                      <Field label="Description">
+                        <textarea className={`${inputCls} min-h-16 resize-y`} value={award.description} onChange={e => patchAward(i, { description: e.target.value })} />
+                      </Field>
+                    </div>
+                  ))}
+                  <button onClick={addAward} className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add award
+                  </button>
+                </div>
+              </FieldGroup>
+
+              {/* Interests */}
+              <FieldGroup title="Interests">
+                <div className="space-y-2">
+                  {(store.interests ?? []).map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input className={`${inputCls} w-14`} value={item.icon} onChange={e => patchInterest(i, { icon: e.target.value })} placeholder="⚡" />
+                      <input className={`${inputCls} flex-1`} value={item.label} onChange={e => patchInterest(i, { label: e.target.value })} placeholder="Interest label" />
+                      <button onClick={() => deleteInterest(i)} className="text-slate-600 hover:text-red-400 transition-colors shrink-0">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={addInterest} className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add interest
+                  </button>
+                </div>
+              </FieldGroup>
+            </div>
+          )}
+
           {/* ══ Experience ══ */}
           {activeSection === 'experience' && (
             <>
@@ -831,36 +1115,83 @@ export default function AdminPortalClient({
                 onAdd={addExperience}
                 onDelete={deleteExperience}
                 getLabel={e => e.company}
-                getSub={e => e.role}
-                addLabel="New entry"
+                getSub={e => `${e.roles?.length ?? 0} role${(e.roles?.length ?? 0) === 1 ? '' : 's'}`}
+                addLabel="New company"
               />
               <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8">
                 {selectedExperienceData ? (
                   <>
-                    <FieldGroup title="Role details">
+                    <FieldGroup title="Company">
                       <div className="grid grid-cols-2 gap-4">
-                        <Field label="Company">
-                          <input className={inputCls} value={selectedExperienceData.company} onChange={e => patchExperience({ company: e.target.value })} />
+                        <Field label="Company name">
+                          <input className={inputCls} value={selectedExperienceData.company} onChange={e => patchExperienceMeta({ company: e.target.value })} />
                         </Field>
-                        <Field label="Role / Title">
-                          <input className={inputCls} value={selectedExperienceData.role} onChange={e => patchExperience({ role: e.target.value })} />
+                        <Field label="Website URL" hint="Hover link on company name">
+                          <input className={inputCls} value={selectedExperienceData.websiteUrl ?? ''} onChange={e => patchExperienceMeta({ websiteUrl: e.target.value })} placeholder="https://example.com" />
                         </Field>
                       </div>
-                      <Field label="Date range">
-                        <input className={inputCls} value={selectedExperienceData.dates} onChange={e => patchExperience({ dates: e.target.value })} placeholder="Jan 2023 – Present" />
-                      </Field>
-                      <Field label="Skills" hint="Comma-separated">
-                        <CommaSeparatedInput className={inputCls} value={selectedExperienceData.skills ?? []} onChange={skills => patchExperience({ skills })} placeholder="TypeScript, React, AWS" />
+                      <Field label="Company logo">
+                        <ImageField
+                          value={selectedExperienceData.logoUrl ?? ''}
+                          onChange={v => patchExperienceMeta({ logoUrl: v })}
+                          uploading={companyLogoUploading}
+                          onUpload={f => uploadImage(f, p => patchExperienceMeta({ logoUrl: p }), setCompanyLogoUploading)}
+                          accept="image/*"
+                        />
                       </Field>
                     </FieldGroup>
-                    <FieldGroup title="Description">
-                      <Field label="Description (MDX)">
-                        <MdxEditor value={selectedExperienceData.description} onChange={v => patchExperience({ description: v })} />
-                      </Field>
+
+                    <FieldGroup title={`Roles (${selectedExperienceData.roles?.length ?? 0})`}>
+                      <div className="space-y-6">
+                        {(selectedExperienceData.roles ?? []).map((r, rIdx) => (
+                          <div key={rIdx} className="rounded-lg border border-slate-700/60 bg-slate-800/30 p-4 space-y-4">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Role {rIdx + 1}</span>
+                              <button
+                                onClick={() => deleteExperienceRole(rIdx)}
+                                className="text-xs text-slate-600 hover:text-red-400 transition-colors"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              <Field label="Role / Title">
+                                <input className={inputCls} value={r.role} onChange={e => patchExperienceRole(rIdx, { role: e.target.value })} />
+                              </Field>
+                              <Field label="Date range">
+                                <input className={inputCls} value={r.dates} onChange={e => patchExperienceRole(rIdx, { dates: e.target.value })} placeholder="Jan 2023 – Present" />
+                              </Field>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                id={`isCurrent-${rIdx}`}
+                                checked={!!r.isCurrent}
+                                onChange={e => patchExperienceRole(rIdx, { isCurrent: e.target.checked })}
+                                className="accent-teal-500"
+                              />
+                              <label htmlFor={`isCurrent-${rIdx}`} className="text-xs text-slate-400 select-none">Current role</label>
+                            </div>
+                            <Field label="Skills" hint="Comma-separated">
+                              <CommaSeparatedInput className={inputCls} value={r.skills ?? []} onChange={skills => patchExperienceRole(rIdx, { skills })} placeholder="TypeScript, React, AWS" />
+                            </Field>
+                            <Field label="Description">
+                              <MdxEditor value={r.description} onChange={v => patchExperienceRole(rIdx, { description: v })} />
+                            </Field>
+                          </div>
+                        ))}
+                        <button
+                          onClick={addExperienceRole}
+                          className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1"
+                        >
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                          Add role
+                        </button>
+                      </div>
                     </FieldGroup>
                   </>
                 ) : (
-                  <div className="flex items-center justify-center h-64 text-slate-600">No experience entry selected</div>
+                  <div className="flex items-center justify-center h-64 text-slate-600">No company selected</div>
                 )}
               </div>
             </>

@@ -255,81 +255,100 @@
   "experience": [
     {
       "company": "Leonardo UK Ltd",
-      "role": "Software Engineer ✈️",
-      "dates": "2025 - Present",
-      "description": "Lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
-      "skills": [
-        "C++",
-        "C",
-        "Linux",
-        "Qt",
-        "Git",
-        "Agile",
-        "System Design"
-      ],
-      "isCurrent": true
-    },
-    {
-      "company": "Leonardo UK Ltd",
-      "role": "Graduate Software Engineer",
-      "dates": "2024 - 2025",
-      "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products. I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones. I also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
-      "skills": [
-        "C++",
-        "Embedded Systems",
-        "Testing",
-        "Teamwork"
-      ]
-    },
-    {
-      "company": "Leonardo UK Ltd",
-      "role": "Undergraduate Software Engineer",
-      "dates": "2023 - 2024",
-      "description": "Hired as first undergraduate software engineer in the company. Worked alongside the Solution team to develop safety-critical software solutions while balancing a final year of undergraduate studies.",
-      "skills": [
-        "C++",
-        "Embedded Systems",
-        "Teamwork",
-        "Research"
-      ]
-    },
-    {
-      "company": "Leonardo UK Ltd",
-      "role": "SWE Intern",
-      "dates": "2023 - 2023",
-      "description": "Completed a summer internship where I led the development of an internal software tool for mechanical engineers. I cleared a backlog of features for the tool and initiated an internal release process.",
-      "skills": [
-        "C++",
-        "Python",
-        "Prototyping",
-        "Research"
+      "logoUrl": "/images/1773949895679-leonardo-logo.jpg",
+      "websiteUrl": "https://www.leonardo.com/en/",
+      "roles": [
+        {
+          "role": "Software Engineer",
+          "dates": "2025 - Present",
+          "description": "Lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
+          "skills": [
+            "C++",
+            "C",
+            "Linux",
+            "Qt",
+            "Git",
+            "Agile",
+            "System Design"
+          ],
+          "isCurrent": true
+        },
+        {
+          "role": "Graduate Software Engineer",
+          "dates": "2024 - 2025",
+          "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products. I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones. I also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
+          "skills": [
+            "C++",
+            "Embedded Systems",
+            "Testing",
+            "Teamwork"
+          ],
+          "isCurrent": false
+        },
+        {
+          "role": "Undergraduate Software Engineer",
+          "dates": "2023 - 2024",
+          "description": "Hired as first undergraduate software engineer in the company. Worked alongside the Solution team to develop safety-critical software solutions while balancing a final year of undergraduate studies.",
+          "skills": [
+            "C++",
+            "Embedded Systems",
+            "Teamwork",
+            "Research"
+          ],
+          "isCurrent": false
+        },
+        {
+          "role": "SWE Intern",
+          "dates": "2023 - 2023",
+          "description": "Completed a summer internship where I led the development of an internal software tool for mechanical engineers. I cleared a backlog of features for the tool and initiated an internal release process.",
+          "skills": [
+            "C++",
+            "Python",
+            "Prototyping",
+            "Research"
+          ],
+          "isCurrent": false
+        }
       ]
     },
     {
       "company": "Altra ERC",
-      "role": "Junior Software Engineer 👨‍🏫",
-      "dates": "2021 - 2022",
-      "description": "I led development of platform features for an education technology startup across a React frontend, Java backend, and AWS serverless workloads.",
-      "skills": [
-        "React",
-        "Node.js",
-        "JavaScript",
-        "AWS",
-        "NoSQL",
-        "Java"
+      "logoUrl": "/images/1773949943428-altra-logo.png",
+      "roles": [
+        {
+          "role": "Junior Software Engineer 👨‍🏫",
+          "dates": "2021 - 2022",
+          "description": "I led development of platform features for an education technology startup across a React frontend, Java backend, and AWS serverless workloads.",
+          "skills": [
+            "React",
+            "Node.js",
+            "JavaScript",
+            "AWS",
+            "NoSQL",
+            "Java"
+          ],
+          "isCurrent": false
+        }
       ]
     },
     {
       "company": "HYPED",
-      "role": "Software Quality Assurance Project Lead 🚆",
-      "dates": "2020 - 2021",
-      "description": "As Project Lead of the Software Quality Assurance team for HYPED (University of Edinburgh’s award-winning Hyperloop competition entry), I was responsible for managing weekly operations, technical direction, and strategic alignment of the QA function within a multi-disciplinary engineering team. I led the design and implementation of automated test suites, set up CI/CD pipelines, and developed scalable testing infrastructure across the codebase to ensure robustness, performance, and reliability of mission-critical systems. I authored the team’s software testing strategy and specification documents for international hyperloop competitions, and ensured the QA effort remained aligned with project roadmaps, competition deadlines, and engineering priorities.",
-      "skills": [
-        "C++",
-        "Test Automation",
-        "CI/CD",
-        "Quality Assurance",
-        "Team Leadership"
+      "logoUrl": "/images/1773949971272-hyped-logo.png",
+      "websiteUrl": "https://hyp-ed.com/",
+      "roles": [
+        {
+          "role": "Software Quality Assurance Project Lead 🚆",
+          "dates": "2020 - 2021",
+          "description": "As Project Lead of the Software Quality Assurance team for HYPED (University of Edinburgh’s award-winning Hyperloop competition entry), I was responsible for managing weekly operations, technical direction, and strategic alignment of the QA function within a multi-disciplinary engineering team. I led the design and implementation of automated test suites, set up CI/CD pipelines, and developed scalable testing infrastructure across the codebase to ensure robustness, performance, and reliability of mission-critical systems. I authored the team’s software testing strategy and specification documents for international hyperloop competitions, and ensured the QA effort remained aligned with project roadmaps, competition deadlines, and engineering priorities.",
+          "skills": [
+            "C++",
+            "Test Automation",
+            "CI/CD",
+            "Quality Assurance",
+            "Team Leadership"
+          ],
+          "isCurrent": false
+        }
       ]
     }
   ],
@@ -387,6 +406,107 @@
       "owner": "DonaldJennings",
       "repo": "arche",
       "projectName": ""
+    }
+  ],
+  "profile": {
+    "name": "Donald",
+    "role": "Software Engineer",
+    "company": "Leonardo UK Ltd",
+    "location": "Edinburgh, UK",
+    "bio": "Full-stack and systems engineer. 1st Class BSc Computer Science from the University of Edinburgh. Building defence-grade software at Leonardo UK, with a growing interest in software research.",
+    "statusLabel": "Currently at Leonardo UK",
+    "avatarUrl": "/images/1773951592963-dj-avatar.png"
+  },
+  "highlights": [
+    {
+      "icon": "🎓",
+      "label": "1st Class BSc Computer Science",
+      "sub": "University of Edinburgh"
+    },
+    {
+      "icon": "🏅",
+      "label": "MIET Member",
+      "sub": "Institution of Engineering & Technology"
+    },
+    {
+      "icon": "⚙️",
+      "label": "SAFe 6.0 Scrum Master",
+      "sub": "Certified"
+    },
+    {
+      "icon": "🏆",
+      "label": "Leonardo Innovation Award",
+      "sub": "2025"
+    }
+  ],
+  "skillCategories": [
+    {
+      "title": "Programming Languages",
+      "skills": [
+        "C++",
+        "C",
+        "Python",
+        "Java",
+        "Haskell"
+      ],
+      "accent": "blue"
+    },
+    {
+      "title": "Frameworks & Tools",
+      "skills": [
+        "React",
+        "Next.js",
+        "Node.js",
+        "Git",
+        "Docker",
+        "Qt"
+      ],
+      "accent": "teal"
+    },
+    {
+      "title": "Specializations",
+      "skills": [
+        "Software Engineering",
+        "System Design",
+        "Software Architecture"
+      ],
+      "accent": "purple"
+    }
+  ],
+  "certifications": [
+    "MIET (Member of IET)",
+    "Certified SAFe 6.0 Scrum Master"
+  ],
+  "awards": [
+    {
+      "title": "Edinburgh Award (Work Experience)",
+      "org": "University of Edinburgh",
+      "year": "2023",
+      "description": "Awarded for becoming the first undergraduate to be employed as an Engineer at Leonardo UK in Edinburgh whilst studying."
+    },
+    {
+      "title": "Edinburgh Award (Employ.Ed on Campus)",
+      "org": "University of Edinburgh",
+      "year": "2022",
+      "description": "Awarded for completing an internship with the School of Informatics where I was responsible for delivering the offer holder communication plan for the Class of 2022."
+    }
+  ],
+  "interests": [
+    {
+      "icon": "⚡",
+      "label": "Emerging Technologies"
+    },
+    {
+      "icon": "🔓",
+      "label": "Open Source Projects"
+    },
+    {
+      "icon": "🏗️",
+      "label": "Software Architecture"
+    },
+    {
+      "icon": "📚",
+      "label": "Continuous Learning"
     }
   ]
 }

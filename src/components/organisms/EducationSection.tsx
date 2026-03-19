@@ -24,23 +24,24 @@ export default function EducationSection({ education }: EducationSectionProps) {
     return bYear - aYear;
   });
 
+  if (sorted.length === 0) {
+    return <p className="text-slate-500 text-sm">No education entries yet.</p>;
+  }
+
   return (
-    <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-8 border border-slate-800">
-      <h2 className="text-2xl font-semibold text-white mb-6">Education</h2>
-      <div className="space-y-6">
-        {sorted.map((edu, idx) => (
-          <EducationCard
-            key={`${edu.degree}-${idx}`}
-            degreeTitle={edu.degreeTitle}
-            degree={edu.degree}
-            institution={edu.institution}
-            results={edu.results}
-            dateRange={edu.dateRange}
-            description={edu.description}
-            borderColor={edu.borderColor}
-          />
-        ))}
-      </div>
+    <div className="space-y-4">
+      {sorted.map((edu, idx) => (
+        <EducationCard
+          key={`${edu.degree}-${idx}`}
+          degreeTitle={edu.degreeTitle}
+          degree={edu.degree}
+          institution={edu.institution}
+          results={edu.results}
+          dateRange={edu.dateRange}
+          description={edu.description}
+          borderColor={edu.borderColor}
+        />
+      ))}
     </div>
   );
 }
