@@ -1,26 +1,8 @@
 import React from 'react';
 import { getDevBlogPosts } from '@/lib/devblog';
-import ContentLandingPage from './ContentLandingPage';
+import BlogLandingClient from './BlogLandingClient';
 
-export default async function BlogLandingPage() {
-  const rawPosts = await getDevBlogPosts();
-
-  const posts = rawPosts.map(post => ({
-    ...post,
-    description: post.description ?? '', // Ensure description is always a string
-  }));
-
-  // Aggregate all unique tags from posts
-  const allTags = Array.from(new Set(posts.flatMap(post => post.tags ?? [])));
-
-  return (
-    <ContentLandingPage
-      title="Developer Blog"
-      subtitle="Insights, architecture, and technical deep-dives from Donald Jennings."
-      searchPlaceholder="Search blog posts..."
-      baseContentPath="/blog"
-      posts={posts}
-      tags={allTags}
-    />
-  );
+export default function BlogLandingPage() {
+  const posts = getDevBlogPosts();
+  return <BlogLandingClient posts={posts} />;
 }

@@ -149,27 +149,7 @@ function ArchitectureTab({ src }: { src: string }) {
 
 function NotesTab({ children }: { children: React.ReactNode }) {
   return (
-    <section
-      className="
-        mdx-content prose prose-invert max-w-none w-full
-        text-slate-200
-        prose-p:leading-relaxed prose-p:mb-3 prose-p:text-[1rem]
-        prose-h1:text-2xl prose-h1:font-bold prose-h1:mt-12 prose-h1:mb-3 prose-h1:text-blue-400
-        prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-2 prose-h2:text-teal-400
-        prose-h3:text-lg prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-1.5 prose-h3:text-green-400
-        prose-ul:pl-5 prose-ul:mb-3 prose-ul:mt-0
-        prose-ol:pl-5 prose-ol:mb-3 prose-ol:mt-0
-        prose-li:mb-1
-        prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:text-green-300
-        prose-pre:bg-[#1e2433] prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:font-mono prose-pre:my-4
-        prose-blockquote:border-l-4 prose-blockquote:border-teal-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-300 prose-blockquote:my-4 prose-blockquote:not-italic
-        prose-a:text-teal-400 prose-a:no-underline hover:prose-a:underline
-        prose-strong:text-slate-100
-        prose-hr:border-slate-700 prose-hr:my-6
-        break-words
-      "
-      style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
-    >
+    <section className="mdx-content" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
       {children}
     </section>
   );

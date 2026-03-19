@@ -33,6 +33,20 @@ type StorePost = {
   content: string;
 };
 
+function calcReadingTime(content: string): string {
+  const text = content
+    .replace(/```[\s\S]*?```/g, '') // fenced code blocks
+    .replace(/`[^`]*`/g, '')         // inline code
+    .replace(/!\[.*?\]\(.*?\)/g, '') // images
+    .replace(/\[.*?\]\(.*?\)/g, '')  // links
+    .replace(/[#*_~>|]/g, '')        // markdown syntax chars
+    .replace(/\s+/g, ' ')
+    .trim();
+  const words = text ? text.split(' ').length : 0;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
+}
+
 function toMeta(post: StorePost): DevBlogMeta {
   return {
     title: post.title,
@@ -43,7 +57,9 @@ function toMeta(post: StorePost): DevBlogMeta {
     tags: post.tags,
     image: post.image,
     imageDir: post.image ? post.image.substring(0, post.image.lastIndexOf('/') + 1) : '',
-    author: post.author,
+    author: post.author
+      ? { ...post.author, readingTime: calcReadingTime(post.content) }
+      : undefined,
   };
 }
 
