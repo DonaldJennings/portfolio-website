@@ -20,7 +20,7 @@
         "avatarUrl": "/images/dj-avatar.png",
         "readingTime": "3 min read"
       },
-      "content": "TEST\nIn the evolving landscape of cloud computing, serverless architectures promise effortless scalability and reduced operational overhead. But beneath the abstraction lies a real challenge: **efficiently distributing work** across a heterogeneous, distributed runtime without creating bottlenecks or single points of failure.\n\nIn my final-year dissertation—later incorporated into the [SoCC'24 paper on dynamic multi-tiered load balancing](https://dl.acm.org/doi/10.1145/3652892.3700755)—I tackled this challenge by **redesigning the load balancing system for AutoNDP**, a funclet-migration runtime built on [Faasm](https://faasm.readthedocs.io/).\n\n## The Problem\n\n---\n\nThe original AutoNDP runtime relied on:\n\n- **A single compute node** as the entry point for all invocations.\n- **Static round-robin balancing** between compute nodes.\n- Minimal configurability and no real adaptation to workload changes.\n\nThis design created clear scaling limits:\n\n- One node acted as a bottleneck and single point of failure.\n- The scheduler only redistributed work _after_ a node hit capacity.\n- No flexibility for cloud providers to tune or replace policies.\n\n## My Contribution: Multi-Tiered, Modular Load Balancing\n\n---\n\nI implemented a **three-layer balancing framework** designed around three principles: **Configurability**, **Modularity**, and **Scalability**.\n\n### 1. Invocation Layer Distribution\n\nAt the system's entry point, I introduced a configurable dispatcher:\n\n- Replaced the single-node invoker with a **round-robin dispatcher** across all compute nodes.\n- Supported pluggable policies—administrators can select or implement their own by conforming to an `ILoadBalancerStrategy` interface.\n- State persisted across invocations using Redis, enabling distribution decisions without losing context.\n\n### 2. Inter-Node Balancing\n\nI refactored Faasm’s tightly coupled scheduler into a **policy-driven engine**:\n\n- Decoupled scheduling logic from core runtime to support modular policies like `MostSlots` and `LeastLoad`.\n- Integrated a **metrics collection module** to provide live CPU, RAM, and load average data from each node via `/proc`.\n- Allowed policies to make **real-time, informed** balancing decisions.\n\n### 3. Storage Layer Data Distribution\n\nAt the Ceph storage layer:\n\n- Increased placement groups from **1 → 128** for better parallelism.\n- Enabled autoscaling and rebalanced data to prevent hot-spotting.\n- Extended offloading decisions beyond simple thread availability to include CPU, memory, and load thresholds—fully configurable per deployment.\n\n## Why Modularity Matters\n\n---\n\nBy designing the balancer as a **set of interchangeable components**, AutoNDP now:\n\n- Supports deployment-specific tuning without modifying core code.\n- Allows experimentation with new strategies (including future ML-based policies).\n- Can scale horizontally without major re-architecture.\n\n## Results\n\n---\n\nBenchmarks showed:\n\n- **3.13× lower median latency** for I/O-intensive workloads.\n- **10× reduction in latency variance** under high concurrency.\n- More stable throughput with reduced queuing effects.\n\nWhile some end-to-end workloads showed the storage offloading bottlenecks still need attention, the architectural flexibility I introduced positions the system for future scaling without major rewrites.\n\n## Looking Ahead\n\n---\n\nThe multi-tiered load balancer opens the door to:\n\n- **Adaptive policies** that evolve with workload patterns.\n- Integration with predictive schedulers and demand forecasting.\n- Applying the modular approach to other runtime services in distributed FaaS systems.\n\nThis work was not just an exercise in squeezing out performance—it was a case study in **engineering for flexibility**, ensuring that when workloads, hardware, or requirements change, the system can adapt without tearing apart its foundation.\n"
+      "content": "In the evolving landscape of cloud computing, serverless architectures promise effortless scalability and reduced operational overhead. But beneath the abstraction lies a real challenge: **efficiently distributing work** across a heterogeneous, distributed runtime without creating bottlenecks or single points of failure.\n\nIn my final-year dissertation—later incorporated into the [SoCC'24 paper on dynamic multi-tiered load balancing](https://dl.acm.org/doi/10.1145/3652892.3700755)—I tackled this challenge by **redesigning the load balancing system for AutoNDP**, a funclet-migration runtime built on [Faasm](https://faasm.readthedocs.io/).\n\n## The Problem\n\n---\n\nThe original AutoNDP runtime relied on:\n\n- **A single compute node** as the entry point for all invocations.\n- **Static round-robin balancing** between compute nodes.\n- Minimal configurability and no real adaptation to workload changes.\n\nThis design created clear scaling limits:\n\n- One node acted as a bottleneck and single point of failure.\n- The scheduler only redistributed work _after_ a node hit capacity.\n- No flexibility for cloud providers to tune or replace policies.\n\n## My Contribution: Multi-Tiered, Modular Load Balancing\n\n---\n\nI implemented a **three-layer balancing framework** designed around three principles: **Configurability**, **Modularity**, and **Scalability**.\n\n### 1. Invocation Layer Distribution\n\nAt the system's entry point, I introduced a configurable dispatcher:\n\n- Replaced the single-node invoker with a **round-robin dispatcher** across all compute nodes.\n- Supported pluggable policies—administrators can select or implement their own by conforming to an `ILoadBalancerStrategy` interface.\n- State persisted across invocations using Redis, enabling distribution decisions without losing context.\n\n### 2. Inter-Node Balancing\n\nI refactored Faasm’s tightly coupled scheduler into a **policy-driven engine**:\n\n- Decoupled scheduling logic from core runtime to support modular policies like `MostSlots` and `LeastLoad`.\n- Integrated a **metrics collection module** to provide live CPU, RAM, and load average data from each node via `/proc`.\n- Allowed policies to make **real-time, informed** balancing decisions.\n\n### 3. Storage Layer Data Distribution\n\nAt the Ceph storage layer:\n\n- Increased placement groups from **1 → 128** for better parallelism.\n- Enabled autoscaling and rebalanced data to prevent hot-spotting.\n- Extended offloading decisions beyond simple thread availability to include CPU, memory, and load thresholds—fully configurable per deployment.\n\n## Why Modularity Matters\n\n---\n\nBy designing the balancer as a **set of interchangeable components**, AutoNDP now:\n\n- Supports deployment-specific tuning without modifying core code.\n- Allows experimentation with new strategies (including future ML-based policies).\n- Can scale horizontally without major re-architecture.\n\n## Results\n\n---\n\nBenchmarks showed:\n\n- **3.13× lower median latency** for I/O-intensive workloads.\n- **10× reduction in latency variance** under high concurrency.\n- More stable throughput with reduced queuing effects.\n\nWhile some end-to-end workloads showed the storage offloading bottlenecks still need attention, the architectural flexibility I introduced positions the system for future scaling without major rewrites.\n\n## Looking Ahead\n\n---\n\nThe multi-tiered load balancer opens the door to:\n\n- **Adaptive policies** that evolve with workload patterns.\n- Integration with predictive schedulers and demand forecasting.\n- Applying the modular approach to other runtime services in distributed FaaS systems.\n\nThis work was not just an exercise in squeezing out performance—it was a case study in **engineering for flexibility**, ensuring that when workloads, hardware, or requirements change, the system can adapt without tearing apart its foundation.\n"
     },
     {
       "title": "Introducing the Developer Blog",
@@ -59,105 +59,296 @@
       ],
       "image": "/images/funclets-card-image.png",
       "imageDir": "/images/",
-      "repoUrl": "",
+      "repoUrl": "https://github.com/auto-ndp",
       "demoUrl": "",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png"
       },
-      "content": "This project was written for my dissertation"
+      "content": "",
+      "status": "archived",
+      "role": "team",
+      "stack": [
+        "C",
+        "C++",
+        "Python",
+        "Ceph"
+      ],
+      "problem": "AutoNDP is an implementation of FaaS runtime that allows code-migration to enable near-data processing. How can we define an intelligent, policy-driven, load balancer for this runtime that allows informed code offloading in a distributed environment",
+      "highlights": [
+        "3.13× lower median latency for I/O-intensive workloads.",
+        "10× reduction in latency variance under high concurrency.",
+        "More stable throughput with reduced queuing effects."
+      ]
     },
     {
       "slug": "arche-engine",
       "title": "Arche Simulation Engine",
       "date": "2026-03-14",
-      "content": "TBD",
+      "content": "Arche originated from earlier work on a university coursework project, Donald-RTX, where I explored ray tracing and path tracing techniques from first principles. That experience sparked a deeper interest in how rendering systems actually work beneath high-level engines—particularly how light transport, acceleration structures, and rendering pipelines are implemented.\n\nI initially set out to extend this work onto the GPU as a way to learn GPU programming. However, rather than jumping directly into CUDA or compute shaders, I realised there was a more fundamental gap: I wanted a controlled environment where I fully understood the entire pipeline—from simulation through to rendering output. Arche became that environment.\n\n\n### From Console Simulation to Interactive Engine\n---\nThe project began as a minimal physics simulation running entirely in the console, outputting entity positions frame-by-frame. From there, I incrementally introduced structure:\n\n- A world system to own and manage entities\n- A physics layer for rigid bodies and colliders\n- A rendering system to visualise state\n- This progression was intentional—each layer was added only once the previous abstraction felt well understood.\n\nOver time, this evolved into a real-time interactive application using Dear ImGui as a presentation layer. The UI is not just visual—it acts as a control surface for the simulation, allowing entities to be created, inspected, and modified at runtime.\n\n### Rendering Pipeline\n---\nA key focus of Arche has been understanding and building a rendering pipeline from first principles.\n\nThe pipeline developed in stages:\n\n1. Initial visualisation\nSimple point-based rendering of entities to validate world-to-screen transformations\n\n2. Mesh-based rendering\nIntroduction of explicit geometry (spheres, cubes) with vertex/index buffers\n\n3. Shader abstraction\nSeparation of shader logic into reusable programs with uniform management\n\n4. Material system\nDecoupling visual appearance (colour, shader, parameters) from geometry\n\n5. Backend abstraction\nA rendering interface allowing different implementations (currently OpenGL)\n\n6. Framebuffer pipeline\nOffscreen rendering into a framebuffer, enabling the rendered scene to be passed cleanly into the UI layer\n\nThis final step is particularly important: the renderer outputs to a texture, which is then consumed by the UI. This creates a strict boundary between rendering and presentation, avoiding tight coupling between engine logic and UI code.\n\n### Architectural Separation\n---\nA core design principle when developing this project is **explicit separation of concerns**\n- The engine core orchestrates subsystem lifecycles and update order\n- The world system owns entities and exposes a read-only view for other systems\n- The physics system operates independently on colliders and rigid bodies\n- The rendering system operates independently on colliders and rigid bodies\n- The UI layer interacts with systems through defined interfaces, not internal state\n\n### Future Direction\n---\nArche is still an evolving project, with several clear next steps\n\n**GPU Acceleration (CUDA / Compute)**\nI would like to extend the engine to support GPGPU based computation, particularly for physics or ray tracing workloads\n\n**Advanced Physics**\nExpanding beyond rigid bodies into more accurate collision resolution and constraints\n\n**Scene Serialisation**\nAdding support for saving and loading scenes to/from files, enabling reproducible environments and tooling workflows\n\n**Rendering Enhancements**\nExpanding more advanced pipelines with more intense lighting models, and GPGPU-based pathtracing",
       "description": "3D Physics Engine developed in C++ with an ImGUI UI",
-      "image": "/images/1773837042956-508589839-2b027d58-8341-4efb-9a05-e611fad85ab5.png",
+      "image": "/images/1773944456657-arche-project-photo.png",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png"
-      }
+      },
+      "tags": [],
+      "stack": [
+        "C++",
+        "ImGUI",
+        "OpenCL"
+      ],
+      "repoUrl": "https://github.com/DonaldJennings/arche",
+      "role": "solo",
+      "status": "wip",
+      "featured": true,
+      "problem": "Building real-time simulation systems often leads to tightly coupled codebases where rendering, physics, and entity logic are interwoven, making systems difficult to extend, test, and reason about. Arche addresses this by introducing a modular engine architecture that cleanly separates subsystems, enforces explicit data flow, and provides a lightweight abstraction over rendering backends and scene composition.",
+      "highlights": [
+        "Modular subsystem architecture with a central engine loop coordinating independent systems (rendering, physics, world)",
+        "Explicit entity interface unifying transform, physics, and rendering responsibilities",
+        "Lightweight rendering abstraction layer enabling backend-agnostic graphics (currently OpenGL)",
+        "Custom OpenGL backend with shader compilation, mesh caching, and framebuffer-based rendering",
+        "Integrated physics hooks via colliders and rigid bodies attached directly to entities",
+        "Real-time 3D viewport with interactive camera controls (pan, rotate, zoom, WASD movement)",
+        "In-editor entity manipulation (position, scale, mass, gravity, static state) through an immediate-mode UI"
+      ]
+    },
+    {
+      "slug": "portfolio-website",
+      "title": "Portfolio Website",
+      "date": "2026-03-19",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A Portfolio website to provide a view into my projects and blogs",
+      "tags": [],
+      "image": "/images/1773943655661-portfolio-website-photo.png",
+      "repoUrl": "https://github.com/DonaldJennings/portfolio-website",
+      "demoUrl": "https://donaldjennings.dev",
+      "featured": true,
+      "status": "live",
+      "role": "solo",
+      "stack": [
+        "React",
+        "NextJS",
+        "TypeScript"
+      ],
+      "problem": "Building a developer portfolio that stands out is harder than it sounds — most are either plain static sites with no personality, or over-engineered showcases that bury the actual work. The goal was to create a fast, content-managed portfolio that reflects a systems engineering background: technically interesting under the hood, visually distinct, and easy to keep up to date without touching code.",
+      "highlights": [
+        "Full MDX content pipeline with runtime compilation, syntax highlighting via rehype-pretty-code, and GitHub Dark theme",
+        "Project detail overlay using Next.js intercepting routes and parallel routes, with Framer Motion spring animations",
+        "SSG-first architecture — all blog and project pages statically generated at build time",
+        "Custom JSON content store bundled at build time, making the site deployable to Netlify serverless without a database",
+        "Interactive architecture diagram viewer supporting draw.io SVG exports with pan and zoom"
+      ]
+    },
+    {
+      "slug": "chocopy-compiler",
+      "title": "ChocoPy Compiler",
+      "date": "2022-09-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A small-scale compiler for the ChocoPy language.",
+      "status": "archived",
+      "role": "solo",
+      "stack": [
+        "Python",
+        "LLVM",
+        "Assembly",
+        "C"
+      ],
+      "problem": "As part of a third-year university coursework, I was tasked with implementing a compiler for ChocoPy, a statically-typed subset of Python designed for teaching compiler construction. The objective was to build a complete compilation pipeline that translates high-level source code into LLVM IR, while adhering to a formally defined language specification.\n\nThis project provided a structured environment to explore the core stages of compilation, including parsing, semantic analysis, and code generation, as well as the challenges of enforcing a static type system and producing correct low-level representations of high-level programs.",
+      "highlights": [
+        "Delivered a fully working compiler as part of assessed coursework",
+        "Implemented core stages: parsing → AST construction → semantic analysis → LLVM IR generation",
+        "Followed a formal language specification, ensuring correctness against defined behaviour",
+        "Implemented static type checking, catching type errors at compile time",
+        "Designed and implemented compiler optimisation passes beyond coursework requirements ( constant folding, dead code elimination )"
+      ],
+      "image": "/images/1773944219495-chocopy-code.png"
+    },
+    {
+      "slug": "mips-processor-simulator",
+      "title": "MIPS Processor Simulator",
+      "date": "2021-10-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A C-based simulator of a MIPS processor that executes assembly programs through a software implementation of the CPU datapath.",
+      "tags": [],
+      "image": "/images/1773945043308-mips-project-card.jpg",
+      "highlights": [
+        "Simulated a MIPS CPU datapath in software, including registers, ALU, and memory",
+        "Modelled instruction execution lifecycle from fetch → decode → execute",
+        "Represented key architectural components in C with clear abstractions"
+      ],
+      "problem": "As part of a second-year university coursework, I developed a simulator for a MIPS processor to model how machine-level instructions are executed within a CPU. The objective was to parse assembly instructions from a text input and simulate their progression through the processor datapath, including register updates, ALU operations, and memory interactions.\n\nThis project aimed to bridge the gap between high-level programming and hardware execution by providing a concrete implementation of instruction-level behaviour and processor architecture.",
+      "architectureDiagram": "",
+      "status": "archived",
+      "role": "solo"
+    },
+    {
+      "slug": "hyped-testing",
+      "title": "HYPED - Test Framework",
+      "date": "2020-09-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "Led the adoption of automated testing and CI/CD across a multi-team hyperloop software project, deploying GoogleTest and a unified pipeline to improve system reliability.",
+      "image": "/images/1773945316854-hyped-team-shot-lead.jpg",
+      "demoUrl": "",
+      "repoUrl": "https://github.com/Hyp-ed/hyped-2021",
+      "status": "archived",
+      "role": "team",
+      "stack": [
+        "C++",
+        "GoogleTest",
+        "Github Actions",
+        "Travis"
+      ],
+      "problem": "As Software Quality Assurance Project Manager at HYPED, I identified a lack of consistent testing practices and automated validation across multiple software teams working on a complex hyperloop system. This created risks around integration, reliability, and confidence in deliverable software.\n\nTo address this, I led the introduction of a standardised testing framework using GoogleTest and implemented a CI/CD pipeline to automatically build, test, and validate code across the entire codebase, ensuring consistent quality and enabling faster, more reliable development cycles. The resulting infrastructure was successfully demonstrated at European Hyperloop Week 2021.",
+      "highlights": [
+        "Led quality assurance strategy across multiple software teams (Telemetry, Navigation, State Machine)",
+        "Defined and drove adoption of testing standards and best practices",
+        "Deployed GoogleTest across the entire C++ codebase",
+        "Enabled unit and integration testing for previously untested components",
+        "Delivered a working testing and CI/CD infrastructure used across the project"
+      ]
+    },
+    {
+      "slug": "donald-rtx",
+      "title": "Donald-RTX",
+      "date": "2023-09-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A CPU-based C++ path tracer capable of physically-based rendering, texture mapping, and scene loading, used to generate a 4K animated sequence.",
+      "image": "/images/1773945604587-donald-rtx.png",
+      "status": "archived",
+      "role": "solo",
+      "stack": [
+        "C++"
+      ],
+      "problem": "As part of a university coursework, I developed a ray tracing engine in C++ to simulate physically-based light transport and generate photorealistic images. The goal was to implement a full rendering pipeline on the CPU, including scene parsing, material handling, and recursive light transport via path tracing.\n\nBeyond the core requirements, I extended the system to support texture mapping and animation rendering, culminating in the production of a 60-second 4K sequence. This project achieved the highest mark in the class and inspired further exploration into high-performance rendering, leading to the development of my later GPU-based engine, Arche.",
+      "highlights": [
+        "Implemented path tracing to simulate global illumination",
+        "Modelled light transport, reflections, and material interactions",
+        "Supported recursive ray evaluation for realistic lighting effects",
+        "Rendered a 60-second animation in 4K resolution",
+        "Achieved the highest mark in the class"
+      ],
+      "demoUrl": "https://youtu.be/JmSBkGTeKtg",
+      "featured": true
     }
   ],
   "experience": [
     {
       "company": "Leonardo UK Ltd",
-      "role": "Software Engineer ✈️",
-      "dates": "2025 - Present",
-      "description": "Lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
-      "skills": [
-        "C++",
-        "C",
-        "Linux",
-        "Qt",
-        "Git",
-        "Agile",
-        "System Design"
-      ],
-      "isCurrent": true
-    },
-    {
-      "company": "Leonardo UK Ltd",
-      "role": "Graduate Software Engineer",
-      "dates": "2024 - 2025",
-      "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products. I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones. I also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
-      "skills": [
-        "C++",
-        "Embedded Systems",
-        "Testing",
-        "Teamwork"
-      ]
-    },
-    {
-      "company": "Leonardo UK Ltd",
-      "role": "Undergraduate Software Engineer",
-      "dates": "2023 - 2024",
-      "description": "Hired as first undergraduate software engineer in the company. Worked alongside the Solution team to develop safety-critical software solutions while balancing a final year of undergraduate studies.",
-      "skills": [
-        "C++",
-        "Embedded Systems",
-        "Teamwork",
-        "Research"
-      ]
-    },
-    {
-      "company": "Leonardo UK Ltd",
-      "role": "Software Engineering Intern",
-      "dates": "2023 - 2023",
-      "description": "Completed a summer internship where I led the development of an internal software tool for mechanical engineers. I cleared a backlog of features for the tool and initiated an internal release process.",
-      "skills": [
-        "C++",
-        "Python",
-        "Prototyping",
-        "Research"
+      "logoUrl": "/images/1773949895679-leonardo-logo.jpg",
+      "websiteUrl": "https://www.leonardo.com/en/",
+      "roles": [
+        {
+          "role": "Software Engineer",
+          "dates": "2025 - Present",
+          "description": "Lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
+          "skills": [
+            "C++",
+            "C",
+            "Linux",
+            "Qt",
+            "Git",
+            "Agile",
+            "System Design"
+          ],
+          "isCurrent": true
+        },
+        {
+          "role": "Graduate Software Engineer",
+          "dates": "2024 - 2025",
+          "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products. I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones. I also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
+          "skills": [
+            "C++",
+            "Embedded Systems",
+            "Testing",
+            "Teamwork"
+          ],
+          "isCurrent": false
+        },
+        {
+          "role": "Undergraduate Software Engineer",
+          "dates": "2023 - 2024",
+          "description": "Hired as first undergraduate software engineer in the company. Worked alongside the Solution team to develop safety-critical software solutions while balancing a final year of undergraduate studies.",
+          "skills": [
+            "C++",
+            "Embedded Systems",
+            "Teamwork",
+            "Research"
+          ],
+          "isCurrent": false
+        },
+        {
+          "role": "SWE Intern",
+          "dates": "2023 - 2023",
+          "description": "Completed a summer internship where I led the development of an internal software tool for mechanical engineers. I cleared a backlog of features for the tool and initiated an internal release process.",
+          "skills": [
+            "C++",
+            "Python",
+            "Prototyping",
+            "Research"
+          ],
+          "isCurrent": false
+        }
       ]
     },
     {
       "company": "Altra ERC",
-      "role": "Junior Software Engineer 👨‍🏫",
-      "dates": "2021 - 2022",
-      "description": "I led development of platform features for an education technology startup across a React frontend, Java backend, and AWS serverless workloads.",
-      "skills": [
-        "React",
-        "Node.js",
-        "JavaScript",
-        "AWS",
-        "NoSQL",
-        "Java"
+      "logoUrl": "/images/1773949943428-altra-logo.png",
+      "roles": [
+        {
+          "role": "Junior Software Engineer 👨‍🏫",
+          "dates": "2021 - 2022",
+          "description": "I led development of platform features for an education technology startup across a React frontend, Java backend, and AWS serverless workloads.",
+          "skills": [
+            "React",
+            "Node.js",
+            "JavaScript",
+            "AWS",
+            "NoSQL",
+            "Java"
+          ],
+          "isCurrent": false
+        }
       ]
     },
     {
       "company": "HYPED",
-      "role": "Software Quality Assurance Project Lead 🚆",
-      "dates": "2020 - 2021",
-      "description": "As Project Lead of the Software Quality Assurance team for HYPED (University of Edinburgh’s award-winning Hyperloop competition entry), I was responsible for managing weekly operations, technical direction, and strategic alignment of the QA function within a multi-disciplinary engineering team. I led the design and implementation of automated test suites, set up CI/CD pipelines, and developed scalable testing infrastructure across the codebase to ensure robustness, performance, and reliability of mission-critical systems. I authored the team’s software testing strategy and specification documents for international hyperloop competitions, and ensured the QA effort remained aligned with project roadmaps, competition deadlines, and engineering priorities.",
-      "skills": [
-        "C++",
-        "Test Automation",
-        "CI/CD",
-        "Quality Assurance",
-        "Team Leadership"
+      "logoUrl": "/images/1773949971272-hyped-logo.png",
+      "websiteUrl": "https://hyp-ed.com/",
+      "roles": [
+        {
+          "role": "Software Quality Assurance Project Lead 🚆",
+          "dates": "2020 - 2021",
+          "description": "As Project Lead of the Software Quality Assurance team for HYPED (University of Edinburgh’s award-winning Hyperloop competition entry), I was responsible for managing weekly operations, technical direction, and strategic alignment of the QA function within a multi-disciplinary engineering team. I led the design and implementation of automated test suites, set up CI/CD pipelines, and developed scalable testing infrastructure across the codebase to ensure robustness, performance, and reliability of mission-critical systems. I authored the team’s software testing strategy and specification documents for international hyperloop competitions, and ensured the QA effort remained aligned with project roadmaps, competition deadlines, and engineering priorities.",
+          "skills": [
+            "C++",
+            "Test Automation",
+            "CI/CD",
+            "Quality Assurance",
+            "Team Leadership"
+          ],
+          "isCurrent": false
+        }
       ]
     }
   ],
@@ -205,5 +396,117 @@
       "doi": "N/A"
     }
   ],
-  "githubRepos": []
+  "githubRepos": [
+    {
+      "owner": "DonaldJennings",
+      "repo": "portfolio-website",
+      "projectName": ""
+    },
+    {
+      "owner": "DonaldJennings",
+      "repo": "arche",
+      "projectName": ""
+    }
+  ],
+  "profile": {
+    "name": "Donald",
+    "role": "Software Engineer",
+    "company": "Leonardo UK Ltd",
+    "location": "Edinburgh, UK",
+    "bio": "Full-stack and systems engineer. 1st Class BSc Computer Science from the University of Edinburgh. Building defence-grade software at Leonardo UK, with a growing interest in software research.",
+    "statusLabel": "Currently at Leonardo UK",
+    "avatarUrl": "/images/1773951592963-dj-avatar.png"
+  },
+  "highlights": [
+    {
+      "icon": "🎓",
+      "label": "1st Class BSc Computer Science",
+      "sub": "University of Edinburgh"
+    },
+    {
+      "icon": "🏅",
+      "label": "MIET Member",
+      "sub": "Institution of Engineering & Technology"
+    },
+    {
+      "icon": "⚙️",
+      "label": "SAFe 6.0 Scrum Master",
+      "sub": "Certified"
+    },
+    {
+      "icon": "🏆",
+      "label": "Leonardo Innovation Award",
+      "sub": "2025"
+    }
+  ],
+  "skillCategories": [
+    {
+      "title": "Programming Languages",
+      "skills": [
+        "C++",
+        "C",
+        "Python",
+        "Java",
+        "Haskell"
+      ],
+      "accent": "blue"
+    },
+    {
+      "title": "Frameworks & Tools",
+      "skills": [
+        "React",
+        "Next.js",
+        "Node.js",
+        "Git",
+        "Docker",
+        "Qt"
+      ],
+      "accent": "teal"
+    },
+    {
+      "title": "Specializations",
+      "skills": [
+        "Software Engineering",
+        "System Design",
+        "Software Architecture"
+      ],
+      "accent": "purple"
+    }
+  ],
+  "certifications": [
+    "MIET (Member of IET)",
+    "Certified SAFe 6.0 Scrum Master"
+  ],
+  "awards": [
+    {
+      "title": "Edinburgh Award (Work Experience)",
+      "org": "University of Edinburgh",
+      "year": "2023",
+      "description": "Awarded for becoming the first undergraduate to be employed as an Engineer at Leonardo UK in Edinburgh whilst studying."
+    },
+    {
+      "title": "Edinburgh Award (Employ.Ed on Campus)",
+      "org": "University of Edinburgh",
+      "year": "2022",
+      "description": "Awarded for completing an internship with the School of Informatics where I was responsible for delivering the offer holder communication plan for the Class of 2022."
+    }
+  ],
+  "interests": [
+    {
+      "icon": "⚡",
+      "label": "Emerging Technologies"
+    },
+    {
+      "icon": "🔓",
+      "label": "Open Source Projects"
+    },
+    {
+      "icon": "🏗️",
+      "label": "Software Architecture"
+    },
+    {
+      "icon": "📚",
+      "label": "Continuous Learning"
+    }
+  ]
 }

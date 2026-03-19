@@ -7,22 +7,23 @@ type PublicationsSectionProps = {
 };
 
 export default function PublicationsSection({ publications }: PublicationsSectionProps) {
+  if (publications.length === 0) {
+    return <p className="text-slate-500 text-sm">No publications yet.</p>;
+  }
+
   return (
-    <div className="bg-slate-800/30 backdrop-blur-sm rounded-lg p-8 border border-slate-800">
-      <h2 className="text-2xl font-semibold text-white mb-6">Publications</h2>
-      <div className="space-y-4">
-        {publications.map((publication, index) => (
-          <PublicationItem
-            key={index}
-            title={publication.title}
-            authors={publication.authors}
-            venue={publication.venue}
-            year={publication.year}
-            url={publication.url}
-            doi={publication.doi}
-          />
-        ))}
-      </div>
+    <div className="space-y-4">
+      {publications.map((publication, index) => (
+        <PublicationItem
+          key={index}
+          title={publication.title}
+          authors={publication.authors}
+          venue={publication.venue}
+          year={publication.year}
+          url={publication.url}
+          doi={publication.doi}
+        />
+      ))}
     </div>
   );
 }

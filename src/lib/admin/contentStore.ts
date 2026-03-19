@@ -33,13 +33,19 @@ export type AdminProject = {
   content: string;
 };
 
-export type ExperienceEntry = {
-  company: string;
+export type ExperienceRole = {
   role: string;
   dates: string;
   description: string;
   skills: string[];
   isCurrent?: boolean;
+};
+
+export type ExperienceEntry = {
+  company: string;
+  logoUrl?: string;
+  websiteUrl?: string;
+  roles: ExperienceRole[];
 };
 
 export type EducationEntry = {
@@ -67,6 +73,40 @@ export type PublicationEntry = {
   doi?: string;
 };
 
+export type ProfileData = {
+  name: string;
+  role: string;
+  company: string;
+  location: string;
+  bio: string;
+  statusLabel: string;
+  avatarUrl?: string;
+};
+
+export type HighlightEntry = {
+  icon: string;
+  label: string;
+  sub: string;
+};
+
+export type SkillCategoryEntry = {
+  title: string;
+  skills: string[];
+  accent: string;
+};
+
+export type AwardEntry = {
+  title: string;
+  org: string;
+  year: string;
+  description: string;
+};
+
+export type InterestEntry = {
+  icon: string;
+  label: string;
+};
+
 export type AdminContentStore = {
   posts: AdminPost[];
   projects: AdminProject[];
@@ -74,6 +114,12 @@ export type AdminContentStore = {
   education: EducationEntry[];
   publications: PublicationEntry[];
   githubRepos: GithubRepoEntry[];
+  profile: ProfileData;
+  highlights: HighlightEntry[];
+  skillCategories: SkillCategoryEntry[];
+  certifications: string[];
+  awards: AwardEntry[];
+  interests: InterestEntry[];
 };
 
 function createDefaultStore(): AdminContentStore {
@@ -84,6 +130,12 @@ function createDefaultStore(): AdminContentStore {
     education: [],
     publications: [],
     githubRepos: [],
+    profile: { name: '', role: '', company: '', location: '', bio: '', statusLabel: '' },
+    highlights: [],
+    skillCategories: [],
+    certifications: [],
+    awards: [],
+    interests: [],
   };
 }
 
@@ -92,6 +144,40 @@ export function getContentStore(): AdminContentStore {
   if (stored) {
     // Work with a looser record to safely normalize older persisted shapes
     const result = stored as Partial<AdminContentStore> & Record<string, unknown>;
+
+    // Migrate experience: old flat {company, role, dates, ...} → new {company, logoUrl, roles[]}
+    const rawExperience = result.experience;
+    if (Array.isArray(rawExperience)) {
+      result.experience = (rawExperience as unknown as Array<Record<string, unknown>>).map(e => {
+        if (Array.isArray(e.roles)) {
+          // Already new format
+          return {
+            company: String(e.company ?? ''),
+            logoUrl: e.logoUrl ? String(e.logoUrl) : undefined,
+            websiteUrl: e.websiteUrl ? String(e.websiteUrl) : undefined,
+            roles: (e.roles as Array<Record<string, unknown>>).map(r => ({
+              role: String(r.role ?? ''),
+              dates: String(r.dates ?? ''),
+              description: String(r.description ?? ''),
+              skills: Array.isArray(r.skills) ? (r.skills as unknown[]).map(String) : [],
+              isCurrent: r.isCurrent === true,
+            })),
+          } as ExperienceEntry;
+        }
+        // Old flat format — wrap single role
+        return {
+          company: String(e.company ?? ''),
+          logoUrl: undefined,
+          roles: [{
+            role: String(e.role ?? ''),
+            dates: String(e.dates ?? ''),
+            description: String(e.description ?? ''),
+            skills: Array.isArray(e.skills) ? (e.skills as unknown[]).map(String) : [],
+            isCurrent: e.isCurrent === true,
+          }],
+        } as ExperienceEntry;
+      });
+    }
 
     const rawEducation = result.education;
     if (!Array.isArray(rawEducation)) {
@@ -124,6 +210,16 @@ export function getContentStore(): AdminContentStore {
 
       result.education = mapped;
     }
+
+    // Ensure new profile fields are always present with defaults
+    if (!result.profile || typeof result.profile !== 'object') {
+      result.profile = { name: '', role: '', company: '', location: '', bio: '', statusLabel: '' };
+    }
+    if (!Array.isArray(result.highlights)) result.highlights = [];
+    if (!Array.isArray(result.skillCategories)) result.skillCategories = [];
+    if (!Array.isArray(result.certifications)) result.certifications = [];
+    if (!Array.isArray(result.awards)) result.awards = [];
+    if (!Array.isArray(result.interests)) result.interests = [];
 
     return result as AdminContentStore;
   }

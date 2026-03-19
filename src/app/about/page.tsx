@@ -30,7 +30,12 @@ export default function AboutPage() {
             <EducationSection education={store.education} />
           </div>
 
-          <AboutSidebar />
+          <AboutSidebar
+            categories={store.skillCategories}
+            certifications={store.certifications}
+            awards={store.awards}
+            interests={store.interests}
+          />
         </div>
 
         <div className="mt-12">
