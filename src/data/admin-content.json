@@ -59,25 +59,197 @@
       ],
       "image": "/images/funclets-card-image.png",
       "imageDir": "/images/",
-      "repoUrl": "",
+      "repoUrl": "https://github.com/auto-ndp",
       "demoUrl": "",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png"
       },
-      "content": "This project was written for my dissertation"
+      "content": "",
+      "status": "archived",
+      "role": "team",
+      "stack": [
+        "C",
+        "C++",
+        "Python",
+        "Ceph"
+      ],
+      "problem": "AutoNDP is an implementation of FaaS runtime that allows code-migration to enable near-data processing. How can we define an intelligent, policy-driven, load balancer for this runtime that allows informed code offloading in a distributed environment",
+      "highlights": [
+        "3.13× lower median latency for I/O-intensive workloads.",
+        "10× reduction in latency variance under high concurrency.",
+        "More stable throughput with reduced queuing effects."
+      ]
     },
     {
       "slug": "arche-engine",
       "title": "Arche Simulation Engine",
       "date": "2026-03-14",
-      "content": "TBD",
+      "content": "Arche originated from earlier work on a university coursework project, Donald-RTX, where I explored ray tracing and path tracing techniques from first principles. That experience sparked a deeper interest in how rendering systems actually work beneath high-level engines—particularly how light transport, acceleration structures, and rendering pipelines are implemented.\n\nI initially set out to extend this work onto the GPU as a way to learn GPU programming. However, rather than jumping directly into CUDA or compute shaders, I realised there was a more fundamental gap: I wanted a controlled environment where I fully understood the entire pipeline—from simulation through to rendering output. Arche became that environment.\n\n\n### From Console Simulation to Interactive Engine\n---\nThe project began as a minimal physics simulation running entirely in the console, outputting entity positions frame-by-frame. From there, I incrementally introduced structure:\n\n- A world system to own and manage entities\n- A physics layer for rigid bodies and colliders\n- A rendering system to visualise state\n- This progression was intentional—each layer was added only once the previous abstraction felt well understood.\n\nOver time, this evolved into a real-time interactive application using Dear ImGui as a presentation layer. The UI is not just visual—it acts as a control surface for the simulation, allowing entities to be created, inspected, and modified at runtime.\n\n### Rendering Pipeline\n---\nA key focus of Arche has been understanding and building a rendering pipeline from first principles.\n\nThe pipeline developed in stages:\n\n1. Initial visualisation\nSimple point-based rendering of entities to validate world-to-screen transformations\n\n2. Mesh-based rendering\nIntroduction of explicit geometry (spheres, cubes) with vertex/index buffers\n\n3. Shader abstraction\nSeparation of shader logic into reusable programs with uniform management\n\n4. Material system\nDecoupling visual appearance (colour, shader, parameters) from geometry\n\n5. Backend abstraction\nA rendering interface allowing different implementations (currently OpenGL)\n\n6. Framebuffer pipeline\nOffscreen rendering into a framebuffer, enabling the rendered scene to be passed cleanly into the UI layer\n\nThis final step is particularly important: the renderer outputs to a texture, which is then consumed by the UI. This creates a strict boundary between rendering and presentation, avoiding tight coupling between engine logic and UI code.\n\n### Architectural Separation\n---\nA core design principle when developing this project is **explicit separation of concerns**\n- The engine core orchestrates subsystem lifecycles and update order\n- The world system owns entities and exposes a read-only view for other systems\n- The physics system operates independently on colliders and rigid bodies\n- The rendering system operates independently on colliders and rigid bodies\n- The UI layer interacts with systems through defined interfaces, not internal state\n\n### Future Direction\n---\nArche is still an evolving project, with several clear next steps\n\n**GPU Acceleration (CUDA / Compute)**\nI would like to extend the engine to support GPGPU based computation, particularly for physics or ray tracing workloads\n\n**Advanced Physics**\nExpanding beyond rigid bodies into more accurate collision resolution and constraints\n\n**Scene Serialisation**\nAdding support for saving and loading scenes to/from files, enabling reproducible environments and tooling workflows\n\n**Rendering Enhancements**\nExpanding more advanced pipelines with more intense lighting models, and GPGPU-based pathtracing",
       "description": "3D Physics Engine developed in C++ with an ImGUI UI",
-      "image": "/images/1773837042956-508589839-2b027d58-8341-4efb-9a05-e611fad85ab5.png",
+      "image": "/images/1773944456657-arche-project-photo.png",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png"
-      }
+      },
+      "tags": [],
+      "stack": [
+        "C++",
+        "ImGUI",
+        "OpenCL"
+      ],
+      "repoUrl": "https://github.com/DonaldJennings/arche",
+      "role": "solo",
+      "status": "wip",
+      "featured": true,
+      "problem": "Building real-time simulation systems often leads to tightly coupled codebases where rendering, physics, and entity logic are interwoven, making systems difficult to extend, test, and reason about. Arche addresses this by introducing a modular engine architecture that cleanly separates subsystems, enforces explicit data flow, and provides a lightweight abstraction over rendering backends and scene composition.",
+      "highlights": [
+        "Modular subsystem architecture with a central engine loop coordinating independent systems (rendering, physics, world)",
+        "Explicit entity interface unifying transform, physics, and rendering responsibilities",
+        "Lightweight rendering abstraction layer enabling backend-agnostic graphics (currently OpenGL)",
+        "Custom OpenGL backend with shader compilation, mesh caching, and framebuffer-based rendering",
+        "Integrated physics hooks via colliders and rigid bodies attached directly to entities",
+        "Real-time 3D viewport with interactive camera controls (pan, rotate, zoom, WASD movement)",
+        "In-editor entity manipulation (position, scale, mass, gravity, static state) through an immediate-mode UI"
+      ]
+    },
+    {
+      "slug": "portfolio-website",
+      "title": "Portfolio Website",
+      "date": "2026-03-19",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A Portfolio website to provide a view into my projects and blogs",
+      "tags": [],
+      "image": "/images/1773943655661-portfolio-website-photo.png",
+      "repoUrl": "https://github.com/DonaldJennings/portfolio-website",
+      "demoUrl": "https://donaldjennings.dev",
+      "featured": true,
+      "status": "live",
+      "role": "solo",
+      "stack": [
+        "React",
+        "NextJS",
+        "TypeScript"
+      ],
+      "problem": "Building a developer portfolio that stands out is harder than it sounds — most are either plain static sites with no personality, or over-engineered showcases that bury the actual work. The goal was to create a fast, content-managed portfolio that reflects a systems engineering background: technically interesting under the hood, visually distinct, and easy to keep up to date without touching code.",
+      "highlights": [
+        "Full MDX content pipeline with runtime compilation, syntax highlighting via rehype-pretty-code, and GitHub Dark theme",
+        "Project detail overlay using Next.js intercepting routes and parallel routes, with Framer Motion spring animations",
+        "SSG-first architecture — all blog and project pages statically generated at build time",
+        "Custom JSON content store bundled at build time, making the site deployable to Netlify serverless without a database",
+        "Interactive architecture diagram viewer supporting draw.io SVG exports with pan and zoom"
+      ]
+    },
+    {
+      "slug": "chocopy-compiler",
+      "title": "ChocoPy Compiler",
+      "date": "2022-09-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A small-scale compiler for the ChocoPy language.",
+      "status": "archived",
+      "role": "solo",
+      "stack": [
+        "Python",
+        "LLVM",
+        "Assembly",
+        "C"
+      ],
+      "problem": "As part of a third-year university coursework, I was tasked with implementing a compiler for ChocoPy, a statically-typed subset of Python designed for teaching compiler construction. The objective was to build a complete compilation pipeline that translates high-level source code into LLVM IR, while adhering to a formally defined language specification.\n\nThis project provided a structured environment to explore the core stages of compilation, including parsing, semantic analysis, and code generation, as well as the challenges of enforcing a static type system and producing correct low-level representations of high-level programs.",
+      "highlights": [
+        "Delivered a fully working compiler as part of assessed coursework",
+        "Implemented core stages: parsing → AST construction → semantic analysis → LLVM IR generation",
+        "Followed a formal language specification, ensuring correctness against defined behaviour",
+        "Implemented static type checking, catching type errors at compile time",
+        "Designed and implemented compiler optimisation passes beyond coursework requirements ( constant folding, dead code elimination )"
+      ],
+      "image": "/images/1773944219495-chocopy-code.png"
+    },
+    {
+      "slug": "mips-processor-simulator",
+      "title": "MIPS Processor Simulator",
+      "date": "2021-10-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A C-based simulator of a MIPS processor that executes assembly programs through a software implementation of the CPU datapath.",
+      "tags": [],
+      "image": "/images/1773945043308-mips-project-card.jpg",
+      "highlights": [
+        "Simulated a MIPS CPU datapath in software, including registers, ALU, and memory",
+        "Modelled instruction execution lifecycle from fetch → decode → execute",
+        "Represented key architectural components in C with clear abstractions"
+      ],
+      "problem": "As part of a second-year university coursework, I developed a simulator for a MIPS processor to model how machine-level instructions are executed within a CPU. The objective was to parse assembly instructions from a text input and simulate their progression through the processor datapath, including register updates, ALU operations, and memory interactions.\n\nThis project aimed to bridge the gap between high-level programming and hardware execution by providing a concrete implementation of instruction-level behaviour and processor architecture.",
+      "architectureDiagram": "",
+      "status": "archived",
+      "role": "solo"
+    },
+    {
+      "slug": "hyped-testing",
+      "title": "HYPED - Test Framework",
+      "date": "2020-09-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "Led the adoption of automated testing and CI/CD across a multi-team hyperloop software project, deploying GoogleTest and a unified pipeline to improve system reliability.",
+      "image": "/images/1773945316854-hyped-team-shot-lead.jpg",
+      "demoUrl": "",
+      "repoUrl": "https://github.com/Hyp-ed/hyped-2021",
+      "status": "archived",
+      "role": "team",
+      "stack": [
+        "C++",
+        "GoogleTest",
+        "Github Actions",
+        "Travis"
+      ],
+      "problem": "As Software Quality Assurance Project Manager at HYPED, I identified a lack of consistent testing practices and automated validation across multiple software teams working on a complex hyperloop system. This created risks around integration, reliability, and confidence in deliverable software.\n\nTo address this, I led the introduction of a standardised testing framework using GoogleTest and implemented a CI/CD pipeline to automatically build, test, and validate code across the entire codebase, ensuring consistent quality and enabling faster, more reliable development cycles. The resulting infrastructure was successfully demonstrated at European Hyperloop Week 2021.",
+      "highlights": [
+        "Led quality assurance strategy across multiple software teams (Telemetry, Navigation, State Machine)",
+        "Defined and drove adoption of testing standards and best practices",
+        "Deployed GoogleTest across the entire C++ codebase",
+        "Enabled unit and integration testing for previously untested components",
+        "Delivered a working testing and CI/CD infrastructure used across the project"
+      ]
+    },
+    {
+      "slug": "donald-rtx",
+      "title": "Donald-RTX",
+      "date": "2023-09-10",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A CPU-based C++ path tracer capable of physically-based rendering, texture mapping, and scene loading, used to generate a 4K animated sequence.",
+      "image": "/images/1773945604587-donald-rtx.png",
+      "status": "archived",
+      "role": "solo",
+      "stack": [
+        "C++"
+      ],
+      "problem": "As part of a university coursework, I developed a ray tracing engine in C++ to simulate physically-based light transport and generate photorealistic images. The goal was to implement a full rendering pipeline on the CPU, including scene parsing, material handling, and recursive light transport via path tracing.\n\nBeyond the core requirements, I extended the system to support texture mapping and animation rendering, culminating in the production of a 60-second 4K sequence. This project achieved the highest mark in the class and inspired further exploration into high-performance rendering, leading to the development of my later GPU-based engine, Arche.",
+      "highlights": [
+        "Implemented path tracing to simulate global illumination",
+        "Modelled light transport, reflections, and material interactions",
+        "Supported recursive ray evaluation for realistic lighting effects",
+        "Rendered a 60-second animation in 4K resolution",
+        "Achieved the highest mark in the class"
+      ],
+      "demoUrl": "https://youtu.be/JmSBkGTeKtg",
+      "featured": true
     }
   ],
   "experience": [
@@ -205,5 +377,16 @@
       "doi": "N/A"
     }
   ],
-  "githubRepos": []
+  "githubRepos": [
+    {
+      "owner": "DonaldJennings",
+      "repo": "portfolio-website",
+      "projectName": ""
+    },
+    {
+      "owner": "DonaldJennings",
+      "repo": "arche",
+      "projectName": ""
+    }
+  ]
 }

@@ -15,6 +15,14 @@ export type ProjectMeta = {
     name: string;
     avatarUrl?: string;
   };
+  // Dashboard fields
+  status?: 'live' | 'wip' | 'archived';
+  stack?: string[];
+  role?: 'solo' | 'team' | 'contributor';
+  featured?: boolean;
+  problem?: string;
+  highlights?: string[];
+  architectureDiagram?: string;
 };
 
 export type Project = {
@@ -34,6 +42,13 @@ type StoreProject = {
   demoUrl?: string;
   author?: { name: string; avatarUrl?: string };
   content: string;
+  status?: 'live' | 'wip' | 'archived';
+  stack?: string[];
+  role?: 'solo' | 'team' | 'contributor';
+  featured?: boolean;
+  problem?: string;
+  highlights?: string[];
+  architectureDiagram?: string;
 };
 
 function toMeta(project: StoreProject): ProjectMeta {
@@ -49,6 +64,13 @@ function toMeta(project: StoreProject): ProjectMeta {
     repoUrl: project.repoUrl,
     demoUrl: project.demoUrl,
     author: project.author,
+    status: project.status,
+    stack: project.stack,
+    role: project.role,
+    featured: project.featured,
+    problem: project.problem,
+    highlights: project.highlights,
+    architectureDiagram: project.architectureDiagram,
   };
 }
 
