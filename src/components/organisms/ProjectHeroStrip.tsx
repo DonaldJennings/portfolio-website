@@ -26,8 +26,8 @@ export default function ProjectHeroStrip({ meta }: { meta: ProjectMeta }) {
         background: 'linear-gradient(90deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.75) 100%)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        border: '1.5px solid rgba(59,130,246,0.2)',
-        boxShadow: '0 2px 24px 0 rgba(34,197,94,0.08), 0 0 0 1px rgba(255,255,255,0.06) inset',
+        border: '1.5px solid var(--strip-border)',
+        boxShadow: 'var(--strip-shadow)',
       }}
     >
       {/* Title row */}

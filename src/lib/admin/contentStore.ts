@@ -107,6 +107,23 @@ export type InterestEntry = {
   label: string;
 };
 
+export type LandingNavLink = {
+  label: string;
+  href: string;
+  description: string;
+  icon: string;
+};
+
+export type LandingData = {
+  headline: string;
+  subheadline: string;
+  heroPhotoUrl: string;
+  primaryCtaLabel: string;
+  secondaryCtaLabel: string;
+  secondaryCtaHref: string;
+  navLinks: LandingNavLink[];
+};
+
 export type AdminContentStore = {
   posts: AdminPost[];
   projects: AdminProject[];
@@ -120,6 +137,21 @@ export type AdminContentStore = {
   certifications: string[];
   awards: AwardEntry[];
   interests: InterestEntry[];
+  landing: LandingData;
+};
+
+const DEFAULT_LANDING: LandingData = {
+  headline: 'Software Engineer',
+  subheadline: '',
+  heroPhotoUrl: '',
+  primaryCtaLabel: 'View My Work',
+  secondaryCtaLabel: 'Get In Touch',
+  secondaryCtaHref: '/contact',
+  navLinks: [
+    { label: 'Blog', href: '/blog', description: 'Thoughts on tech, architecture, and engineering.', icon: '✍️' },
+    { label: 'Projects', href: '/projects', description: 'Open source work and side projects.', icon: '🛠️' },
+    { label: 'Contact', href: '/contact', description: 'Get in touch or collaborate.', icon: '📬' },
+  ],
 };
 
 function createDefaultStore(): AdminContentStore {
@@ -136,6 +168,7 @@ function createDefaultStore(): AdminContentStore {
     certifications: [],
     awards: [],
     interests: [],
+    landing: { ...DEFAULT_LANDING },
   };
 }
 
@@ -220,6 +253,20 @@ export function getContentStore(): AdminContentStore {
     if (!Array.isArray(result.certifications)) result.certifications = [];
     if (!Array.isArray(result.awards)) result.awards = [];
     if (!Array.isArray(result.interests)) result.interests = [];
+    if (!result.landing || typeof result.landing !== 'object') {
+      result.landing = { ...DEFAULT_LANDING };
+    } else {
+      const l = result.landing as Partial<LandingData>;
+      result.landing = {
+        headline: l.headline ?? DEFAULT_LANDING.headline,
+        subheadline: l.subheadline ?? DEFAULT_LANDING.subheadline,
+        heroPhotoUrl: l.heroPhotoUrl ?? DEFAULT_LANDING.heroPhotoUrl,
+        primaryCtaLabel: l.primaryCtaLabel ?? DEFAULT_LANDING.primaryCtaLabel,
+        secondaryCtaLabel: l.secondaryCtaLabel ?? DEFAULT_LANDING.secondaryCtaLabel,
+        secondaryCtaHref: l.secondaryCtaHref ?? DEFAULT_LANDING.secondaryCtaHref,
+        navLinks: Array.isArray(l.navLinks) ? l.navLinks : DEFAULT_LANDING.navLinks,
+      };
+    }
 
     return result as AdminContentStore;
   }

@@ -25,8 +25,8 @@ export default function NavBar() {
           : 'linear-gradient(90deg, rgba(30,41,59,0.32) 0%, rgba(15,23,42,0.12) 100%)',
         backdropFilter: scrolled ? 'blur(18px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
-        boxShadow: '0 4px 24px 0 rgba(59,130,246,0.10)',
-        borderBottom: '1px solid rgba(59,130,246,0.10)',
+        boxShadow: '0 4px 24px 0 var(--nav-glow)',
+        borderBottom: '1px solid var(--nav-border)',
       }}
     >
       <div className="max-w-7xl mx-auto w-full">

@@ -24,7 +24,7 @@ export default function ContentFilter({
         background: 'rgba(15,23,42,0.65)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        boxShadow: '0 8px 32px 0 rgba(59,130,246,0.18), 0 0 0 1px rgba(34,197,94,0.10) inset',
+        boxShadow: 'var(--filter-shadow)',
         border: '1px solid rgba(255,255,255,0.10)',
       }}
     >

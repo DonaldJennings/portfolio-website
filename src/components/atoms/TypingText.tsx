@@ -40,8 +40,9 @@ export default function TypingText({ text, speed = 60, className = '' }: TypingT
       {displayed}
       {showCursor && (
         <span
-          className="inline-block w-0.5 h-6 bg-blue-400 ml-1"
+          className="inline-block w-0.5 h-[1em] ml-0.5 translate-y-[0.1em]"
           style={{
+            background: 'var(--accent-1)',
             animation: 'blink 1s infinite',
           }}
         />

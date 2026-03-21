@@ -1,47 +1,20 @@
-import SectionWithBackground from '@/components/molecules/Section';
-import ExperienceList from '@/components/organisms/ExperienceList';
-import EducationSection from '@/components/organisms/EducationSection';
-import AboutSidebar from '@/components/organisms/AboutSidebar';
-import CallToActionSection from '@/components/organisms/CallToActionSection';
 import { getContentStore } from '@/lib/admin/contentStore';
-import React from 'react';
+import AboutPageClient from '@/components/pages/AboutPageClient';
 
 export default function AboutPage() {
   const store = getContentStore();
 
   return (
-    <div className="relative min-h-screen font-mono">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About Me</h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Passionate software engineer with a focus on innovation and excellence
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-4 gap-12">
-          <div className="lg:col-span-3 space-y-8">
-            <SectionWithBackground
-              title="Introduction"
-              bodyText="Hello! I'm Donald, a Software Engineer currently working at Leonardo UK Ltd. I graduated with a 1st Class BSc (Hons) in Computer Science from University of Edinburgh. I am interested in developing innovative and smart solutions to complex technical challenges with my skills spanning a wide range from cloud computing to systems programming."
-            />
-
-            <ExperienceList jobs={store.experience} />
-            <EducationSection education={store.education} />
-          </div>
-
-          <AboutSidebar
-            categories={store.skillCategories}
-            certifications={store.certifications}
-            awards={store.awards}
-            interests={store.interests}
-          />
-        </div>
-
-        <div className="mt-12">
-          <CallToActionSection />
-        </div>
-      </div>
-    </div>
+    <AboutPageClient
+      profile={store.profile}
+      experience={store.experience}
+      education={store.education}
+      publications={store.publications}
+      skillCategories={store.skillCategories}
+      certifications={store.certifications}
+      awards={store.awards}
+      interests={store.interests}
+      highlights={store.highlights}
+    />
   );
 }
