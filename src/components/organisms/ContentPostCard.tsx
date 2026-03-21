@@ -40,18 +40,15 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
     <Link href={href} className="group no-underline">
       <motion.div
         layoutId={layoutId}
-        className="relative rounded-xl border flex flex-row overflow-hidden transition-all duration-300 cursor-pointer w-full group"
+        className="relative rounded-xl border flex flex-row overflow-hidden transition-all duration-300 cursor-pointer w-full group theme-post-card"
         style={{
           background: 'rgba(15,23,42,0.65)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          boxShadow: '0 2px 16px 0 rgba(59,130,246,0.12), 0 0 0 1px rgba(34,197,94,0.10) inset',
-          border: '1.5px solid rgba(59,130,246,0.18)',
+          boxShadow: 'var(--post-shadow)',
+          border: '1.5px solid var(--card-border)',
         }}
-        whileHover={{
-          y: -4,
-          boxShadow: '0 8px 32px 0 rgba(59,130,246,0.25), 0 0 0 2px rgba(34,197,94,0.18) inset',
-        }}
+        whileHover={{ y: -4 }}
         transition={{ type: 'spring', bounce: 0.3, duration: 0.4 }}
       >
         {/* Main Content */}

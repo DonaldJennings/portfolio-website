@@ -1,6 +1,7 @@
 'use client';
 
+import ThemePanel from '@/components/molecules/ThemePanel';
+
 export default function ThemeToggle() {
-  // Theme toggle is disabled - forcing dark mode only
-  return null;
+  return <ThemePanel />;
 }

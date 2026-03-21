@@ -11,14 +11,17 @@ const Tag: React.FC<TagProps> = ({ tag, isHovered, onMouseEnter, onMouseLeave })
   let borderColor = 'rgba(100,116,139,0.5)';
   const textColor = 'rgba(148,163,184,0.8)';
   let glow = '';
+
   if (tag.toLowerCase().includes('serverless')) {
-    borderColor = 'rgba(34,197,94,0.7)';
-    glow = '0 0 8px 2px rgba(34,197,94,0.25)';
+    borderColor = 'var(--tag-a-border)';
+    glow = 'var(--tag-a-glow)';
   } else if (tag.toLowerCase().includes('architecture')) {
-    borderColor = 'rgba(59,130,246,0.7)';
-    glow = '0 0 8px 2px rgba(59,130,246,0.18)';
+    borderColor = 'var(--tag-b-border)';
+    glow = 'var(--tag-b-glow)';
   }
+
   const defaultBoxShadow = glow || '0 0 8px 2px rgba(148,163,184,0.18)';
+
   return (
     <span
       className="rounded-full px-2 py-0.5 bg-transparent transition-all"

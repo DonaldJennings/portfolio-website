@@ -1,45 +1,44 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-type Theme = 'dark' | 'light';
+import { DEFAULT_BACKDROP_ID, DEFAULT_COLOR_SCHEME_ID } from '@/lib/themes';
 
 interface ThemeContextType {
-  theme: Theme;
-  toggleTheme: () => void;
+  colorScheme: string;
+  backdropId: string;
+  setColorScheme: (id: string) => void;
+  setBackdropId: (id: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [colorScheme, setColorSchemeState] = useState(DEFAULT_COLOR_SCHEME_ID);
+  const [backdropId, setBackdropIdState] = useState(DEFAULT_BACKDROP_ID);
 
+  // Apply color scheme to html element
   useEffect(() => {
-    // Always force dark mode, ignore any saved preferences
-    setTheme('dark');
-  }, []);
+    document.documentElement.setAttribute('data-color-scheme', colorScheme);
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  }, [colorScheme]);
 
-  useEffect(() => {
-    // Always apply dark theme to document
-    const root = document.documentElement;
-    root.classList.remove('light');
-    root.classList.add('dark');
-
-    // Don't save theme preference since we're forcing dark mode
-  }, [theme]);
-
-  const toggleTheme = () => {
-    // Disable theme toggling - always stay dark
-    // setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider
+      value={{
+        colorScheme,
+        backdropId,
+        setColorScheme: setColorSchemeState,
+        setBackdropId: setBackdropIdState,
+      }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
+  if (context === undefined) throw new Error('useTheme must be used within a ThemeProvider');
   return context;
 }

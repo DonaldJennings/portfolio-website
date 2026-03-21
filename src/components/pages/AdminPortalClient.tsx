@@ -135,6 +135,23 @@ type InterestEntry = {
   label: string;
 };
 
+type LandingNavLink = {
+  label: string;
+  href: string;
+  description: string;
+  icon: string;
+};
+
+type LandingData = {
+  headline: string;
+  subheadline: string;
+  heroPhotoUrl: string;
+  primaryCtaLabel: string;
+  secondaryCtaLabel: string;
+  secondaryCtaHref: string;
+  navLinks: LandingNavLink[];
+};
+
 type Store = {
   posts: AdminPost[];
   projects: AdminProject[];
@@ -148,6 +165,7 @@ type Store = {
   certifications: string[];
   awards: AwardEntry[];
   interests: InterestEntry[];
+  landing: LandingData;
 };
 
 type AdminPortalMode =
@@ -159,7 +177,8 @@ type AdminPortalMode =
   | 'experience'
   | 'education'
   | 'publications'
-  | 'profile';
+  | 'profile'
+  | 'landing';
 
 // ─── Markdown preview (client-side, no extra deps) ─────────────────────────────
 
@@ -373,6 +392,7 @@ function ItemList<T>({
 // ─── Main component ────────────────────────────────────────────────────────────
 
 const NAV = [
+  { mode: 'landing',    href: '/admin/landing',    label: 'Landing Page', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
   { mode: 'profile',    href: '/admin/profile',    label: 'Profile',      icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
   { mode: 'posts',      href: '/admin/posts',      label: 'Blog Posts',   icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6m-6-4h6' },
   { mode: 'projects',   href: '/admin/projects',   label: 'Projects',     icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' },
@@ -418,6 +438,7 @@ export default function AdminPortalClient({
   const [projectAvatarUploading, setProjectAvatarUploading] = useState(false);
   const [projectDiagramUploading, setProjectDiagramUploading] = useState(false);
   const [companyLogoUploading, setCompanyLogoUploading] = useState(false);
+  const [heroPhotoUploading, setHeroPhotoUploading] = useState(false);
 
   // Auto-clear status message
   useEffect(() => {
@@ -568,6 +589,33 @@ export default function AdminPortalClient({
     setStore(s => ({ ...s, profile: { ...s.profile, ...patch } }));
   }
 
+  function patchLanding(patch: Partial<LandingData>) {
+    setStore(s => ({ ...s, landing: { ...s.landing, ...patch } }));
+  }
+  function addLandingNavLink() {
+    setStore(s => ({
+      ...s,
+      landing: {
+        ...s.landing,
+        navLinks: [...(s.landing?.navLinks ?? []), { icon: '🔗', label: 'New Link', href: '/', description: '' }],
+      },
+    }));
+  }
+  function deleteLandingNavLink(i: number) {
+    setStore(s => {
+      const next = [...(s.landing?.navLinks ?? [])];
+      next.splice(i, 1);
+      return { ...s, landing: { ...s.landing, navLinks: next } };
+    });
+  }
+  function patchLandingNavLink(i: number, patch: Partial<LandingNavLink>) {
+    setStore(s => {
+      const next = [...(s.landing?.navLinks ?? [])];
+      next[i] = { ...next[i], ...patch };
+      return { ...s, landing: { ...s.landing, navLinks: next } };
+    });
+  }
+
   // Highlights
   function addHighlight() {
     setStore(s => ({ ...s, highlights: [...(s.highlights ?? []), { icon: '⭐', label: 'New highlight', sub: '' }] }));
@@ -680,6 +728,7 @@ export default function AdminPortalClient({
   // Determine active section from mode
   // Derive active section before any effects that depend on it
   const activeSection: typeof NAV[number]['mode'] =
+    mode === 'landing' ? 'landing' :
     mode === 'profile' ? 'profile' :
     mode === 'metrics' ? 'metrics' :
     mode === 'projects' ? 'projects' :
@@ -951,6 +1000,68 @@ export default function AdminPortalClient({
                 )}
               </div>
             </>
+          )}
+
+          {/* ══ Landing Page ══ */}
+          {activeSection === 'landing' && (
+            <div className="flex-1 overflow-y-auto px-8 py-6 space-y-10">
+              <FieldGroup title="Hero text">
+                <Field label="Headline" hint="Shown as typing text below your name (e.g. job title)">
+                  <input className={inputCls} value={store.landing?.headline ?? ''} onChange={e => patchLanding({ headline: e.target.value })} />
+                </Field>
+                <Field label="Subheadline" hint="Second line of typing text (e.g. qualifications)">
+                  <input className={inputCls} value={store.landing?.subheadline ?? ''} onChange={e => patchLanding({ subheadline: e.target.value })} />
+                </Field>
+                <Field label="Hero photo">
+                  <ImageField
+                    value={store.landing?.heroPhotoUrl ?? ''}
+                    onChange={v => patchLanding({ heroPhotoUrl: v })}
+                    uploading={heroPhotoUploading}
+                    onUpload={f => uploadImage(f, p => patchLanding({ heroPhotoUrl: p }), setHeroPhotoUploading)}
+                  />
+                </Field>
+              </FieldGroup>
+
+              <FieldGroup title="Call-to-action buttons">
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Primary button label">
+                    <input className={inputCls} value={store.landing?.primaryCtaLabel ?? ''} onChange={e => patchLanding({ primaryCtaLabel: e.target.value })} placeholder="View My Work" />
+                  </Field>
+                  <div />
+                  <Field label="Secondary button label">
+                    <input className={inputCls} value={store.landing?.secondaryCtaLabel ?? ''} onChange={e => patchLanding({ secondaryCtaLabel: e.target.value })} placeholder="Get In Touch" />
+                  </Field>
+                  <Field label="Secondary button URL">
+                    <input className={inputCls} value={store.landing?.secondaryCtaHref ?? ''} onChange={e => patchLanding({ secondaryCtaHref: e.target.value })} placeholder="/contact" />
+                  </Field>
+                </div>
+              </FieldGroup>
+
+              <FieldGroup title="Navigation link cards">
+                <p className="text-xs text-slate-500 mb-3">Cards displayed at the bottom of the landing page linking to other sections of the site.</p>
+                <div className="space-y-3">
+                  {(store.landing?.navLinks ?? []).map((link, i) => (
+                    <div key={i} className="rounded-lg border border-slate-700/60 bg-slate-800/30 p-4 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <input className={`${inputCls} w-14 text-center`} value={link.icon} onChange={e => patchLandingNavLink(i, { icon: e.target.value })} placeholder="🔗" />
+                        <input className={`${inputCls} flex-1`} value={link.label} onChange={e => patchLandingNavLink(i, { label: e.target.value })} placeholder="Label" />
+                        <input className={`${inputCls} flex-1`} value={link.href} onChange={e => patchLandingNavLink(i, { href: e.target.value })} placeholder="/blog" />
+                        <button onClick={() => deleteLandingNavLink(i)} className="text-slate-600 hover:text-red-400 transition-colors shrink-0">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                      </div>
+                      <Field label="Description">
+                        <input className={inputCls} value={link.description} onChange={e => patchLandingNavLink(i, { description: e.target.value })} placeholder="Short description of this section" />
+                      </Field>
+                    </div>
+                  ))}
+                  <button onClick={addLandingNavLink} className="w-full py-2 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-500 hover:border-teal-500 hover:text-teal-400 transition-colors flex items-center justify-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Add link card
+                  </button>
+                </div>
+              </FieldGroup>
+            </div>
           )}
 
           {/* ══ Profile ══ */}

@@ -6,15 +6,15 @@ import NavBar from '@/components/organisms/NavBar';
 import { ThemeProvider } from '@/components/context/ThemeContext';
 import '../styles/mdx.css';
 
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 
-import MatrixRainGlobal from '@/components/organisms/MatrixRainGlobal';
+import ActiveBackdrop from '@/components/organisms/ActiveBackdrop';
 import RadialGradientOverlay from '@/components/atoms/RadialGradientOverlay';
 import { Analytics } from '@vercel/analytics/next';
 
-const inter = Inter({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-space-grotesk',
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -38,24 +38,19 @@ export default function RootLayout({
   modal?: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased site-bg relative`}
-        style={{
-          background: 'linear-gradient(to bottom, #0f172a 0%, #1e293b 60%, #0a192f 100%)',
-        }}
-      >
-        <ScrollProgressBar />
-        <RadialGradientOverlay />
-        <MatrixRainGlobal />
-        {/* Main Content */}
-        <div className="relative z-20">
-          <ThemeProvider>
+    <html lang="en" data-color-scheme="cobalt">
+      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased site-bg relative`}>
+        <ThemeProvider>
+          <ScrollProgressBar />
+          <RadialGradientOverlay />
+          <ActiveBackdrop />
+          {/* Main Content */}
+          <div className="relative z-20">
             <NavBar />
             {children}
             <Analytics />
-          </ThemeProvider>
-        </div>
+          </div>
+        </ThemeProvider>
         {/* Parallel route modal slot — renders project overlay when intercepted */}
         {modal}
       </body>

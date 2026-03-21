@@ -23,23 +23,19 @@ export default function ProjectCard({ project, featured = false }: { project: Pr
   return (
     <Link href={`/projects/${project.slug}`} className="group block no-underline h-full">
       <motion.div
-        className="relative rounded-xl overflow-hidden h-full flex flex-col cursor-pointer"
+        className="relative rounded-xl overflow-hidden h-full flex flex-col cursor-pointer theme-card"
         style={{
           background: 'rgba(15,23,42,0.7)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           borderWidth: '1.5px',
           borderStyle: 'solid',
-          borderColor: 'rgba(59,130,246,0.18)',
-          boxShadow: '0 2px 16px 0 rgba(59,130,246,0.10)',
+          borderColor: 'var(--card-border)',
+          boxShadow: 'var(--card-shadow)',
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
         }}
-        whileHover={{
-          y: -4,
-          boxShadow: '0 8px 32px 0 rgba(59,130,246,0.22)',
-          borderColor: 'rgba(59,130,246,0.45)',
-        }}
+        whileHover={{ y: -4 }}
         transition={{ type: 'spring', bounce: 0.3, duration: 0.35 }}
       >
         {/* Image area */}

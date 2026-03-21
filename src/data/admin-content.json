@@ -276,7 +276,7 @@
         {
           "role": "Graduate Software Engineer",
           "dates": "2024 - 2025",
-          "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. I participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products. I held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones. I also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
+          "description": "I contributed to the development of software solutions for defence systems, focusing on modern C++ and adhering to DO-178C compliance standards. \n\nI participated in design discussions, code reviews, and collaborated with cross-functional teams to deliver high-quality software products.\n\nI held responsibility as scrum master for my team, ensuring effective collaboration and timely delivery of project milestones.\n\nI also held responsibility as Product Designer (Junior Architect) for my team, working closely with Solutions Architects to ensure alignment between design and technical implementation.",
           "skills": [
             "C++",
             "Embedded Systems",
@@ -508,5 +508,39 @@
       "icon": "📚",
       "label": "Continuous Learning"
     }
-  ]
+  ],
+  "landing": {
+    "headline": "Software Engineer | PhD Researcher",
+    "subheadline": "MIET | BSc (Hons) Computer Science",
+    "heroPhotoUrl": "/images/graduation-photo-inf-forum.jpg",
+    "primaryCtaLabel": "View My Work",
+    "secondaryCtaLabel": "Get In Touch",
+    "secondaryCtaHref": "/contact",
+    "navLinks": [
+      {
+        "label": "About",
+        "href": "/about",
+        "description": "Industry experience, education, and research.",
+        "icon": "👤"
+      },
+      {
+        "label": "Projects",
+        "href": "/projects",
+        "description": "Open source work and side projects.",
+        "icon": "🛠️"
+      },
+      {
+        "label": "Blog",
+        "href": "/blog",
+        "description": "Thoughts on tech, architecture, and engineering.",
+        "icon": "✍️"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact",
+        "description": "Get in touch or collaborate.",
+        "icon": "📬"
+      }
+    ]
+  }
 }

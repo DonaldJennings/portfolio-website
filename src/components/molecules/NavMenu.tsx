@@ -17,7 +17,7 @@ const adminLinks = [
 
 const links = [
   { name: 'Home', href: '/' },
-  { name: 'About', href: '/', scrollTo: 'about' },
+  { name: 'About', href: '/about' },
   { name: 'Projects', href: '/projects' },
   { name: 'Developer Blog', href: '/blog' },
   { name: 'Contact', href: '/contact' },
@@ -43,29 +43,7 @@ export default function NavMenu({ vertical }: { vertical?: boolean }) {
   return (
     <div className={vertical ? 'flex flex-col space-y-3' : 'flex space-x-4'}>
       {links.map(link => {
-        // Handle active state for about section when on home page
-        const isActive = pathname === link.href || (link.scrollTo === 'about' && pathname === '/');
-
-        const handleLinkClick = (e: React.MouseEvent) => {
-          if (link.scrollTo) {
-            // If we're already on the home page, just scroll
-            if (pathname === '/') {
-              e.preventDefault();
-              const element = document.getElementById(link.scrollTo);
-              if (element) {
-                const navbarHeight = 80; // h-20 = 80px
-                const elementPosition = element.offsetTop - navbarHeight;
-                window.scrollTo({
-                  top: elementPosition,
-                  behavior: 'smooth',
-                });
-              }
-            } else {
-              // If we're on a different page, store the scroll target
-              sessionStorage.setItem('scrollToSection', link.scrollTo);
-            }
-          }
-        };
+        const isActive = pathname === link.href;
 
         return (
           <NavLink
@@ -77,7 +55,6 @@ export default function NavMenu({ vertical }: { vertical?: boolean }) {
                 : 'px-2 py-1 transition-colors'
             }
             isActive={isActive}
-            onClick={handleLinkClick}
           >
             {link.name}
           </NavLink>
@@ -125,7 +102,7 @@ export default function NavMenu({ vertical }: { vertical?: boolean }) {
                   className="w-44 rounded-xl py-1.5 overflow-hidden"
                   style={{
                     background: 'rgba(15,23,42,0.97)',
-                    border: '1px solid rgba(59,130,246,0.18)',
+                    border: '1px solid var(--dropdown-border)',
                     boxShadow: '0 16px 48px 0 rgba(0,0,0,0.5)',
                   }}
                 >
