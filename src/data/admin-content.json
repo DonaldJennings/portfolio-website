@@ -142,7 +142,8 @@
         "SSG-first architecture — all blog and project pages statically generated at build time",
         "Custom JSON content store bundled at build time, making the site deployable to Netlify serverless without a database",
         "Interactive architecture diagram viewer supporting draw.io SVG exports with pan and zoom"
-      ]
+      ],
+      "architectureDiagram": "/images/1774112634835-mermaid-diagram.jpg"
     },
     {
       "slug": "chocopy-compiler",
