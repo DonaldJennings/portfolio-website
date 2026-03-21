@@ -8,7 +8,7 @@ import { getColorScheme } from '@/lib/themes';
 
 export default function NodeGraphBackdrop() {
   const canvasRef = useRef<HTMLCanvasElement>(null) as React.RefObject<HTMLCanvasElement>;
-  const { colorScheme } = useTheme();
+  const { colorScheme, mode } = useTheme();
   const scheme = getColorScheme(colorScheme);
 
   useNodeGraphBackdrop(canvasRef, {
@@ -19,6 +19,9 @@ export default function NodeGraphBackdrop() {
   });
 
   return (
-    <CanvasElement canvasRef={canvasRef} className="pointer-events-none fixed inset-0 z-0 opacity-90" />
+    <CanvasElement
+      canvasRef={canvasRef}
+      className={`backdrop-canvas pointer-events-none fixed inset-0 z-0 ${mode === 'light' ? 'opacity-55' : 'opacity-90'}`}
+    />
   );
 }

@@ -27,9 +27,9 @@ type Props = {
 };
 
 const panel = {
-  background: 'rgba(15,23,42,0.72)',
+  background: 'rgba(var(--surface-base-rgb),0.72)',
   backdropFilter: 'blur(16px)',
-  border: '1px solid rgba(100,116,139,0.2)',
+  border: '1px solid rgba(var(--border-faint-rgb),0.2)',
 };
 
 const SKILL_COLORS = [
@@ -156,10 +156,10 @@ function OverviewSection({
             className="group text-left rounded-2xl p-5 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
             style={{
               ...panel,
-              borderColor: 'rgba(100,116,139,0.2)',
+              borderColor: 'rgba(var(--border-faint-rgb),0.2)',
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--card-border-hover)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(100,116,139,0.2)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border-faint-rgb),0.2)'; }}
           >
             <span className="text-2xl mb-3 block">{c.icon}</span>
             <p className="text-white text-sm font-semibold leading-snug mb-1 group-hover:text-white transition-colors">
@@ -184,7 +184,7 @@ function OverviewSection({
               <span
                 key={i}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                style={{ background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.2)', color: 'var(--accent-1)' }}
+                style={{ background: 'rgba(var(--accent-1-rgb),0.08)', border: '1px solid rgba(var(--accent-1-rgb),0.2)', color: 'var(--accent-1)' }}
               >
                 🏆 {a.title}
               </span>
@@ -238,7 +238,7 @@ function ExperienceSection({ experience }: { experience: ExperienceEntry[] }) {
               {/* Logo / initial */}
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-                style={{ background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(71,85,105,0.4)' }}
+                style={{ background: 'rgba(var(--surface-elevated-rgb),0.9)', border: '1px solid rgba(var(--border-mid-rgb),0.4)' }}
               >
                 {entry.logoUrl
                   ? <img src={entry.logoUrl} alt={entry.company} className="w-full h-full object-contain p-0.5" />
@@ -251,7 +251,7 @@ function ExperienceSection({ experience }: { experience: ExperienceEntry[] }) {
                   {isCurrent && (
                     <span
                       className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
-                      style={{ color: 'var(--accent-1)', background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.2)' }}
+                      style={{ color: 'var(--accent-1)', background: 'rgba(var(--accent-1-rgb),0.1)', border: '1px solid rgba(var(--accent-1-rgb),0.2)' }}
                     >
                       <span className="w-1 h-1 rounded-full animate-pulse inline-block" style={{ background: 'var(--accent-1)' }} />
                       Now
@@ -299,7 +299,7 @@ function ExperienceSection({ experience }: { experience: ExperienceEntry[] }) {
                         )}
                         {/* Connector line to next role */}
                         {!isLast && (
-                          <div className="flex-1 w-px mt-2" style={{ background: 'rgba(71,85,105,0.4)' }} />
+                          <div className="flex-1 w-px mt-2" style={{ background: 'rgba(var(--border-mid-rgb),0.4)' }} />
                         )}
                       </div>
 
@@ -369,7 +369,7 @@ function EducationSection({
           <div className="flex items-start gap-4">
             <div
               className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-lg flex-shrink-0"
-              style={{ background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.2)' }}
+              style={{ background: 'rgba(var(--accent-1-rgb),0.08)', border: '1px solid rgba(var(--accent-1-rgb),0.2)' }}
             >
               🎓
             </div>
@@ -503,7 +503,7 @@ function SkillsSection({
           <div className="flex flex-wrap gap-2">
             {certifications.map(cert => (
               <span key={cert} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-200"
-                style={{ background: 'rgba(56,189,248,0.06)', border: '1px solid rgba(56,189,248,0.15)' }}>
+                style={{ background: 'rgba(var(--accent-1-rgb),0.06)', border: '1px solid rgba(var(--accent-1-rgb),0.15)' }}>
                 ✓ {cert}
               </span>
             ))}

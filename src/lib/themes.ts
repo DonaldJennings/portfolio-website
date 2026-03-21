@@ -45,6 +45,7 @@ export const BACKDROPS: BackdropDef[] = [
 
 export const DEFAULT_COLOR_SCHEME_ID = 'cobalt';
 export const DEFAULT_BACKDROP_ID = 'node-graph';
+export const DEFAULT_MODE: 'dark' | 'light' = 'dark';
 
 export function getColorScheme(id: string): ColorScheme {
   return COLOR_SCHEMES.find(s => s.id === id) ?? COLOR_SCHEMES[0];

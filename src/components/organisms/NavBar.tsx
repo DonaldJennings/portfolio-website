@@ -20,9 +20,7 @@ export default function NavBar() {
         scrolled ? 'bg-slate-900/80 backdrop-blur-md' : 'bg-transparent backdrop-blur-none'
       }`}
       style={{
-        background: scrolled
-          ? 'linear-gradient(90deg, rgba(30,41,59,0.82) 0%, rgba(15,23,42,0.82) 100%)'
-          : 'linear-gradient(90deg, rgba(30,41,59,0.32) 0%, rgba(15,23,42,0.12) 100%)',
+        background: scrolled ? 'var(--nav-bg-scrolled)' : 'var(--nav-bg-unscrolled)',
         backdropFilter: scrolled ? 'blur(18px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
         boxShadow: '0 4px 24px 0 var(--nav-glow)',

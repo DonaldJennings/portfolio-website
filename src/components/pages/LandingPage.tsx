@@ -88,7 +88,7 @@ export default function LandingPage({ name, landing }: LandingPageProps) {
                   href={link.href}
                   className="group flex items-center gap-2.5 sm:gap-3.5 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border transition-all duration-200"
                   style={{
-                    background: 'rgba(15, 23, 42, 0.72)',
+                    background: 'rgba(var(--surface-base-rgb), 0.72)',
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
                     borderColor: 'var(--card-border)',
@@ -98,13 +98,13 @@ export default function LandingPage({ name, landing }: LandingPageProps) {
                     const el = e.currentTarget as HTMLAnchorElement;
                     el.style.borderColor = 'var(--card-border-hover)';
                     el.style.boxShadow = 'var(--card-shadow-hover)';
-                    el.style.background = 'rgba(30, 41, 59, 0.82)';
+                    el.style.background = 'rgba(var(--surface-elevated-rgb), 0.82)';
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget as HTMLAnchorElement;
                     el.style.borderColor = 'var(--card-border)';
                     el.style.boxShadow = 'var(--card-shadow)';
-                    el.style.background = 'rgba(15, 23, 42, 0.72)';
+                    el.style.background = 'rgba(var(--surface-base-rgb), 0.72)';
                   }}
                 >
                   {/* Icon */}

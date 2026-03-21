@@ -38,7 +38,7 @@ export default function RootLayout({
   modal?: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-color-scheme="cobalt">
+    <html lang="en" data-color-scheme="cobalt" data-mode="dark">
       <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased site-bg relative`}>
         <ThemeProvider>
           <ScrollProgressBar />

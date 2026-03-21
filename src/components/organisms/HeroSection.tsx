@@ -72,7 +72,7 @@ export default function HeroSection({
           <button
             onClick={() => { window.location.href = '/about'; }}
             className="group flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
-            style={{ background: 'var(--accent-1)', color: 'rgb(15 23 42)' }}
+            style={{ background: 'var(--accent-1)', color: 'var(--cta-text-color)' }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = 'var(--cta-glow-shadow)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none'; }}
           >

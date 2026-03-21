@@ -42,7 +42,7 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
         layoutId={layoutId}
         className="relative rounded-xl border flex flex-row overflow-hidden transition-all duration-300 cursor-pointer w-full group theme-post-card"
         style={{
-          background: 'rgba(15,23,42,0.65)',
+          background: 'rgba(var(--surface-base-rgb),0.65)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           boxShadow: 'var(--post-shadow)',
@@ -82,7 +82,7 @@ const ContentPostCard: React.FC<ContentPostCardProps> = ({
               className="absolute inset-y-0 left-0 w-8"
               style={{
                 background:
-                  'linear-gradient(to right, rgba(15,23,42,0.65) 0%, transparent 100%)',
+                  'linear-gradient(to right, rgba(var(--surface-base-rgb),0.65) 0%, transparent 100%)',
               }}
             />
           </div>

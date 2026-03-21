@@ -25,7 +25,7 @@ export default function ProjectCard({ project, featured = false }: { project: Pr
       <motion.div
         className="relative rounded-xl overflow-hidden h-full flex flex-col cursor-pointer theme-card"
         style={{
-          background: 'rgba(15,23,42,0.7)',
+          background: 'rgba(var(--surface-base-rgb),0.70)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           borderWidth: '1.5px',
@@ -59,7 +59,7 @@ export default function ProjectCard({ project, featured = false }: { project: Pr
           <div
             className="absolute inset-0"
             style={{
-              background: 'linear-gradient(to bottom, transparent 30%, rgba(10,15,30,0.92) 100%)',
+              background: 'linear-gradient(to bottom, transparent 30%, rgba(var(--surface-deep-rgb),0.92) 100%)',
             }}
           />
           {/* Status badge — top right */}

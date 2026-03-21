@@ -23,7 +23,7 @@ export default function ProjectHeroStrip({ meta }: { meta: ProjectMeta }) {
     <div
       className="w-full rounded-xl px-6 py-6 md:px-8 md:py-7"
       style={{
-        background: 'linear-gradient(90deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.75) 100%)',
+        background: 'linear-gradient(90deg, rgba(var(--surface-elevated-rgb),0.9) 0%, rgba(var(--surface-base-rgb),0.75) 100%)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         border: '1.5px solid var(--strip-border)',

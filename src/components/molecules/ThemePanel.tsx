@@ -6,7 +6,7 @@ import { COLOR_SCHEMES, BACKDROPS } from '@/lib/themes';
 
 export default function ThemePanel() {
   const [open, setOpen] = useState(false);
-  const { colorScheme, backdropId, setColorScheme, setBackdropId } = useTheme();
+  const { colorScheme, backdropId, mode, setColorScheme, setBackdropId, setMode } = useTheme();
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,6 +46,49 @@ export default function ThemePanel() {
         <div className="absolute right-0 top-11 w-52 bg-slate-900/96 border border-slate-700/80 rounded-lg shadow-2xl backdrop-blur-md z-50 overflow-hidden">
           <div className="px-3 py-2.5 border-b border-slate-700/60">
             <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Appearance</p>
+          </div>
+
+          {/* Dark / Light toggle */}
+          <div className="px-3 py-2.5 border-b border-slate-700/40">
+            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Mode</p>
+            <div className="flex gap-1">
+              <button
+                onClick={() => setMode('dark')}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded text-xs font-medium transition-colors ${
+                  mode === 'dark'
+                    ? 'bg-slate-700/80 text-white'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                }`}
+              >
+                {/* Moon icon */}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+                </svg>
+                Dark
+              </button>
+              <button
+                onClick={() => setMode('light')}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded text-xs font-medium transition-colors ${
+                  mode === 'light'
+                    ? 'bg-slate-700/80 text-white'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                }`}
+              >
+                {/* Sun icon */}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="12" cy="12" r="4" />
+                  <line x1="12" y1="2" x2="12" y2="4" />
+                  <line x1="12" y1="20" x2="12" y2="22" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="2" y1="12" x2="4" y2="12" />
+                  <line x1="20" y1="12" x2="22" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                Light
+              </button>
+            </div>
           </div>
 
           <div className="px-3 py-2.5 border-b border-slate-700/40">

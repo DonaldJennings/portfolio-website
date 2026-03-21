@@ -101,9 +101,9 @@ export default function NavMenu({ vertical }: { vertical?: boolean }) {
                 <div
                   className="w-44 rounded-xl py-1.5 overflow-hidden"
                   style={{
-                    background: 'rgba(15,23,42,0.97)',
+                    background: 'rgba(var(--surface-base-rgb),0.97)',
                     border: '1px solid var(--dropdown-border)',
-                    boxShadow: '0 16px 48px 0 rgba(0,0,0,0.5)',
+                    boxShadow: '0 16px 48px 0 rgba(var(--border-mid-rgb),0.3)',
                   }}
                 >
                   {adminLinks.map(link => (
