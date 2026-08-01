@@ -41,6 +41,94 @@
         "readingTime": "3 min read"
       },
       "content": "\r\nWelcome to the developer blog! This first post is written in **MDX** and loaded from the filesystem.\r\n\r\n## Getting Started\r\n\r\nTo add a post, create an `.mdx` file in `src/content/dev-blog`:\r\n\r\n```ts\r\nexport function greet(name: string) {\r\n  console.log(`Hello, ${name}!`);\r\n}\r\n```\r\n\r\n## Next Steps\r\n\r\n- Customize components\r\n- Enhance styling\r\n- Explore more content\r\n\r\nThanks for reading!\r\n"
+    },
+    {
+      "title": "CUDA as a Technology",
+      "date": "2026-08-01",
+      "slug": "cuda-as-a-technology",
+      "description": "An introduction to CUDA and what makes GPU programming a different way of thinking about computation.",
+      "excerpt": "",
+      "tags": [
+        "cuda",
+        "gpu",
+        "curadar"
+      ],
+      "image": "",
+      "imageDir": "",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png",
+        "readingTime": "1 min read"
+      },
+      "content": ""
+    },
+    {
+      "title": "Range-Doppler FFTs in CUDA",
+      "date": "2026-08-01",
+      "slug": "range-doppler-ffts-in-cuda",
+      "description": "Implementing range-doppler processing on the GPU using CUDA-accelerated FFTs.",
+      "excerpt": "",
+      "tags": [
+        "cuda",
+        "gpu",
+        "radar",
+        "signal-processing",
+        "curadar"
+      ],
+      "image": "",
+      "imageDir": "",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png",
+        "readingTime": "1 min read"
+      },
+      "content": ""
+    },
+    {
+      "title": "Adding CA-CFAR Detection",
+      "date": "2026-08-01",
+      "slug": "adding-ca-cfar",
+      "description": "Implementing Cell-Averaging Constant False Alarm Rate (CA-CFAR) detection as a CUDA kernel.",
+      "excerpt": "",
+      "tags": [
+        "cuda",
+        "gpu",
+        "radar",
+        "signal-processing",
+        "cfar",
+        "curadar"
+      ],
+      "image": "",
+      "imageDir": "",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png",
+        "readingTime": "1 min read"
+      },
+      "content": ""
+    },
+    {
+      "title": "Adding Bartlett Beamforming",
+      "date": "2026-08-01",
+      "slug": "adding-bartlett-beamforming",
+      "description": "Implementing Bartlett beamforming for angle-of-arrival estimation on the GPU.",
+      "excerpt": "",
+      "tags": [
+        "cuda",
+        "gpu",
+        "radar",
+        "signal-processing",
+        "beamforming",
+        "curadar"
+      ],
+      "image": "",
+      "imageDir": "",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png",
+        "readingTime": "1 min read"
+      },
+      "content": ""
     }
   ],
   "projects": [
@@ -251,6 +339,42 @@
       ],
       "demoUrl": "https://youtu.be/JmSBkGTeKtg",
       "featured": true
+    },
+    {
+      "slug": "curadar",
+      "title": "cuRadar",
+      "date": "2026-08-01",
+      "author": {
+        "name": "Donald Jennings",
+        "avatarUrl": "/images/dj-avatar.png"
+      },
+      "content": "",
+      "description": "A simulated radar signal processing pipeline built with GPU acceleration via CUDA.",
+      "tags": [
+        "cuda",
+        "gpu",
+        "radar",
+        "signal-processing",
+        "high-performance-computing"
+      ],
+      "image": "",
+      "stack": [
+        "CUDA",
+        "C++",
+        "Python"
+      ],
+      "repoUrl": "",
+      "demoUrl": "",
+      "role": "solo",
+      "status": "wip",
+      "featured": false,
+      "problem": "Modern radar systems generate large volumes of raw ADC data that must be transformed through range-doppler processing, detection, and beamforming stages under tight latency constraints. cuRadar explores how a full radar signal processing chain — from raw samples through to detections — can be implemented and accelerated on the GPU using CUDA, as a way to build hands-on intuition for heterogeneous, high-performance signal processing pipelines.",
+      "highlights": [
+        "Simulated raw radar signal generation for a configurable pipeline input",
+        "GPU-accelerated Range-Doppler processing using CUDA-based FFTs",
+        "CA-CFAR (Cell-Averaging Constant False Alarm Rate) detection implemented as a CUDA kernel",
+        "Bartlett beamforming for angle-of-arrival estimation on the GPU"
+      ]
     }
   ],
   "experience": [
@@ -260,9 +384,9 @@
       "websiteUrl": "https://www.leonardo.com/en/",
       "roles": [
         {
-          "role": "Software Engineer",
-          "dates": "2025 - Present",
-          "description": "Lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
+          "role": "Senior Software Engineer",
+          "dates": "2026 - Present",
+          "description": "Promoted to Senior Software Engineer, continuing to lead the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nAct as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDeliver customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.\n\nUndertaking a part-time Engineering Doctorate (EngD) focused on high-performance computing and heterogeneous runtime design for signal processing workloads.",
           "skills": [
             "C++",
             "C",
@@ -273,6 +397,21 @@
             "System Design"
           ],
           "isCurrent": true
+        },
+        {
+          "role": "Software Engineer",
+          "dates": "2025 - 2026",
+          "description": "Led the design and implementation of mission-critical radar processing software, ensuring high reliability and performance in safety-critical environments.\n\nAccountable for software architecture and design quality, working closely with the system architect to evolve and improve the overall software design.\n\nActed as a technical mentor to graduate apprentices, supporting their development in core computer science concepts and guiding their progress through university and professional goal setting.\n\nDelivered customer-facing demonstrations of operational systems, clearly communicating technical capabilities and system behaviour to stakeholders.\n\nExperienced across the full software development lifecycle, including requirements analysis, architecture, implementation, testing, and release.",
+          "skills": [
+            "C++",
+            "C",
+            "Linux",
+            "Qt",
+            "Git",
+            "Agile",
+            "System Design"
+          ],
+          "isCurrent": false
         },
         {
           "role": "Graduate Software Engineer",
@@ -411,7 +550,7 @@
   ],
   "profile": {
     "name": "Donald",
-    "role": "Software Engineer",
+    "role": "Senior Software Engineer",
     "company": "Leonardo UK Ltd",
     "location": "Edinburgh, UK",
     "bio": "Software Engineer specialising in mission-critical embedded systems, and PhD researcher in High Performance Computing at EPCC, University of Edinburgh.",
@@ -427,6 +566,11 @@
     {
       "icon": "🏅",
       "label": "MIET Member",
+      "sub": "Institution of Engineering & Technology"
+    },
+    {
+      "icon": "🎖️",
+      "label": "Incorporated Engineer (IEng)",
       "sub": "Institution of Engineering & Technology"
     },
     {
@@ -475,7 +619,7 @@
     }
   ],
   "certifications": [
-    "Incorporated Engineer (IET)"
+    "Incorporated Engineer (IEng)",
     "MIET (Member of IET)",
     "Certified SAFe 6.0 Scrum Master"
   ],
