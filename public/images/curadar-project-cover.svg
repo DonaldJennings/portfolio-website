@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <radialGradient id="sweep" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <g stroke="#334155" stroke-width="1" opacity="0.4">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200" />
+    <path d="M100 0 V630 M200 0 V630 M300 0 V630 M400 0 V630 M500 0 V630 M600 0 V630 M700 0 V630 M800 0 V630 M900 0 V630 M1000 0 V630 M1100 0 V630" />
+  </g>
+
+  <circle cx="600" cy="315" r="260" fill="url(#glow)" />
+
+  <g transform="translate(600,315)" fill="none" stroke="#2dd4bf" opacity="0.55">
+    <circle r="60" />
+    <circle r="120" />
+    <circle r="180" />
+    <circle r="240" />
+  </g>
+  <g transform="translate(600,315)" stroke="#334155" opacity="0.6">
+    <line x1="-240" y1="0" x2="240" y2="0" />
+    <line x1="0" y1="-240" x2="0" y2="240" />
+  </g>
+
+  <g transform="translate(600,315)">
+    <path d="M0 0 L240 0 A240 240 0 0 1 169.7 169.7 Z" fill="url(#sweep)" />
+    <line x1="0" y1="0" x2="169.7" y2="169.7" stroke="#4ade80" stroke-width="3" />
+  </g>
+
+  <g fill="#4ade80">
+    <circle cx="712" cy="230" r="6" />
+    <circle cx="500" cy="180" r="5" opacity="0.8" />
+    <circle cx="780" cy="410" r="4" opacity="0.6" />
+  </g>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#5eead4">
+    <text x="60" y="80" font-size="22" letter-spacing="4" opacity="0.85">CURADAR</text>
+    <text x="60" y="110" font-size="14" fill="#94a3b8" letter-spacing="2">CUDA-ACCELERATED SIGNAL PROCESSING</text>
+  </g>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#64748b" font-size="12">
+    <text x="60" y="580">RANGE-DOPPLER</text>
+    <text x="220" y="580">CA-CFAR</text>
+    <text x="340" y="580">BEAMFORMING</text>
+  </g>
+</svg>

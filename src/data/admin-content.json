@@ -53,8 +53,8 @@
         "gpu",
         "curadar"
       ],
-      "image": "",
-      "imageDir": "",
+      "image": "/images/curadar-blog-cuda-intro.svg",
+      "imageDir": "/images/",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png",
@@ -75,8 +75,8 @@
         "signal-processing",
         "curadar"
       ],
-      "image": "",
-      "imageDir": "",
+      "image": "/images/curadar-blog-range-doppler.svg",
+      "imageDir": "/images/",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png",
@@ -98,8 +98,8 @@
         "cfar",
         "curadar"
       ],
-      "image": "",
-      "imageDir": "",
+      "image": "/images/curadar-blog-ca-cfar.svg",
+      "imageDir": "/images/",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png",
@@ -121,8 +121,8 @@
         "beamforming",
         "curadar"
       ],
-      "image": "",
-      "imageDir": "",
+      "image": "/images/curadar-blog-beamforming.svg",
+      "imageDir": "/images/",
       "author": {
         "name": "Donald Jennings",
         "avatarUrl": "/images/dj-avatar.png",
@@ -357,7 +357,7 @@
         "signal-processing",
         "high-performance-computing"
       ],
-      "image": "",
+      "image": "/images/curadar-project-cover.svg",
       "stack": [
         "CUDA",
         "C++",
@@ -656,7 +656,7 @@
     }
   ],
   "landing": {
-    "headline": "Software Engineer | PhD Researcher",
+    "headline": "Senior Software Engineer | PhD Researcher",
     "subheadline": "IEng MIET | BSc (Hons) Computer Science",
     "heroPhotoUrl": "/images/graduation-photo-inf-forum.jpg",
     "primaryCtaLabel": "View My Work",
